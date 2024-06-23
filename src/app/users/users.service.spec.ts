@@ -2,11 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
+import { CryptoService } from '../crypto/crypto.service';
 import {
   mockCreateUserDto,
   mockUserEntity,
   mockUsersRepository,
 } from 'test/mocks/user';
+import { mockCryptoService } from 'test/mocks/crypto';
 
 describe('UsersService', () => {
   let usersService: UsersService;
@@ -19,6 +21,10 @@ describe('UsersService', () => {
           provide: UsersRepository,
           useValue: mockUsersRepository,
         },
+        {
+          provide: CryptoService,
+          useValue: mockCryptoService,
+        },
       ],
     }).compile();
 
@@ -27,10 +33,12 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should call UsersRepository with correct values', async () => {
+      mockCryptoService.hasher.mockResolvedValueOnce('any-hash');
       await usersService.create(mockCreateUserDto);
-      expect(mockUsersRepository.create).toHaveBeenCalledWith(
-        mockCreateUserDto,
-      );
+      expect(mockUsersRepository.create).toHaveBeenCalledWith({
+        ...mockCreateUserDto,
+        password: 'any-hash',
+      });
     });
 
     it('should create a new user', async () => {

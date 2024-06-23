@@ -28,4 +28,21 @@ export class UsersRepository {
       result.updatedAt,
     );
   }
+
+  async findByEmail(email: string) {
+    const result = await this.prisma.user.findUnique({ where: { email } });
+    
+    if (!result) {
+      return null;
+    }
+
+    return new User(
+      result.id,
+      result.name,
+      result.email,
+      result.password,
+      result.createdAt,
+      result.updatedAt,
+    );
+  }
 }

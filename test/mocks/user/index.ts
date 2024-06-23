@@ -17,6 +17,7 @@ export const mockUserEntity = {
 
 export const mockUsersService = {
   create: jest.fn(),
+  findOne: jest.fn()
 };
 
 export const mockUsersRepository = {

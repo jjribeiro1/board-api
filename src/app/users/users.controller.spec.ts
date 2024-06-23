@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { mockCreateUserDto, mockUsersService } from 'test/mocks/user';
+import {
+  mockCreateUserDto,
+  mockUserEntity,
+  mockUsersService,
+} from 'test/mocks/user';
+import { NotFoundException } from '@nestjs/common';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -27,6 +32,24 @@ describe('UsersController', () => {
 
       await expect(controller.create(mockCreateUserDto)).rejects.toThrow(
         new Error('error'),
+      );
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return user by id', async () => {
+      mockUsersService.findOne.mockResolvedValueOnce(mockUserEntity);
+      const result = await controller.findOne('any-id');
+      expect(result).toEqual({ data: { ...mockUserEntity } });
+    });
+
+    it('should throw if UsersService throws', async () => {
+      mockUsersService.findOne.mockRejectedValueOnce(
+        new NotFoundException(),
+      );
+
+      await expect(controller.findOne('any-id')).rejects.toThrow(
+        new NotFoundException(),
       );
     });
   });

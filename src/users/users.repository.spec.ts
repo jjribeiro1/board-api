@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
-import {
-  MockContext,
-  createMockContext,
-} from 'src/prisma/prisma-client-mock';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MockContext, createMockContext } from 'src/prisma/prisma-client-mock';
+import { mockCreateUserDto, mockUserEntity } from 'test/mocks/user';
 
 describe('UsersRepository', () => {
   let usersRepository: UsersRepository;
@@ -25,21 +23,10 @@ describe('UsersRepository', () => {
 
   describe('create', () => {
     it('should create a new user ', async () => {
-      const input = {
-        name: 'any-name',
-        email: 'any-email',
-        password: 'any-password',
-      };
-      const output = {
-        ...input,
-        id: 'any-id',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      mockCtx.prisma.user.create.mockResolvedValueOnce(output);
+      mockCtx.prisma.user.create.mockResolvedValueOnce(mockUserEntity);
 
-      const result = await usersRepository.create(input);
-      expect(result).toEqual(output.id);
+      const result = await usersRepository.create(mockCreateUserDto);
+      expect(result).toEqual(mockUserEntity.id);
     });
   });
 });

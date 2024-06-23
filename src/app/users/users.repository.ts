@@ -31,7 +31,7 @@ export class UsersRepository {
 
   async findByEmail(email: string) {
     const result = await this.prisma.user.findUnique({ where: { email } });
-    
+
     if (!result) {
       return null;
     }

@@ -44,9 +44,7 @@ describe('UsersController', () => {
     });
 
     it('should throw if UsersService throws', async () => {
-      mockUsersService.findOne.mockRejectedValueOnce(
-        new NotFoundException(),
-      );
+      mockUsersService.findOne.mockRejectedValueOnce(new NotFoundException());
 
       await expect(controller.findOne('any-id')).rejects.toThrow(
         new NotFoundException(),

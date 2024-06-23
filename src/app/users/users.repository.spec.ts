@@ -45,4 +45,20 @@ describe('UsersRepository', () => {
       expect(result).toBe(null);
     });
   });
+
+  describe('findByEmail', () => {
+    it('should return user by email', async () => {
+      mockCtx.prisma.user.findUnique.mockResolvedValueOnce(mockUserEntity);
+
+      const result = await usersRepository.findOne('any-email');
+      expect(result).toEqual(mockUserEntity);
+    });
+
+    it('should return null if user not exists', async () => {
+      mockCtx.prisma.user.findUnique.mockResolvedValueOnce(null);
+
+      const result = await usersRepository.findOne('any-email');
+      expect(result).toBe(null);
+    });
+  });
 });

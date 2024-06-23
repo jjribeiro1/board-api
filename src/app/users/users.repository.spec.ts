@@ -29,4 +29,20 @@ describe('UsersRepository', () => {
       expect(result).toEqual(mockUserEntity.id);
     });
   });
+
+  describe('findOne', () => {
+    it('should return user by id', async () => {
+      mockCtx.prisma.user.findUnique.mockResolvedValueOnce(mockUserEntity);
+
+      const result = await usersRepository.findOne('any-id');
+      expect(result).toEqual(mockUserEntity);
+    });
+
+    it('should return null if user not exists', async () => {
+      mockCtx.prisma.user.findUnique.mockResolvedValueOnce(null);
+
+      const result = await usersRepository.findOne('any-id');
+      expect(result).toBe(null);
+    });
+  });
 });

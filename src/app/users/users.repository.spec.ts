@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { MockContext, createMockContext } from 'src/prisma/prisma-client-mock';
+import { PrismaService } from 'src/app/prisma/prisma.service';
+import { MockContext, createMockContext } from 'src/app/prisma/prisma-client-mock';
 import { mockCreateUserDto, mockUserEntity } from 'test/mocks/user';
 
 describe('UsersRepository', () => {

@@ -2,7 +2,8 @@ import type { Config } from 'jest';
 
 const config: Config = {
   moduleFileExtensions: ['js', 'ts', 'json'],
-  rootDir: 'src',
+  rootDir: './',
+  modulePaths: ['<rootDir>'],
   preset: 'ts-jest',
   testEnvironment: 'node',
   transform: {

@@ -17,10 +17,11 @@ export const mockUserEntity = {
 
 export const mockUsersService = {
   create: jest.fn(),
-  findOne: jest.fn()
+  findOne: jest.fn(),
 };
 
 export const mockUsersRepository = {
   create: jest.fn(),
-  findOne: jest.fn()
+  findOne: jest.fn(),
+  findByEmail: jest.fn(),
 };

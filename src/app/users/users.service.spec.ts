@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { CryptoService } from '../crypto/crypto.service';
@@ -32,6 +32,15 @@ describe('UsersService', () => {
   });
 
   describe('create', () => {
+    it('should throw ConflictException if email already in use', async () => {
+      mockUsersRepository.findByEmail.mockResolvedValueOnce(mockUserEntity);
+      await expect(usersService.create(mockCreateUserDto)).rejects.toThrow(
+        new ConflictException(
+          `Email ${mockCreateUserDto.email} já foi registrado`,
+        ),
+      );
+    });
+
     it('should call UsersRepository with correct values', async () => {
       mockCryptoService.hasher.mockResolvedValueOnce('any-hash');
       await usersService.create(mockCreateUserDto);

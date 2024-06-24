@@ -62,7 +62,7 @@ export class AuthService {
     const payload = await this.verifyToken(token);
     const user = await this.usersRepository.findOne(payload.sub);
     if (!user) {
-      throw new Error('Não autorizado');
+      throw new UnauthorizedException('Não autorizado');
     }
     return user;
   }

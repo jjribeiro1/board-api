@@ -9,6 +9,7 @@ import { UsersRepository } from 'src/app/users/users.repository';
 import { CryptoService } from 'src/app/crypto/crypto.service';
 import { SignInDto } from './dto/sign-in.dto';
 import { User } from 'src/app/users/entities/user.entity';
+import { JwtUserPayload } from 'src/common/types/jwt-payload';
 
 @Injectable()
 export class AuthService {
@@ -59,7 +60,7 @@ export class AuthService {
   }
 
   async extractUserFromToken(token: string) {
-    const payload = await this.verifyToken(token);
+    const payload: JwtUserPayload = await this.verifyToken(token);
     const user = await this.usersRepository.findOne(payload.sub);
     if (!user) {
       throw new UnauthorizedException('Não autorizado');

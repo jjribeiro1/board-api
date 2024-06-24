@@ -8,6 +8,7 @@ import { mockJwtService } from 'test/mocks/auth';
 import { mockUserEntity, mockUsersRepository } from 'test/mocks/user';
 import { mockCryptoService } from 'test/mocks/crypto';
 import { mockSignInDto } from 'test/mocks/auth';
+import { JwtUserPayload } from 'src/common/types/jwt-payload';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -121,7 +122,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if user not found', async () => {
-      const payload = { sub: 'any-id', email: 'any-email' };
+      const payload: JwtUserPayload = { sub: 'any-id', email: 'any-email' };
       mockJwtService.verifyAsync.mockResolvedValueOnce(payload);
       mockUsersRepository.findOne.mockResolvedValueOnce(null);
 
@@ -132,7 +133,7 @@ describe('AuthService', () => {
     });
 
     it("should return user from token", async () => {
-      const payload = { sub: 'any-id', email: 'any-email' };
+      const payload: JwtUserPayload = { sub: 'any-id', email: 'any-email' };
       mockJwtService.verifyAsync.mockResolvedValueOnce(payload)
       mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity)
 

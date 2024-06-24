@@ -12,4 +12,5 @@ export const mockJwtService = {
 
 export const mockAuthService = {
   signIn: jest.fn(),
+  extractUserFromToken: jest.fn()
 };

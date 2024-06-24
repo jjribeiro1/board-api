@@ -7,4 +7,14 @@ export class User {
     readonly createdAt: Date,
     readonly updatedAt: Date,
   ) {}
+
+  toPresentation() {
+    return {
+      id: this.id,
+      name: this.name,
+      email: this.email,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
 }

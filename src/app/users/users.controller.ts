@@ -25,7 +25,7 @@ export class UsersController {
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
     return {
-      data: user,
+      data: user.toPresentation(),
     };
   }
 }

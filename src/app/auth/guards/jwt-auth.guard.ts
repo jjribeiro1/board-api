@@ -16,7 +16,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractTokenFromAuthorizationHeader(req);
     const user = await this.authService.extractUserFromToken(token);
 
-    req['user'] = user;
+    req['user'] = user.toPresentation();
     return true;
   }
 

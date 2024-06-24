@@ -28,6 +28,10 @@ export class AuthController {
     return this.authService.signIn(dto);
   }
 
+  /**
+   *
+   * Returns logged user profile
+   */
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   getProfile(@Request() req) {

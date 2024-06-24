@@ -85,7 +85,7 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException if user password is invalid', async () => {
       mockUsersRepository.findByEmail.mockResolvedValueOnce(mockUserEntity);
       mockCryptoService.compareHash.mockResolvedValueOnce(false);
-      
+
       await expect(
         authService.validateUser(mockSignInDto.email, mockSignInDto.password),
       ).rejects.toThrow(
@@ -107,5 +107,40 @@ describe('AuthService', () => {
       );
       expect(result).toEqual(mockUserEntity);
     });
+  });
+
+  describe('extractUserFromToken', () => {
+    it('should throw UnauthorizedException if verify token fails', async () => {
+      mockJwtService.verifyAsync.mockRejectedValueOnce(
+        new UnauthorizedException('Erro ao verificar token'),
+      );
+
+      await expect(
+        authService.extractUserFromToken('any-token'),
+      ).rejects.toThrow(new UnauthorizedException('Erro ao verificar token'));
+    });
+
+    it('should throw UnauthorizedException if user not found', async () => {
+      const payload = { sub: 'any-id', email: 'any-email' };
+      mockJwtService.verifyAsync.mockResolvedValueOnce(payload);
+      mockUsersRepository.findOne.mockResolvedValueOnce(null);
+
+      await expect(
+        authService.extractUserFromToken('any-token'),
+      ).rejects.toThrow(new UnauthorizedException('Não autorizado'));
+      expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub);
+    });
+
+    it("should return user from token", async () => {
+      const payload = { sub: 'any-id', email: 'any-email' };
+      mockJwtService.verifyAsync.mockResolvedValueOnce(payload)
+      mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity)
+
+      const result = await authService.extractUserFromToken('any-token')
+
+      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith('any-token', undefined)
+      expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub)
+      expect(result).toEqual(mockUserEntity)
+    })
   });
 });

@@ -1,7 +1,11 @@
-import { plainToInstance } from 'class-transformer';
-import { IsString, IsNotEmpty, validateSync } from 'class-validator';
+import { Transform, plainToInstance } from 'class-transformer';
+import { IsString, IsNotEmpty, validateSync, IsNumber } from 'class-validator';
 
 export class EnvironmentVariables {
+  @IsNotEmpty()
+  @Transform(({ value }) => Number(value))
+  SERVER_PORT: number;
+
   @IsString()
   @IsNotEmpty()
   POSTGRES_USER: string;

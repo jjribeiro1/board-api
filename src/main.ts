@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const PORT = configService.get('SERVER_PORT');
+
   app.setGlobalPrefix('/api');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -18,12 +22,12 @@ async function bootstrap() {
     .setTitle('Feedback board api')
     .setDescription('Api to manage and collect user feedback')
     .setVersion('1.0')
-    .addTag("auth")
+    .addTag('auth')
     .addTag('users')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(3000);
+  await app.listen(PORT || 3002);
 }
 bootstrap();

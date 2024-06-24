@@ -1,5 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import {
+  JwtService,
+  JwtSignOptions,
+  JwtVerifyOptions,
+  TokenExpiredError,
+} from '@nestjs/jwt';
 import { UsersRepository } from 'src/app/users/users.repository';
 import { CryptoService } from 'src/app/crypto/crypto.service';
 import { SignInDto } from './dto/sign-in.dto';
@@ -53,6 +58,15 @@ export class AuthService {
     );
   }
 
+  async extractUserFromToken(token: string) {
+    const payload = await this.verifyToken(token);
+    const user = await this.usersRepository.findOne(payload.sub);
+    if (!user) {
+      throw new Error('Não autorizado');
+    }
+    return user;
+  }
+
   private async generateToken(payload: any, options?: JwtSignOptions) {
     try {
       const token = await this.jwtService.signAsync(payload, options);
@@ -60,6 +74,19 @@ export class AuthService {
     } catch (error) {
       console.error(error);
       throw new UnauthorizedException('Não foi possível gerar token de acesso');
+    }
+  }
+
+  private async verifyToken(token: string, options?: JwtVerifyOptions) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, options);
+      return payload;
+    } catch (error) {
+      console.error(error);
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException('Token expirado');
+      }
+      throw new UnauthorizedException('Erro ao verificar token');
     }
   }
 }

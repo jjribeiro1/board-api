@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { UsersRepository } from 'src/app/users/users.repository';
-import { CryptoService } from 'src/app/crypto/crypto.service';
+import { AuthService } from './auth.service';
+import { UsersRepository } from 'src/modules/users/users.repository';
+import { CryptoService } from 'src/modules/crypto/crypto.service';
 import { mockJwtService } from 'test/mocks/auth';
 import { mockUserEntity, mockUsersRepository } from 'test/mocks/user';
 import { mockCryptoService } from 'test/mocks/crypto';

@@ -5,10 +5,10 @@ import {
   JwtVerifyOptions,
   TokenExpiredError,
 } from '@nestjs/jwt';
-import { UsersRepository } from 'src/app/users/users.repository';
-import { CryptoService } from 'src/app/crypto/crypto.service';
 import { SignInDto } from './dto/sign-in.dto';
-import { User } from 'src/app/users/entities/user.entity';
+import { User } from 'src/modules/users/entities/user.entity';
+import { UsersRepository } from 'src/modules/users/users.repository';
+import { CryptoService } from 'src/modules/crypto/crypto.service';
 import { JwtUserPayload } from 'src/common/types/jwt-payload';
 
 @Injectable()
@@ -73,7 +73,6 @@ export class AuthService {
       const token = await this.jwtService.signAsync(payload, options);
       return token;
     } catch (error) {
-      console.error(error);
       throw new UnauthorizedException('Não foi possível gerar token de acesso');
     }
   }
@@ -83,7 +82,6 @@ export class AuthService {
       const payload = await this.jwtService.verifyAsync(token, options);
       return payload;
     } catch (error) {
-      console.error(error);
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Token expirado');
       }

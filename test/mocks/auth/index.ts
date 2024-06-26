@@ -1,4 +1,4 @@
-import { SignInDto } from 'src/app/auth/dto/sign-in.dto';
+import { SignInDto } from 'src/modules/auth/dto/sign-in.dto';
 
 export const mockSignInDto: SignInDto = {
   email: 'any-email',

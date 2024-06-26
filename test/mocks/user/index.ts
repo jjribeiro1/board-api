@@ -1,5 +1,5 @@
-import { CreateUserDto } from 'src/app/users/dto/create-user.dto';
-import { User } from 'src/app/users/entities/user.entity';
+import { CreateUserDto } from 'src/modules/users/dto/create-user.dto';
+import { User } from 'src/modules/users/entities/user.entity';
 
 export const mockCreateUserDto: CreateUserDto = {
   name: 'any-name',

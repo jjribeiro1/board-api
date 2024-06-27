@@ -7,5 +7,5 @@ export class CreateOrganizationDto {
 
   @IsString({ message: 'Url inválida' })
   @IsOptional()
-  logoUrl?: string;
+  logoUrl: string | null;
 }

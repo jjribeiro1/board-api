@@ -8,10 +8,37 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(200)
-  email     String   @unique @db.VarChar(200)
-  password  String   @db.VarChar(200)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String             @id @default(uuid())
+  name          String             @db.VarChar(200)
+  email         String             @unique @db.VarChar(200)
+  password      String             @db.VarChar(200)
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+  organizations UserOrganization[]
+}
+
+model Organization {
+  id        String             @id @default(uuid())
+  name      String             @db.VarChar(140)
+  logoUrl   String?            @map("logo_url")
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+  members   UserOrganization[]
+}
+
+model UserOrganization {
+  id             String       @id @default(uuid())
+  userId         String       @map("user_id")
+  organizationId String       @map("organization_id")
+  role           Role         @default(MEMBER)
+  user           User         @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([userId, organizationId])
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
 }

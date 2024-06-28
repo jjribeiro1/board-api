@@ -31,8 +31,8 @@ model UserOrganization {
   userId         String       @map("user_id")
   organizationId String       @map("organization_id")
   role           Role         @default(MEMBER)
-  user           User         @relation(fields: [userId], references: [id])
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
 }

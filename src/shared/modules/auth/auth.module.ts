@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CryptoModule } from 'src/modules/crypto/crypto.module';
+import { CryptoModule } from 'src/shared/modules/crypto/crypto.module';
 import { UsersModule } from 'src/modules/users/users.module';
 import { EnvironmentVariables } from 'src/config/env.validation';
 import { JWT_EXPIRES } from 'src/constants';

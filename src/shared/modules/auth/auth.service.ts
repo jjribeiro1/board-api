@@ -8,7 +8,7 @@ import {
 import { SignInDto } from './dto/sign-in.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { UsersRepository } from 'src/modules/users/users.repository';
-import { CryptoService } from 'src/modules/crypto/crypto.service';
+import { CryptoService } from 'src/shared/modules/crypto/crypto.service';
 import { JwtUserPayload } from 'src/common/types/jwt-payload';
 
 @Injectable()

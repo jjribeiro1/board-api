@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
-import { CryptoService } from '../crypto/crypto.service';
+import { CryptoService } from '../../shared/modules/crypto/crypto.service';
 import {
   mockCreateUserDto,
   mockUserEntity,

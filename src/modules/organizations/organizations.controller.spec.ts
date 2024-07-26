@@ -7,9 +7,9 @@ import {
   mockOrganizationEntity,
 } from 'test/mocks/organizations';
 import { mockUserEntity } from 'test/mocks/user';
-import '../auth/guards/jwt-auth.guard';
+import '../../shared/modules/auth/guards/jwt-auth.guard';
 
-jest.mock('../auth/guards/jwt-auth.guard', () => ({
+jest.mock('../../shared/modules/auth/guards/jwt-auth.guard', () => ({
   JwtAuthGuard: jest.fn().mockImplementationOnce(() => ({
     canActivate: jest.fn().mockReturnValue(true),
   })),

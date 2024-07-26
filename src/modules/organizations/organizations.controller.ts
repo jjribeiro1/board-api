@@ -2,7 +2,7 @@ import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
-import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { LoggedUser } from 'src/decorators/logged-user.decorator';
 import { User } from 'src/modules/users/entities/user.entity';
 

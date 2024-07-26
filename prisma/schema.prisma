@@ -23,6 +23,7 @@ model Organization {
   logoUrl   String?            @map("logo_url")
   createdAt DateTime           @default(now()) @map("created_at")
   updatedAt DateTime           @updatedAt @map("updated_at")
+  boards    Board[]
   members   UserOrganization[]
 }
 
@@ -35,6 +36,17 @@ model UserOrganization {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
+}
+
+model Board {
+  id             String       @id @default(uuid())
+  title          String       @db.VarChar(200)
+  description    String       @db.VarChar(300)
+  isPrivate      Boolean      @default(false)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id")
 }
 
 enum Role {

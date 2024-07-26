@@ -11,6 +11,10 @@ import { User } from 'src/modules/users/entities/user.entity';
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
+  /**
+   *
+   * Create new organization and returns the ID
+   */
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() dto: CreateOrganizationDto, @LoggedUser() user: User) {

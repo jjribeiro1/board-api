@@ -9,6 +9,6 @@ import { CryptoModule } from 'src/modules/crypto/crypto.module';
   imports: [PrismaModule, CryptoModule],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
-  exports: [UsersRepository]
+  exports: [UsersRepository],
 })
 export class UsersModule {}

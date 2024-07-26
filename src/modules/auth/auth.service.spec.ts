@@ -132,16 +132,19 @@ describe('AuthService', () => {
       expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub);
     });
 
-    it("should return user from token", async () => {
+    it('should return user from token', async () => {
       const payload: JwtUserPayload = { sub: 'any-id', email: 'any-email' };
-      mockJwtService.verifyAsync.mockResolvedValueOnce(payload)
-      mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity)
+      mockJwtService.verifyAsync.mockResolvedValueOnce(payload);
+      mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity);
 
-      const result = await authService.extractUserFromToken('any-token')
+      const result = await authService.extractUserFromToken('any-token');
 
-      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith('any-token', undefined)
-      expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub)
-      expect(result).toEqual(mockUserEntity)
-    })
+      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith(
+        'any-token',
+        undefined,
+      );
+      expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub);
+      expect(result).toEqual(mockUserEntity);
+    });
   });
 });

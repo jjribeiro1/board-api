@@ -39,9 +39,9 @@ describe('UsersController', () => {
   describe('findOne', () => {
     it('should return user by id', async () => {
       mockUsersService.findOne.mockResolvedValueOnce(mockUserEntity);
-      
+
       const result = await controller.findOne('any-id');
-      expect(result).toEqual({ data: mockUserEntity.toPresentation()});
+      expect(result).toEqual({ data: mockUserEntity.toPresentation() });
     });
 
     it('should throw if UsersService throws', async () => {

@@ -15,9 +15,9 @@ export const mockOrganizationEntity: Organization = {
 };
 
 export const mockOrganizationsRepository = {
-  create: jest.fn()
-}
+  create: jest.fn(),
+};
 
 export const mockOrganizationsService = {
-  create: jest.fn()
-}
+  create: jest.fn(),
+};

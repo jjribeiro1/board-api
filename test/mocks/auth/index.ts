@@ -7,10 +7,10 @@ export const mockSignInDto: SignInDto = {
 
 export const mockJwtService = {
   signAsync: jest.fn(),
-  verifyAsync: jest.fn()
+  verifyAsync: jest.fn(),
 };
 
 export const mockAuthService = {
   signIn: jest.fn(),
-  extractUserFromToken: jest.fn()
+  extractUserFromToken: jest.fn(),
 };

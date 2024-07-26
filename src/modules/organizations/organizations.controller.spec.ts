@@ -45,11 +45,16 @@ describe('OrganizationsController', () => {
       ).rejects.toThrow(new Error('error'));
     });
 
-    it("should return the ID of the organization created", async () => {
-      mockOrganizationsService.create.mockResolvedValueOnce(mockOrganizationEntity.id)
-      const result = await controller.create(mockCreateOrganizationDto, mockUserEntity)
+    it('should return the ID of the organization created', async () => {
+      mockOrganizationsService.create.mockResolvedValueOnce(
+        mockOrganizationEntity.id,
+      );
+      const result = await controller.create(
+        mockCreateOrganizationDto,
+        mockUserEntity,
+      );
 
-      expect(result).toBe(mockOrganizationEntity.id)
-    })
+      expect(result).toBe(mockOrganizationEntity.id);
+    });
   });
 });

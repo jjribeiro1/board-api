@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
 export class JwtAuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
 
-  async canActivate(ctx: ExecutionContext): Promise<boolean> {    
+  async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req: Request = ctx.switchToHttp().getRequest();
     const token = this.extractTokenFromAuthorizationHeader(req);
     const user = await this.authService.extractUserFromToken(token);

@@ -15,6 +15,7 @@ model User {
   createdAt     DateTime           @default(now()) @map("created_at")
   updatedAt     DateTime           @updatedAt @map("updated_at")
   organizations UserOrganization[]
+  posts         Post[]
 }
 
 model Organization {
@@ -42,11 +43,28 @@ model Board {
   id             String       @id @default(uuid())
   title          String       @db.VarChar(200)
   description    String       @db.VarChar(300)
-  isPrivate      Boolean      @default(false)
+  isPrivate      Boolean      @default(false) @map("is_private")
+  isLocked       Boolean      @default(false) @map("is_locked")
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String       @map("organization_id")
+  posts          Post[]
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  title       String   @db.VarChar(200)
+  description String   @db.VarChar(300)
+  isPrivate   Boolean  @default(false) @map("is_private")
+  isPinned    Boolean  @default(false) @map("is_pinned")
+  isLocked    Boolean  @default(false) @map("is_locked")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  board       Board    @relation(fields: [boardId], references: [id])
+  boardId     String   @map("board_id")
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String   @map("author_id")
 }
 
 enum Role {

@@ -19,13 +19,14 @@ model User {
 }
 
 model Organization {
-  id        String             @id @default(uuid())
-  name      String             @db.VarChar(140)
-  logoUrl   String?            @map("logo_url")
-  createdAt DateTime           @default(now()) @map("created_at")
-  updatedAt DateTime           @updatedAt @map("updated_at")
-  boards    Board[]
-  members   UserOrganization[]
+  id                       String             @id @default(uuid())
+  name                     String             @db.VarChar(140)
+  logoUrl                  String?            @map("logo_url")
+  createdAt                DateTime           @default(now()) @map("created_at")
+  updatedAt                DateTime           @updatedAt @map("updated_at")
+  boards                   Board[]
+  members                  UserOrganization[]
+  organizationCustomStatus Status[]
 }
 
 model UserOrganization {
@@ -65,6 +66,20 @@ model Post {
   boardId     String   @map("board_id")
   author      User     @relation(fields: [authorId], references: [id])
   authorId    String   @map("author_id")
+  status      Status   @relation(fields: [statusId], references: [id])
+  statusId    String   @map("status_id")
+}
+
+model Status {
+  id              String        @id @default(uuid())
+  name            String        @db.VarChar(50)
+  color           String        @db.VarChar(50)
+  isSystemDefault Boolean       @default(false) @map("is_system_default")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  posts           Post[]
+  organization    Organization? @relation(fields: [organizationId], references: [id])
+  organizationId  String?       @map("organization_id")
 }
 
 enum Role {

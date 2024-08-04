@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
@@ -19,5 +19,18 @@ export class OrganizationsController {
   @Post()
   async create(@Body() dto: CreateOrganizationDto, @LoggedUser() user: User) {
     return this.organizationsService.create(dto, user.id);
+  }
+
+  /**
+   *
+   * Returns an organization by ID
+   */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const organization = await this.organizationsService.findOne(id);
+    return {
+      data: organization,
+    };
   }
 }

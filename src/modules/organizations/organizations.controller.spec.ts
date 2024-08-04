@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { OrganizationsController } from './organizations.controller';
 import { OrganizationsService } from './organizations.service';
 import { mockOrganizationsService, mockCreateOrganizationDto, mockOrganizationEntity } from 'test/mocks/organizations';
@@ -39,6 +40,21 @@ describe('OrganizationsController', () => {
       const result = await controller.create(mockCreateOrganizationDto, mockUserEntity);
 
       expect(result).toBe(mockOrganizationEntity.id);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return organization by id', async () => {
+      mockOrganizationsService.findOne.mockResolvedValueOnce(mockOrganizationEntity);
+
+      const result = await controller.findOne('any-id');
+      expect(result).toEqual({ data: mockOrganizationEntity });
+    });
+
+    it('should throw if OrganizationsService throws', async () => {
+      mockOrganizationsService.findOne.mockRejectedValueOnce(new NotFoundException());
+
+      await expect(controller.findOne('any-id')).rejects.toThrow(new NotFoundException());
     });
   });
 });

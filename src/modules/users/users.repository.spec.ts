@@ -1,10 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
-import {
-  MockContext,
-  createMockContext,
-} from 'src/shared/modules/database/prisma/prisma-client-mock';
+import { MockContext, createMockContext } from 'src/shared/modules/database/prisma/prisma-client-mock';
 import { mockCreateUserDto, mockUserEntity } from 'test/mocks/user';
 
 describe('UsersRepository', () => {
@@ -15,10 +12,7 @@ describe('UsersRepository', () => {
     mockCtx = createMockContext();
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UsersRepository,
-        { provide: PrismaService, useValue: mockCtx.prisma },
-      ],
+      providers: [UsersRepository, { provide: PrismaService, useValue: mockCtx.prisma }],
     }).compile();
 
     usersRepository = module.get<UsersRepository>(UsersRepository);

@@ -12,9 +12,7 @@ import { JWT_EXPIRES } from 'src/constants';
 @Module({
   imports: [
     JwtModule.registerAsync({
-      useFactory: async (
-        configService: ConfigService<EnvironmentVariables>,
-      ) => ({
+      useFactory: async (configService: ConfigService<EnvironmentVariables>) => ({
         publicKey: await configService.get('JWT_PUBLIC_KEY'),
         privateKey: await configService.get('JWT_PRIVATE_KEY'),
         signOptions: {

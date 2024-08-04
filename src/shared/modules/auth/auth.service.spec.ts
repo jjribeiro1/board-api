@@ -76,9 +76,7 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException if user email not exists', async () => {
       mockUsersRepository.findByEmail.mockResolvedValueOnce(null);
 
-      await expect(
-        authService.validateUser(mockSignInDto.email, mockSignInDto.password),
-      ).rejects.toThrow(
+      await expect(authService.validateUser(mockSignInDto.email, mockSignInDto.password)).rejects.toThrow(
         new UnauthorizedException('Email e/ou senha incorretos'),
       );
     });
@@ -87,38 +85,28 @@ describe('AuthService', () => {
       mockUsersRepository.findByEmail.mockResolvedValueOnce(mockUserEntity);
       mockCryptoService.compareHash.mockResolvedValueOnce(false);
 
-      await expect(
-        authService.validateUser(mockSignInDto.email, mockSignInDto.password),
-      ).rejects.toThrow(
+      await expect(authService.validateUser(mockSignInDto.email, mockSignInDto.password)).rejects.toThrow(
         new UnauthorizedException('Email e/ou senha incorretos'),
       );
-      expect(mockCryptoService.compareHash).toHaveBeenCalledWith(
-        mockSignInDto.password,
-        mockUserEntity.password,
-      );
+      expect(mockCryptoService.compareHash).toHaveBeenCalledWith(mockSignInDto.password, mockUserEntity.password);
     });
 
     it('should return the user if it is valid', async () => {
       mockUsersRepository.findByEmail.mockResolvedValueOnce(mockUserEntity);
       mockCryptoService.compareHash.mockResolvedValueOnce(true);
 
-      const result = await authService.validateUser(
-        mockSignInDto.email,
-        mockSignInDto.password,
-      );
+      const result = await authService.validateUser(mockSignInDto.email, mockSignInDto.password);
       expect(result).toEqual(mockUserEntity);
     });
   });
 
   describe('extractUserFromToken', () => {
     it('should throw UnauthorizedException if verify token fails', async () => {
-      mockJwtService.verifyAsync.mockRejectedValueOnce(
+      mockJwtService.verifyAsync.mockRejectedValueOnce(new UnauthorizedException('Erro ao verificar token'));
+
+      await expect(authService.extractUserFromToken('any-token')).rejects.toThrow(
         new UnauthorizedException('Erro ao verificar token'),
       );
-
-      await expect(
-        authService.extractUserFromToken('any-token'),
-      ).rejects.toThrow(new UnauthorizedException('Erro ao verificar token'));
     });
 
     it('should throw UnauthorizedException if user not found', async () => {
@@ -126,9 +114,9 @@ describe('AuthService', () => {
       mockJwtService.verifyAsync.mockResolvedValueOnce(payload);
       mockUsersRepository.findOne.mockResolvedValueOnce(null);
 
-      await expect(
-        authService.extractUserFromToken('any-token'),
-      ).rejects.toThrow(new UnauthorizedException('Não autorizado'));
+      await expect(authService.extractUserFromToken('any-token')).rejects.toThrow(
+        new UnauthorizedException('Não autorizado'),
+      );
       expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub);
     });
 
@@ -139,10 +127,7 @@ describe('AuthService', () => {
 
       const result = await authService.extractUserFromToken('any-token');
 
-      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith(
-        'any-token',
-        undefined,
-      );
+      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith('any-token', undefined);
       expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub);
       expect(result).toEqual(mockUserEntity);
     });

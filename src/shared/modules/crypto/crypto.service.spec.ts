@@ -27,9 +27,7 @@ describe('CryptoService', () => {
     it('should return hashed value', async () => {
       const input = { data: 'any-value', salt: 10 };
 
-      jest
-        .spyOn(bcrypt, 'hash')
-        .mockImplementationOnce(() => Promise.resolve('any-hash'));
+      jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => Promise.resolve('any-hash'));
 
       const result = await cryptoService.hasher(input.data, input.salt);
       expect(result).toBe('any-hash');
@@ -41,9 +39,7 @@ describe('CryptoService', () => {
         throw new Error('error');
       });
 
-      await expect(
-        cryptoService.hasher(input.data, input.salt),
-      ).rejects.toThrow(new Error('error'));
+      await expect(cryptoService.hasher(input.data, input.salt)).rejects.toThrow(new Error('error'));
     });
   });
 
@@ -56,23 +52,15 @@ describe('CryptoService', () => {
       await cryptoService.compareHash(input.plain, input.encrypted);
 
       expect(bcryptCompareSpy).toHaveBeenCalledTimes(1);
-      expect(bcryptCompareSpy).toHaveBeenCalledWith(
-        input.plain,
-        input.encrypted,
-      );
+      expect(bcryptCompareSpy).toHaveBeenCalledWith(input.plain, input.encrypted);
     });
 
     it('should return false if values does not match', async () => {
       const input = { plain: 'invalid-value', encrypted: 'encrypted-value' };
 
-      jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementationOnce(() => Promise.resolve(false));
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => Promise.resolve(false));
 
-      const result = await cryptoService.compareHash(
-        input.plain,
-        input.encrypted,
-      );
+      const result = await cryptoService.compareHash(input.plain, input.encrypted);
 
       expect(result).toBe(false);
     });
@@ -80,14 +68,9 @@ describe('CryptoService', () => {
     it('should return true if values match', async () => {
       const input = { plain: 'any-value', encrypted: 'any-encrypted-value' };
 
-      jest
-        .spyOn(bcrypt, 'compare')
-        .mockImplementationOnce(() => Promise.resolve(true));
+      jest.spyOn(bcrypt, 'compare').mockImplementationOnce(() => Promise.resolve(true));
 
-      const result = await cryptoService.compareHash(
-        input.plain,
-        input.encrypted,
-      );
+      const result = await cryptoService.compareHash(input.plain, input.encrypted);
 
       expect(result).toBe(true);
     });
@@ -98,9 +81,7 @@ describe('CryptoService', () => {
         throw new Error('error');
       });
 
-      await expect(
-        cryptoService.compareHash(input.plain, input.encrypted),
-      ).rejects.toThrow(new Error('error'));
+      await expect(cryptoService.compareHash(input.plain, input.encrypted)).rejects.toThrow(new Error('error'));
     });
   });
 });

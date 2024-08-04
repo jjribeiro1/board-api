@@ -34,9 +34,7 @@ describe('AuthController', () => {
     it('should throw if AuthService throws', async () => {
       mockAuthService.signIn.mockRejectedValueOnce(new UnauthorizedException());
 
-      await expect(controller.signIn(mockSignInDto)).rejects.toThrow(
-        new UnauthorizedException(),
-      );
+      await expect(controller.signIn(mockSignInDto)).rejects.toThrow(new UnauthorizedException());
     });
   });
 });

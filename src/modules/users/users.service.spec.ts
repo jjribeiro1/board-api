@@ -3,11 +3,7 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { CryptoService } from '../../shared/modules/crypto/crypto.service';
-import {
-  mockCreateUserDto,
-  mockUserEntity,
-  mockUsersRepository,
-} from 'test/mocks/user';
+import { mockCreateUserDto, mockUserEntity, mockUsersRepository } from 'test/mocks/user';
 import { mockCryptoService } from 'test/mocks/crypto';
 
 describe('UsersService', () => {
@@ -35,9 +31,7 @@ describe('UsersService', () => {
     it('should throw ConflictException if email already in use', async () => {
       mockUsersRepository.findByEmail.mockResolvedValueOnce(mockUserEntity);
       await expect(usersService.create(mockCreateUserDto)).rejects.toThrow(
-        new ConflictException(
-          `Email ${mockCreateUserDto.email} já foi registrado`,
-        ),
+        new ConflictException(`Email ${mockCreateUserDto.email} já foi registrado`),
       );
     });
 
@@ -58,9 +52,7 @@ describe('UsersService', () => {
 
     it('should throw if UsersRepository throws', async () => {
       mockUsersRepository.create.mockRejectedValueOnce(new Error('error'));
-      await expect(usersService.create(mockCreateUserDto)).rejects.toThrow(
-        new Error('error'),
-      );
+      await expect(usersService.create(mockCreateUserDto)).rejects.toThrow(new Error('error'));
     });
   });
 
@@ -80,9 +72,7 @@ describe('UsersService', () => {
 
     it('should throw if UsersRepository throws', async () => {
       mockUsersRepository.findOne.mockRejectedValueOnce(new Error('error'));
-      await expect(usersService.findOne('any-id')).rejects.toThrow(
-        new Error('error'),
-      );
+      await expect(usersService.findOne('any-id')).rejects.toThrow(new Error('error'));
     });
   });
 });

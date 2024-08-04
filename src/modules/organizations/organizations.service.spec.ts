@@ -21,38 +21,27 @@ describe('OrganizationsService', () => {
       ],
     }).compile();
 
-    organizationsService =
-      module.get<OrganizationsService>(OrganizationsService);
+    organizationsService = module.get<OrganizationsService>(OrganizationsService);
   });
 
   describe('create', () => {
     it('should call OrganizationsRepository with correct values', async () => {
       await organizationsService.create(mockCreateOrganizationDto, 'any-id');
-      expect(mockOrganizationsRepository.create).toHaveBeenCalledWith(
-        { name: 'any-name', logoUrl: null },
-        'any-id',
-      );
+      expect(mockOrganizationsRepository.create).toHaveBeenCalledWith({ name: 'any-name', logoUrl: null }, 'any-id');
     });
 
     it('should throw if OrganizationsRepository throws', async () => {
-      mockOrganizationsRepository.create.mockRejectedValueOnce(
+      mockOrganizationsRepository.create.mockRejectedValueOnce(new Error('error'));
+
+      await expect(organizationsService.create(mockCreateOrganizationDto, 'any-id')).rejects.toThrow(
         new Error('error'),
       );
-
-      await expect(
-        organizationsService.create(mockCreateOrganizationDto, 'any-id'),
-      ).rejects.toThrow(new Error('error'));
     });
 
     it('should return the ID of the organization created', async () => {
-      mockOrganizationsRepository.create.mockResolvedValueOnce(
-        mockOrganizationEntity.id,
-      );
+      mockOrganizationsRepository.create.mockResolvedValueOnce(mockOrganizationEntity.id);
 
-      const result = await organizationsService.create(
-        mockCreateOrganizationDto,
-        'any-id',
-      );
+      const result = await organizationsService.create(mockCreateOrganizationDto, 'any-id');
       expect(result).toBe(mockOrganizationEntity.id);
     });
   });

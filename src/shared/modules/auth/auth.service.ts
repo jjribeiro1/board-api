@@ -1,10 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import {
-  JwtService,
-  JwtSignOptions,
-  JwtVerifyOptions,
-  TokenExpiredError,
-} from '@nestjs/jwt';
+import { JwtService, JwtSignOptions, JwtVerifyOptions, TokenExpiredError } from '@nestjs/jwt';
 import { SignInDto } from './dto/sign-in.dto';
 import { User } from 'src/modules/users/entities/user.entity';
 import { UsersRepository } from 'src/modules/users/users.repository';
@@ -40,23 +35,13 @@ export class AuthService {
       throw new UnauthorizedException('Email e/ou senha incorretos');
     }
 
-    const passwordIsValid = await this.cryptoService.compareHash(
-      password,
-      user.password,
-    );
+    const passwordIsValid = await this.cryptoService.compareHash(password, user.password);
 
     if (!passwordIsValid) {
       throw new UnauthorizedException('Email e/ou senha incorretos');
     }
 
-    return new User(
-      user.id,
-      user.name,
-      user.email,
-      user.password,
-      user.createdAt,
-      user.updatedAt,
-    );
+    return new User(user.id, user.name, user.email, user.password, user.createdAt, user.updatedAt);
   }
 
   async extractUserFromToken(token: string) {

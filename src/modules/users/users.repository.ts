@@ -19,14 +19,7 @@ export class UsersRepository {
       return null;
     }
 
-    return new User(
-      result.id,
-      result.name,
-      result.email,
-      result.password,
-      result.createdAt,
-      result.updatedAt,
-    );
+    return new User(result.id, result.name, result.email, result.password, result.createdAt, result.updatedAt);
   }
 
   async findByEmail(email: string) {
@@ -36,13 +29,6 @@ export class UsersRepository {
       return null;
     }
 
-    return new User(
-      result.id,
-      result.name,
-      result.email,
-      result.password,
-      result.createdAt,
-      result.updatedAt,
-    );
+    return new User(result.id, result.name, result.email, result.password, result.createdAt, result.updatedAt);
   }
 }

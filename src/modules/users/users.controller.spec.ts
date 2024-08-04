@@ -1,11 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import {
-  mockCreateUserDto,
-  mockUserEntity,
-  mockUsersService,
-} from 'test/mocks/user';
+import { mockCreateUserDto, mockUserEntity, mockUsersService } from 'test/mocks/user';
 import { NotFoundException } from '@nestjs/common';
 
 describe('UsersController', () => {
@@ -30,9 +26,7 @@ describe('UsersController', () => {
     it('should throw if UsersService throws', async () => {
       mockUsersService.create.mockRejectedValueOnce(new Error('error'));
 
-      await expect(controller.create(mockCreateUserDto)).rejects.toThrow(
-        new Error('error'),
-      );
+      await expect(controller.create(mockCreateUserDto)).rejects.toThrow(new Error('error'));
     });
   });
 
@@ -47,9 +41,7 @@ describe('UsersController', () => {
     it('should throw if UsersService throws', async () => {
       mockUsersService.findOne.mockRejectedValueOnce(new NotFoundException());
 
-      await expect(controller.findOne('any-id')).rejects.toThrow(
-        new NotFoundException(),
-      );
+      await expect(controller.findOne('any-id')).rejects.toThrow(new NotFoundException());
     });
   });
 });

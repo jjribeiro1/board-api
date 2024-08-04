@@ -24,4 +24,5 @@ export const mockOrganizationsRepository = {
 
 export const mockOrganizationsService = {
   create: jest.fn(),
+  findOne: jest.fn(),
 };

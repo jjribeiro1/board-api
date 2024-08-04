@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { OrganizationsRepository } from './organizations.repository';
 import {
@@ -43,6 +44,26 @@ describe('OrganizationsService', () => {
 
       const result = await organizationsService.create(mockCreateOrganizationDto, 'any-id');
       expect(result).toBe(mockOrganizationEntity.id);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return organization by id', async () => {
+      mockOrganizationsRepository.findOne.mockResolvedValueOnce(mockOrganizationEntity);
+      const result = await organizationsService.findOne('any-id');
+      expect(result).toEqual(mockOrganizationEntity);
+    });
+
+    it('should throw NotFoundException if organization not exists', async () => {
+      mockOrganizationsRepository.findOne.mockResolvedValueOnce(null);
+      await expect(organizationsService.findOne('any-id')).rejects.toThrow(
+        new NotFoundException(`organização com id: any-id não encontrada`),
+      );
+    });
+
+    it('should throw if OrganizationsRepository throws', async () => {
+      mockOrganizationsRepository.findOne.mockRejectedValueOnce(new Error('error'));
+      await expect(organizationsService.findOne('any-id')).rejects.toThrow(new Error('error'));
     });
   });
 });

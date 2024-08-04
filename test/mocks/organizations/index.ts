@@ -10,12 +10,16 @@ export const mockOrganizationEntity: Organization = {
   id: 'any-id',
   name: 'any-name',
   logoUrl: 'any-url',
+  members: [],
+  organizationStatus: [],
+  organizationTags: [],
   createdAt: new Date(),
   updatedAt: new Date(),
 };
 
 export const mockOrganizationsRepository = {
   create: jest.fn(),
+  findOne: jest.fn(),
 };
 
 export const mockOrganizationsService = {

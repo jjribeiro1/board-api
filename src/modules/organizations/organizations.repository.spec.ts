@@ -4,7 +4,7 @@ import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service
 import {
   MockContext,
   createMockContext,
-} from '../../shared/modules/database/prisma/prisma-client-mock';
+} from 'src/shared/modules/database/prisma/prisma-client-mock';
 import {
   mockCreateOrganizationDto,
   mockOrganizationEntity,
@@ -37,6 +37,24 @@ describe('OrganizationsRepository', () => {
         'any-id',
       );
       expect(result).toBe('any-id');
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return organization by id', async () => {
+      mockCtx.prisma.organization.findUnique.mockResolvedValueOnce(
+        mockOrganizationEntity,
+      );
+
+      const result = await repository.findOne('any-id');
+      expect(result).toBeTruthy;
+    });
+
+    it('should return null if user not exists', async () => {
+      mockCtx.prisma.organization.findUnique.mockResolvedValueOnce(null);
+
+      const result = await repository.findOne('any-id');
+      expect(result).toBe(null);
     });
   });
 });

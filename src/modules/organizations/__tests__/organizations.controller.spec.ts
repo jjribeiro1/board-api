@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { OrganizationsController } from './organizations.controller';
-import { OrganizationsService } from './organizations.service';
+import { OrganizationsController } from '../organizations.controller';
+import { OrganizationsService } from '../organizations.service';
 import { mockOrganizationsService, mockCreateOrganizationDto, mockOrganizationEntity } from 'test/mocks/organizations';
 import { mockUserEntity } from 'test/mocks/user';
-import '../../shared/modules/auth/guards/jwt-auth.guard';
+import 'src/shared/modules/auth/guards/jwt-auth.guard';
 
-jest.mock('../../shared/modules/auth/guards/jwt-auth.guard', () => ({
+jest.mock('src/shared/modules/auth/guards/jwt-auth.guard', () => ({
   JwtAuthGuard: jest.fn().mockImplementationOnce(() => ({
     canActivate: jest.fn().mockReturnValue(true),
   })),

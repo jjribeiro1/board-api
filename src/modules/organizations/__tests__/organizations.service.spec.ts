@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
-import { OrganizationsService } from './organizations.service';
-import { OrganizationsRepository } from './organizations.repository';
+import { OrganizationsService } from '../organizations.service';
+import { OrganizationsRepository } from '../organizations.repository';
 import {
   mockOrganizationsRepository,
   mockCreateOrganizationDto,

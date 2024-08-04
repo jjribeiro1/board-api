@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
 import { UsersRepository } from 'src/modules/users/users.repository';
 import { CryptoService } from 'src/shared/modules/crypto/crypto.service';
+import { JwtUserPayload } from 'src/common/types/jwt-payload';
 import { mockJwtService } from 'test/mocks/auth';
 import { mockUserEntity, mockUsersRepository } from 'test/mocks/user';
 import { mockCryptoService } from 'test/mocks/crypto';
 import { mockSignInDto } from 'test/mocks/auth';
-import { JwtUserPayload } from 'src/common/types/jwt-payload';
 
 describe('AuthService', () => {
   let authService: AuthService;

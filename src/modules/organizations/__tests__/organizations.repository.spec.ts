@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { OrganizationsRepository } from './organizations.repository';
+import { OrganizationsRepository } from '../organizations.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { MockContext, createMockContext } from 'src/shared/modules/database/prisma/prisma-client-mock';
 import { mockCreateOrganizationDto, mockOrganizationEntity } from 'test/mocks/organizations';

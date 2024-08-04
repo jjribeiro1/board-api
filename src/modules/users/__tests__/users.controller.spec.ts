@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
+import { UsersController } from '../users.controller';
+import { UsersService } from '../users.service';
 import { mockCreateUserDto, mockUserEntity, mockUsersService } from 'test/mocks/user';
 import { NotFoundException } from '@nestjs/common';
 

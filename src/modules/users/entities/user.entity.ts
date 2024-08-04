@@ -6,6 +6,7 @@ export class User {
     readonly password: string,
     readonly createdAt: Date,
     readonly updatedAt: Date,
+    readonly organizationIds?: string[],
   ) {}
 
   toPresentation() {
@@ -13,6 +14,7 @@ export class User {
       id: this.id,
       name: this.name,
       email: this.email,
+      organizationsIds: this.organizationIds,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

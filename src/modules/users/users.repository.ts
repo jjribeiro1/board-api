@@ -13,13 +13,22 @@ export class UsersRepository {
   }
 
   async findOne(id: string) {
-    const result = await this.prisma.user.findUnique({ where: { id } });
-
+    const result = await this.prisma.user.findUnique({ where: { id }, include: { organizations: true } });
+    const userOrganizations = result?.organizations;
+    const organizationIds = userOrganizations?.map((value) => value.organizationId);
     if (!result) {
       return null;
     }
 
-    return new User(result.id, result.name, result.email, result.password, result.createdAt, result.updatedAt);
+    return new User(
+      result.id,
+      result.name,
+      result.email,
+      result.password,
+      result.createdAt,
+      result.updatedAt,
+      organizationIds,
+    );
   }
 
   async findByEmail(email: string) {

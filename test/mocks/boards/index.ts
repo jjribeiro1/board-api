@@ -28,4 +28,5 @@ export const mockBoardsRepository = {
 
 export const mockBoardsService = {
   create: jest.fn(),
+  findOne: jest.fn(),
 };

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { LoggedUser } from 'src/decorators/logged-user.decorator';
@@ -17,7 +17,19 @@ export class BoardsController {
    */
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: CreateBoardDto, @LoggedUser() user: User) {
+  async create(@Body() dto: CreateBoardDto, @LoggedUser() user: User) {
     return this.boardsService.create(dto, user.id);
+  }
+
+  /**
+   *
+   * Returns an board by ID
+   */
+  @Get(':id')
+  async findOne(@Param('id') boardId: string) {
+    const board = await this.boardsService.findOne(boardId);
+    return {
+      data: board,
+    };
   }
 }

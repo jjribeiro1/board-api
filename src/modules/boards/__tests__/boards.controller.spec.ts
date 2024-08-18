@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { BoardsController } from '../boards.controller';
 import { BoardsService } from '../boards.service';
 import { mockBoardEntity, mockBoardsService, mockCreateBoardDto } from 'test/mocks/boards';
@@ -38,6 +39,19 @@ describe('BoardsController', () => {
       const result = await controller.create(mockCreateBoardDto, mockUserEntity);
 
       expect(result).toBe(mockBoardEntity.id);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return board by id', async () => {
+      mockBoardsService.findOne.mockResolvedValueOnce(mockBoardEntity);
+      const result = await controller.findOne('any-id');
+      expect(result).toEqual({ data: mockBoardEntity });
+    });
+
+    it('should throw if BoardsService throws', async () => {
+      mockBoardsService.findOne.mockRejectedValueOnce(new NotFoundException());
+      await expect(controller.findOne('any-id')).rejects.toThrow(new NotFoundException());
     });
   });
 });

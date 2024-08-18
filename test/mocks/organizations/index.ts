@@ -20,6 +20,7 @@ export const mockOrganizationEntity: Organization = {
 export const mockOrganizationsRepository = {
   create: jest.fn(),
   findOne: jest.fn(),
+  findBoardsFromOrganization: jest.fn(),
 };
 
 export const mockOrganizationsService = {

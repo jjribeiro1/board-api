@@ -18,4 +18,9 @@ export class OrganizationsService {
 
     return organization;
   }
+
+  async findBoardsFromOrganization(organizationId: string) {
+    await this.findOne(organizationId);
+    return this.organizationsRepository.findBoardsFromOrganization(organizationId);
+  }
 }

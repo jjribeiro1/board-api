@@ -7,6 +7,7 @@ import {
   mockCreateOrganizationDto,
   mockOrganizationEntity,
 } from 'test/mocks/organizations';
+import { mockBoardEntity } from 'test/mocks/boards';
 
 describe('OrganizationsService', () => {
   let organizationsService: OrganizationsService;
@@ -64,6 +65,28 @@ describe('OrganizationsService', () => {
     it('should throw if OrganizationsRepository throws', async () => {
       mockOrganizationsRepository.findOne.mockRejectedValueOnce(new Error('error'));
       await expect(organizationsService.findOne('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
+
+  describe('findBoardsFromOrganization', () => {
+    it('should return an array of boards', async () => {
+      mockOrganizationsRepository.findOne.mockResolvedValueOnce(mockOrganizationEntity);
+      mockOrganizationsRepository.findBoardsFromOrganization.mockResolvedValueOnce([mockBoardEntity]);
+      const result = await organizationsService.findBoardsFromOrganization('any-id');
+      expect(result).toEqual([mockBoardEntity]);
+    });
+
+    it('should throw NotFoundException if organization not exists', async () => {
+      mockOrganizationsRepository.findOne.mockResolvedValueOnce(null);
+      await expect(organizationsService.findBoardsFromOrganization('any-id')).rejects.toThrow(
+        new NotFoundException('organização com id: any-id não encontrada'),
+      );
+    });
+
+    it('should throw if Repository throws', async () => {
+      mockOrganizationsRepository.findOne.mockResolvedValueOnce(mockOrganizationEntity);
+      mockOrganizationsRepository.findBoardsFromOrganization.mockRejectedValueOnce(new Error('error'));
+      await expect(organizationsService.findBoardsFromOrganization('any-id')).rejects.toThrow(new Error('error'));
     });
   });
 });

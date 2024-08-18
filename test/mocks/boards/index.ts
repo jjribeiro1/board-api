@@ -20,3 +20,7 @@ export const mockCreateBoardDto: CreateBoardDto = {
   isLocked: true,
   isPrivate: true,
 };
+
+export const mockBoardsRepository = {
+  create: jest.fn(),
+};

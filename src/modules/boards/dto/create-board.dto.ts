@@ -39,11 +39,4 @@ export class CreateBoardDto {
    */
   @IsUUID()
   organizationId: string;
-
-  /**
-   * ID of the owner
-   * @example fb24e5810-9543-11k2-3209-j5688v310m53
-   */
-  @IsUUID()
-  authorId: string;
 }

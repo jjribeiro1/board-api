@@ -33,4 +33,17 @@ export class OrganizationsController {
       data: organization,
     };
   }
+
+  /**
+   *
+   * Returns all boards from an organization
+   */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/boards')
+  async findBoards(@Param('id') id: string) {
+    const boards = await this.organizationsService.findBoardsFromOrganization(id);
+    return {
+      data: boards,
+    };
+  }
 }

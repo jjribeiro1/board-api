@@ -34,7 +34,7 @@ describe('OrganizationsRepository', () => {
       expect(result).toBeTruthy;
     });
 
-    it('should return null if user not exists', async () => {
+    it('should return null if organization not exists', async () => {
       mockCtx.prisma.organization.findUnique.mockResolvedValueOnce(null);
 
       const result = await repository.findOne('any-id');

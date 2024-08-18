@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { Organization } from './entities/organization.entity';
+import { Board } from '../boards/entities/board.entity';
 
 @Injectable()
 export class OrganizationsRepository {
@@ -62,5 +63,15 @@ export class OrganizationsRepository {
       result.createdAt,
       result.updatedAt,
     );
+  }
+
+  async findBoardsFromOrganization(organizationId: string): Promise<Board[]> {
+    const result = await this.prisma.board.findMany({
+      where: {
+        organizationId,
+      },
+    });
+
+    return result;
   }
 }

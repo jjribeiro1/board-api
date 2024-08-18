@@ -3,6 +3,7 @@ import { OrganizationsRepository } from '../organizations.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { MockContext, createMockContext } from 'src/shared/modules/database/prisma/prisma-client-mock';
 import { mockCreateOrganizationDto, mockOrganizationEntity } from 'test/mocks/organizations';
+import { mockBoardEntity } from 'test/mocks/boards';
 
 describe('OrganizationsRepository', () => {
   let repository: OrganizationsRepository;
@@ -39,6 +40,14 @@ describe('OrganizationsRepository', () => {
 
       const result = await repository.findOne('any-id');
       expect(result).toBe(null);
+    });
+  });
+
+  describe('findBoardsFromOrganization', () => {
+    it('should return an array of boards', async () => {
+      mockCtx.prisma.board.findMany.mockResolvedValueOnce([mockBoardEntity]);
+      const result = await repository.findBoardsFromOrganization('any-id');
+      expect(result).toEqual([mockBoardEntity]);
     });
   });
 });

@@ -25,4 +25,19 @@ describe('BoardsRepository', () => {
       expect(result).toBe('any-id');
     });
   });
+
+  describe('findOne', () => {
+    it('should return board by id', async () => {
+      mockCtx.prisma.board.findUnique.mockResolvedValueOnce(mockBoardEntity);
+      const result = await repository.findOne('any-id');
+      expect(result).toEqual(mockBoardEntity);
+    });
+
+    it('should return null if board not exists', async () => {
+      mockCtx.prisma.board.findUnique.mockResolvedValueOnce(null);
+
+      const result = await repository.findOne('any-id');
+      expect(result).toBe(null);
+    });
+  });
 });

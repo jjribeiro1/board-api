@@ -16,6 +16,7 @@ model User {
   updatedAt     DateTime           @updatedAt @map("updated_at")
   organizations UserOrganization[]
   posts         Post[]
+  boards        Board[]
 }
 
 model UserOrganization {
@@ -51,6 +52,8 @@ model Board {
   updatedAt      DateTime     @updatedAt @map("updated_at")
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String       @map("organization_id")
+  author         User         @relation(fields: [authorId], references: [id])
+  authorId       String       @map("author_id")
   posts          Post[]
 }
 

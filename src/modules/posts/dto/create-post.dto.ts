@@ -49,13 +49,6 @@ export class CreatePostDto {
   boardId: string;
 
   /**
-   * ID of the user who created the post
-   * @example eb36e562-3762-45c3-8214-b0688c518d01
-   */
-  @IsUUID()
-  authorId: string;
-
-  /**
    * Post status ID
    * @example eb36e562-3762-45c3-8214-b0688c518d01
    */

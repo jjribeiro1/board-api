@@ -21,7 +21,7 @@ describe('PostsRepository', () => {
   describe('create', () => {
     it('should create a new organization and return the ID', async () => {
       mockCtx.prisma.post.create.mockResolvedValueOnce(mockPostEntity);
-      const result = await repository.create(mockCreatePostDto);
+      const result = await repository.create(mockCreatePostDto, 'any-id');
       expect(result).toBe('any-id');
     });
   });

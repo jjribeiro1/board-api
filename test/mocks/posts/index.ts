@@ -2,7 +2,6 @@ import { CreatePostDto } from 'src/modules/posts/dto/create-post.dto';
 import { Post } from 'src/modules/posts/entities/post.entity';
 
 export const mockCreatePostDto: CreatePostDto = {
-  authorId: 'any-id',
   boardId: 'any-id',
   description: 'any-id',
   isLocked: false,
@@ -15,6 +14,7 @@ export const mockCreatePostDto: CreatePostDto = {
 export const mockPostEntity: Post = {
   ...mockCreatePostDto,
   id: 'any-id',
+  authorId: 'any-id',
   isLocked: false,
   isPinned: false,
   isPrivate: false,

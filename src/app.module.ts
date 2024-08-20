@@ -6,6 +6,7 @@ import { PrismaModule } from './shared/modules/database/prisma/prisma.module';
 import { UsersModule } from './modules/users/users.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
 import { BoardsModule } from './modules/boards/boards.module';
+import { PostsModule } from './modules/posts/posts.module';
 import { validate } from 'src/config/env.validation';
 
 @Module({
@@ -20,6 +21,7 @@ import { validate } from 'src/config/env.validation';
     UsersModule,
     OrganizationsModule,
     BoardsModule,
+    PostsModule,
   ],
 })
 export class AppModule {}

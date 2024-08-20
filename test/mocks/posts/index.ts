@@ -26,3 +26,7 @@ export const mockPostEntity: Post = {
 export const mockPostsRepository = {
   create: jest.fn(),
 };
+
+export const mockPostsService = {
+  create: jest.fn(),
+};

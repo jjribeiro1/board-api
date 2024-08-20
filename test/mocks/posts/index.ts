@@ -22,3 +22,7 @@ export const mockPostEntity: Post = {
   createdAt: new Date(),
   updatedAt: new Date(),
 };
+
+export const mockPostsRepository = {
+  create: jest.fn(),
+};

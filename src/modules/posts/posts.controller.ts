@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -19,5 +19,17 @@ export class PostsController {
   @Post('')
   async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {
     return this.postsService.create(dto, loggedUser.id);
+  }
+
+  /**
+   *
+   * Returns an post by ID
+   */
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const post = await this.postsService.findOne(id);
+    return {
+      data: post,
+    };
   }
 }

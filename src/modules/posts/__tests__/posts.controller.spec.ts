@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { PostsController } from '../posts.controller';
 import { PostsService } from '../posts.service';
 import { mockPostsService, mockCreatePostDto, mockPostEntity } from 'test/mocks/posts';
@@ -38,6 +39,21 @@ describe('PostsController', () => {
       const result = await controller.create(mockCreatePostDto, mockUserEntity);
 
       expect(result).toBe(mockPostEntity.id);
+    });
+  });
+
+  describe('findOne', () => {
+    it('should return Post by id', async () => {
+      mockPostsService.findOne.mockResolvedValueOnce(mockPostEntity);
+
+      const result = await controller.findOne('any-id');
+      expect(result).toEqual({ data: mockPostEntity });
+    });
+
+    it('should throw if OrganizationsService throws', async () => {
+      mockPostsService.findOne.mockRejectedValueOnce(new NotFoundException());
+
+      await expect(controller.findOne('any-id')).rejects.toThrow(new NotFoundException());
     });
   });
 });

@@ -25,4 +25,33 @@ describe('PostsRepository', () => {
       expect(result).toBe('any-id');
     });
   });
+
+  describe('findOne', () => {
+    it('should return Post by id', async () => {
+      mockCtx.prisma.post.findUnique.mockResolvedValueOnce(mockPostEntity);
+
+      const result = await repository.findOne('any-id');
+      expect(result).toEqual({
+        authorId: 'any-id',
+        boardId: 'any-id',
+        description: 'any-id',
+        id: 'any-id',
+        title: 'any-id',
+        isLocked: false,
+        isPinned: false,
+        isPrivate: false,
+        statusId: 'any-id',
+        tagsId: ['any-id'],
+        createdAt: mockPostEntity.createdAt,
+        updatedAt: mockPostEntity.updatedAt,
+      });
+    });
+
+    it('should return null if Post not exists', async () => {
+      mockCtx.prisma.post.findUnique.mockResolvedValueOnce(null);
+
+      const result = await repository.findOne('any-id');
+      expect(result).toBe(null);
+    });
+  });
 });

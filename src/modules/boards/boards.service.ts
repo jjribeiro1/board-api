@@ -18,4 +18,9 @@ export class BoardsService {
 
     return board;
   }
+
+  async findPostsFromBoard(boardId: string) {
+    await this.findOne(boardId);
+    return this.boardsRepository.findPostsFromBoard(boardId);
+  }
 }

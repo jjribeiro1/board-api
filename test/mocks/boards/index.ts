@@ -24,6 +24,7 @@ export const mockCreateBoardDto: CreateBoardDto = {
 export const mockBoardsRepository = {
   create: jest.fn(),
   findOne: jest.fn(),
+  findPostsFromBoard: jest.fn(),
 };
 
 export const mockBoardsService = {

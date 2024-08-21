@@ -54,4 +54,41 @@ describe('BoardsService', () => {
       await expect(boardsService.findOne('any-id')).rejects.toThrow(new Error('error'));
     });
   });
+
+  describe('findPostsFromBoard', () => {
+    it('should return an array of posts', async () => {
+      const data = [
+        {
+          id: 'any-id',
+          title: 'any-title',
+          description: 'any-description',
+          isPrivate: false,
+          isPinned: false,
+          isLocked: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          boardId: 'any-id',
+          authorId: 'any-id',
+          statusId: 'any-id',
+        },
+      ];
+      mockBoardsRepository.findOne.mockResolvedValueOnce(mockBoardEntity);
+      mockBoardsRepository.findPostsFromBoard.mockResolvedValueOnce(data);
+      const result = await boardsService.findPostsFromBoard('any-id');
+      expect(result).toEqual(data);
+    });
+
+    it('should throw NotFoundException if board not exists', async () => {
+      mockBoardsRepository.findOne.mockResolvedValueOnce(null);
+      await expect(boardsService.findPostsFromBoard('any-id')).rejects.toThrow(
+        new NotFoundException('board com id: any-id não encontrado'),
+      );
+    });
+
+    it('should throw if repository throws', async () => {
+      mockBoardsRepository.findOne.mockResolvedValueOnce(mockBoardEntity);
+      mockBoardsRepository.findPostsFromBoard.mockRejectedValueOnce(new Error('error'));
+      await expect(boardsService.findPostsFromBoard('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
 });

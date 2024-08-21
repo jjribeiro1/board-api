@@ -32,4 +32,16 @@ export class BoardsController {
       data: board,
     };
   }
+
+  /**
+   *
+   * Returns all posts from an board
+   */
+  @Get(':id/posts')
+  async findPosts(@Param('id') boardId: string) {
+    const posts = await this.boardsService.findPostsFromBoard(boardId);
+    return {
+      data: posts,
+    };
+  }
 }

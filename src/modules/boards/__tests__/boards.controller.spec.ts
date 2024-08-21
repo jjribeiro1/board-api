@@ -54,4 +54,33 @@ describe('BoardsController', () => {
       await expect(controller.findOne('any-id')).rejects.toThrow(new NotFoundException());
     });
   });
+
+  describe('findPostsFromBoard', () => {
+    it('should return posts from an board ', async () => {
+      const data = [
+        {
+          id: 'any-id',
+          title: 'any-title',
+          description: 'any-description',
+          isPrivate: false,
+          isPinned: false,
+          isLocked: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          boardId: 'any-id',
+          authorId: 'any-id',
+          statusId: 'any-id',
+        },
+      ];
+      mockBoardsService.findPostsFromBoard.mockResolvedValueOnce(data);
+
+      const result = await controller.findPosts('any-id');
+      expect(result).toEqual({ data });
+    });
+
+    it('should throw if BoardsService throws', async () => {
+      mockBoardsService.findPostsFromBoard.mockRejectedValueOnce(new Error('error'));
+      await expect(controller.findPosts('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
 });

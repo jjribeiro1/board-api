@@ -45,4 +45,14 @@ export class BoardsRepository {
       result.updatedAt,
     );
   }
+
+  async findPostsFromBoard(boardId: string) {
+    const result = await this.prisma.post.findMany({
+      where: {
+        boardId,
+      },
+    });
+
+    return result;
+  }
 }

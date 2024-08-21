@@ -40,4 +40,27 @@ describe('BoardsRepository', () => {
       expect(result).toBe(null);
     });
   });
+
+  describe('findPostsFromBoard', () => {
+    it('should return an array of posts', async () => {
+      const data = [
+        {
+          id: 'any-id',
+          title: 'any-title',
+          description: 'any-description',
+          isPrivate: false,
+          isPinned: false,
+          isLocked: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          boardId: 'any-id',
+          authorId: 'any-id',
+          statusId: 'any-id',
+        },
+      ];
+      mockCtx.prisma.post.findMany.mockResolvedValueOnce(data);
+      const result = await repository.findPostsFromBoard('any-id');
+      expect(result).toEqual(data);
+    });
+  });
 });

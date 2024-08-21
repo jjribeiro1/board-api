@@ -1,5 +1,4 @@
 import { CreatePostDto } from 'src/modules/posts/dto/create-post.dto';
-import { Post } from 'src/modules/posts/entities/post.entity';
 
 export const mockCreatePostDto: CreatePostDto = {
   boardId: 'any-id',
@@ -11,22 +10,24 @@ export const mockCreatePostDto: CreatePostDto = {
   title: 'any-id',
 };
 
-export const mockPostEntity: Post = {
+export const mockPostEntity = {
   ...mockCreatePostDto,
   id: 'any-id',
   authorId: 'any-id',
   isLocked: false,
   isPinned: false,
   isPrivate: false,
-  tagsId: [],
+  tags: [{ tagId: 'any-id' }],
   createdAt: new Date(),
   updatedAt: new Date(),
 };
 
 export const mockPostsRepository = {
   create: jest.fn(),
+  findOne: jest.fn(),
 };
 
 export const mockPostsService = {
   create: jest.fn(),
+  findOne: jest.fn(),
 };

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { PrismaClientExceptionFilter } from './common/filters/prisma-exception.filter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -22,6 +23,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.useGlobalFilters(new PrismaClientExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Feedback board api')

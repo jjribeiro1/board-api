@@ -36,6 +36,6 @@ export class UsersService {
 
   async organizationsFromUser(id: string) {
     await this.findOne(id);
-    return this.usersRepository.organizationFromUser(id);
+    return this.usersRepository.organizationsFromUser(id);
   }
 }

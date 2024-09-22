@@ -66,7 +66,7 @@ describe('UsersRepository', () => {
       ];
       mockCtx.prisma.organization.findMany.mockResolvedValueOnce(data);
 
-      const result = await usersRepository.organizationFromUser('any-id');
+      const result = await usersRepository.organizationsFromUser('any-id');
       expect(result).toEqual(data);
     });
   });

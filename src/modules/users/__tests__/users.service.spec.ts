@@ -83,7 +83,7 @@ describe('UsersService', () => {
       ];
 
       mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity);
-      mockUsersRepository.organizationFromUser.mockResolvedValueOnce(organizations);
+      mockUsersRepository.organizationsFromUser.mockResolvedValueOnce(organizations);
 
       const result = await usersService.organizationsFromUser('any-id');
       expect(result).toEqual(organizations);
@@ -98,7 +98,7 @@ describe('UsersService', () => {
 
     it('should throw if UsersRepository throws', async () => {
       mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity);
-      mockUsersRepository.organizationFromUser.mockRejectedValueOnce(new Error('error'));
+      mockUsersRepository.organizationsFromUser.mockRejectedValueOnce(new Error('error'));
       await expect(usersService.organizationsFromUser('any-id')).rejects.toThrow(new Error('error'));
     });
   });

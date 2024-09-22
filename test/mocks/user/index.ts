@@ -12,11 +12,12 @@ export const mockUserEntity = new User('any-id', 'any-name', 'any-email', 'any-p
 export const mockUsersService = {
   create: jest.fn(),
   findOne: jest.fn(),
+  organizationsFromUser: jest.fn(),
 };
 
 export const mockUsersRepository = {
   create: jest.fn(),
   findOne: jest.fn(),
   findByEmail: jest.fn(),
-  organizationFromUser: jest.fn(),
+  organizationsFromUser: jest.fn(),
 };

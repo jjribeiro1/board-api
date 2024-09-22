@@ -44,4 +44,23 @@ describe('UsersController', () => {
       await expect(controller.findOne('any-id')).rejects.toThrow(new NotFoundException());
     });
   });
+
+  describe('findOrgFromUser', () => {
+    it('should return organizations from an user', async () => {
+      const organizations = [
+        { id: 'any-id', name: 'any-name', logoUrl: 'any-url', createdAt: new Date(), updatedAt: new Date() },
+      ];
+
+      mockUsersService.findOne.mockResolvedValueOnce(mockUserEntity);
+      mockUsersService.organizationsFromUser.mockResolvedValueOnce(organizations);
+
+      const result = await controller.findOrgFromUser('any-id');
+      expect(result).toEqual({ data: organizations });
+    });
+
+    it('should throw if UsersService throws', async () => {
+      mockUsersService.organizationsFromUser.mockRejectedValueOnce(new NotFoundException());
+      await expect(controller.findOrgFromUser('any-id')).rejects.toThrow(new NotFoundException());
+    });
+  });
 });

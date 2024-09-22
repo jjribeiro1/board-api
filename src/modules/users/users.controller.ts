@@ -28,4 +28,15 @@ export class UsersController {
       data: user.toPresentation(),
     };
   }
+
+  /**
+   * Returns organizations from an user
+   */
+  @Get(':id/organizations')
+  async findOrgFromUser(@Param('id') id: string) {
+    const organizations = await this.usersService.organizationsFromUser(id);
+    return {
+      data: organizations,
+    };
+  }
 }

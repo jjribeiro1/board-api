@@ -58,4 +58,16 @@ describe('UsersRepository', () => {
       expect(result).toBe(null);
     });
   });
+
+  describe('organizationsFromUser', () => {
+    it('should return organizations from an user', async () => {
+      const data = [
+        { id: 'any-id', name: 'any-name', logoUrl: 'any-url', createdAt: new Date(), updatedAt: new Date() },
+      ];
+      mockCtx.prisma.organization.findMany.mockResolvedValueOnce(data);
+
+      const result = await usersRepository.organizationFromUser('any-id');
+      expect(result).toEqual(data);
+    });
+  });
 });

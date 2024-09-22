@@ -40,4 +40,18 @@ export class UsersRepository {
 
     return new User(result.id, result.name, result.email, result.password, result.createdAt, result.updatedAt);
   }
+
+  async organizationFromUser(userId: string) {
+    const result = await this.prisma.organization.findMany({
+      where: {
+        members: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+    });
+
+    return result;
+  }
 }

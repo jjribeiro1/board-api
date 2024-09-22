@@ -33,4 +33,9 @@ export class UsersService {
 
     return user;
   }
+
+  async organizationsFromUser(id: string) {
+    await this.findOne(id);
+    return this.usersRepository.organizationFromUser(id);
+  }
 }

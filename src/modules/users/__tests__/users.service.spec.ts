@@ -75,4 +75,31 @@ describe('UsersService', () => {
       await expect(usersService.findOne('any-id')).rejects.toThrow(new Error('error'));
     });
   });
+
+  describe('organizationsFromUser', () => {
+    it('should return organizations from an user', async () => {
+      const organizations = [
+        { id: 'any-id', name: 'any-name', logoUrl: 'any-url', createdAt: new Date(), updatedAt: new Date() },
+      ];
+
+      mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity);
+      mockUsersRepository.organizationFromUser.mockResolvedValueOnce(organizations);
+
+      const result = await usersService.organizationsFromUser('any-id');
+      expect(result).toEqual(organizations);
+    });
+
+    it('should throw NotFoundException if user not exists', async () => {
+      mockUsersRepository.findOne.mockResolvedValueOnce(null);
+      await expect(usersService.organizationsFromUser('any-id')).rejects.toThrow(
+        new NotFoundException(`usuário com id: any-id não encontrado`),
+      );
+    });
+
+    it('should throw if UsersRepository throws', async () => {
+      mockUsersRepository.findOne.mockResolvedValueOnce(mockUserEntity);
+      mockUsersRepository.organizationFromUser.mockRejectedValueOnce(new Error('error'));
+      await expect(usersService.organizationsFromUser('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
 });

@@ -18,4 +18,5 @@ export const mockUsersRepository = {
   create: jest.fn(),
   findOne: jest.fn(),
   findByEmail: jest.fn(),
+  organizationFromUser: jest.fn(),
 };

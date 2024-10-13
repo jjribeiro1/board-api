@@ -51,6 +51,28 @@ export class BoardsRepository {
       where: {
         boardId,
       },
+      select: {
+        id: true,
+        title: true,
+        isLocked: true,
+        isPinned: true,
+        isPrivate: true,
+        description: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        status: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            isSystemDefault: true,
+          },
+        },
+      },
     });
 
     return result;

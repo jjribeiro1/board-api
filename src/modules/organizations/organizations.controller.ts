@@ -1,11 +1,12 @@
 import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { LoggedUser } from 'src/decorators/logged-user.decorator';
 import { User } from 'src/modules/users/entities/user.entity';
 
+@ApiBearerAuth()
 @ApiTags('organizations')
 @Controller('organizations')
 export class OrganizationsController {

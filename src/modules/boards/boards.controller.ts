@@ -4,7 +4,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { LoggedUser } from 'src/decorators/logged-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('boards')
 @Controller('boards')
@@ -15,6 +15,7 @@ export class BoardsController {
    *
    * Create new board and returns the ID
    */
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() dto: CreateBoardDto, @LoggedUser() user: User) {

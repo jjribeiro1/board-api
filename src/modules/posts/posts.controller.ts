@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { CreatePostDto } from './dto/create-post.dto';
 import { User } from '../users/entities/user.entity';
@@ -15,6 +15,7 @@ export class PostsController {
    *
    * Create new Post and returns the ID
    */
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post('')
   async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {

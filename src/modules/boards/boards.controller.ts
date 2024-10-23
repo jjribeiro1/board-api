@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { LoggedUser } from 'src/decorators/logged-user.decorator';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';

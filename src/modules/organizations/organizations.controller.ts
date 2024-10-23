@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
-import { LoggedUser } from 'src/decorators/logged-user.decorator';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { User } from 'src/modules/users/entities/user.entity';
 
 @ApiBearerAuth()

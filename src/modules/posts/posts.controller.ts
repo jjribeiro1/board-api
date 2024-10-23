@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { CreatePostDto } from './dto/create-post.dto';
 import { User } from '../users/entities/user.entity';
-import { LoggedUser } from 'src/decorators/logged-user.decorator';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { PostsService } from './posts.service';
 
 @ApiTags('posts')

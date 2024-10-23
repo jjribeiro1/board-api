@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id            String             @id @default(uuid())
+  id            String             @id @default(uuid()) @db.Uuid 
   name          String             @db.VarChar(200)
   email         String             @unique @db.VarChar(200)
   password      String             @db.VarChar(200)
@@ -22,8 +22,8 @@ model User {
 
 model UserOrganization {
   id             String       @id @default(uuid())
-  userId         String       @map("user_id")
-  organizationId String       @map("organization_id")
+  userId         String       @map("user_id") @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
   role           Role         @default(MEMBER)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -32,7 +32,7 @@ model UserOrganization {
 }
 
 model Organization {
-  id                       String             @id @default(uuid())
+  id                       String             @id @default(uuid()) @db.Uuid
   name                     String             @db.VarChar(140)
   logoUrl                  String?            @map("logo_url")
   createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz
@@ -45,7 +45,7 @@ model Organization {
 }
 
 model Board {
-  id             String       @id @default(uuid())
+  id             String       @id @default(uuid()) @db.Uuid
   title          String       @db.VarChar(200)
   description    String       @db.VarChar(300)
   isPrivate      Boolean      @default(false) @map("is_private")
@@ -54,14 +54,14 @@ model Board {
   updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
   organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String       @map("organization_id")
+  organizationId String       @map("organization_id") @db.Uuid
   author         User         @relation(fields: [authorId], references: [id])
-  authorId       String       @map("author_id")
+  authorId       String       @map("author_id") @db.Uuid
   posts          Post[]
 }
 
 model Post {
-  id          String     @id @default(uuid())
+  id          String     @id @default(uuid()) @db.Uuid
   title       String     @db.VarChar(200)
   description String     @db.VarChar(300)
   isPrivate   Boolean    @default(false) @map("is_private")
@@ -71,17 +71,17 @@ model Post {
   updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt   DateTime?  @map("deleted_at") @db.Timestamptz
   board       Board      @relation(fields: [boardId], references: [id])
-  boardId     String     @map("board_id")
+  boardId     String     @map("board_id") @db.Uuid
   author      User       @relation(fields: [authorId], references: [id])
-  authorId    String     @map("author_id")
+  authorId    String     @map("author_id") @db.Uuid
   status      Status     @relation(fields: [statusId], references: [id])
-  statusId    String     @map("status_id")
+  statusId    String     @map("status_id") @db.Uuid
   tags        PostTags[]
 }
 
 model PostTags {
-  postId String @map("post_id")
-  tagId  String @map("tag_id")
+  postId String @map("post_id") @db.Uuid
+  tagId  String @map("tag_id") @db.Uuid
   post   Post   @relation(fields: [postId], references: [id])
   tag    Tag    @relation(fields: [tagId], references: [id])
 
@@ -89,7 +89,7 @@ model PostTags {
 }
 
 model Tag {
-  id              String    @id @default(uuid())
+  id              String    @id @default(uuid()) @db.Uuid
   name            String    @db.VarChar(50)
   color           String    @db.VarChar(50)
   isSystemDefault Boolean   @default(false) @map("is_system_default")
@@ -98,11 +98,11 @@ model Tag {
   deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
   posts          PostTags[]
   organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId String?       @map("organization_id")
+  organizationId String?       @map("organization_id") @db.Uuid
 }
 
 model Status {
-  id              String        @id @default(uuid())
+  id              String        @id @default(uuid()) @db.Uuid
   name            String        @db.VarChar(50)
   color           String        @db.VarChar(50)
   isSystemDefault Boolean       @default(false) @map("is_system_default")
@@ -111,7 +111,7 @@ model Status {
   deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
   posts           Post[]
   organization    Organization? @relation(fields: [organizationId], references: [id])
-  organizationId  String?       @map("organization_id")
+  organizationId  String?       @map("organization_id") @db.Uuid
 
   @@unique([organizationId, name])
 }

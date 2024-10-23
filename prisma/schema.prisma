@@ -12,8 +12,9 @@ model User {
   name          String             @db.VarChar(200)
   email         String             @unique @db.VarChar(200)
   password      String             @db.VarChar(200)
-  createdAt     DateTime           @default(now()) @map("created_at")
-  updatedAt     DateTime           @updatedAt @map("updated_at")
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt     DateTime?          @db.Timestamptz
   organizations UserOrganization[]
   posts         Post[]
   boards        Board[]
@@ -34,8 +35,9 @@ model Organization {
   id                       String             @id @default(uuid())
   name                     String             @db.VarChar(140)
   logoUrl                  String?            @map("logo_url")
-  createdAt                DateTime           @default(now()) @map("created_at")
-  updatedAt                DateTime           @updatedAt @map("updated_at")
+  createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                DateTime           @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt                DateTime?          @map("deleted_at") @db.Timestamptz
   boards                   Board[]
   members                  UserOrganization[]
   organizationCustomStatus Status[]
@@ -48,8 +50,9 @@ model Board {
   description    String       @db.VarChar(300)
   isPrivate      Boolean      @default(false) @map("is_private")
   isLocked       Boolean      @default(false) @map("is_locked")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt @map("updated_at")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String       @map("organization_id")
   author         User         @relation(fields: [authorId], references: [id])
@@ -64,8 +67,9 @@ model Post {
   isPrivate   Boolean    @default(false) @map("is_private")
   isPinned    Boolean    @default(false) @map("is_pinned")
   isLocked    Boolean    @default(false) @map("is_locked")
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime?  @map("deleted_at") @db.Timestamptz
   board       Board      @relation(fields: [boardId], references: [id])
   boardId     String     @map("board_id")
   author      User       @relation(fields: [authorId], references: [id])
@@ -85,15 +89,16 @@ model PostTags {
 }
 
 model Tag {
-  id              String        @id @default(uuid())
-  name            String        @db.VarChar(50)
-  color           String        @db.VarChar(50)
-  isSystemDefault Boolean       @default(false) @map("is_system_default")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
-  posts           PostTags[]
-  organization    Organization? @relation(fields: [organizationId], references: [id])
-  organizationId  String?       @map("organization_id")
+  id              String    @id @default(uuid())
+  name            String    @db.VarChar(50)
+  color           String    @db.VarChar(50)
+  isSystemDefault Boolean   @default(false) @map("is_system_default")
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
+  posts          PostTags[]
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?       @map("organization_id")
 }
 
 model Status {
@@ -101,8 +106,9 @@ model Status {
   name            String        @db.VarChar(50)
   color           String        @db.VarChar(50)
   isSystemDefault Boolean       @default(false) @map("is_system_default")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt       DateTime? @map("deleted_at") @db.Timestamptz
   posts           Post[]
   organization    Organization? @relation(fields: [organizationId], references: [id])
   organizationId  String?       @map("organization_id")

@@ -1,18 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { mockCreateCommentDto, mockCommentEntity, mockCommentRepository } from 'test/mocks/comments';
 import { CommentsService } from '../comments.service';
+import { CommentsRepository } from '../comments.repository';
 
 describe('CommentsService', () => {
-  let service: CommentsService;
+  let commentsService: CommentsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CommentsService],
+      providers: [CommentsService, { provide: CommentsRepository, useValue: mockCommentRepository }],
     }).compile();
 
-    service = module.get<CommentsService>(CommentsService);
+    commentsService = module.get<CommentsService>(CommentsService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('create', () => {
+    it('should call CommentsRepository with correct values', async () => {
+      await commentsService.create(mockCreateCommentDto, 'any-id');
+      expect(mockCommentRepository.create).toHaveBeenCalledWith({ ...mockCreateCommentDto }, 'any-id');
+    });
+
+    it('should throw if CommentsRepository throws', async () => {
+      mockCommentRepository.create.mockRejectedValueOnce(new Error('error'));
+      await expect(commentsService.create(mockCreateCommentDto, 'any-id')).rejects.toThrow(new Error('error'));
+    });
+
+    it('should return the ID of the Comment created', async () => {
+      mockCommentRepository.create.mockResolvedValueOnce(mockCommentEntity.id);
+      const result = await commentsService.create(mockCommentEntity, 'any-id');
+      expect(result).toBe(mockCommentEntity.id);
+    });
   });
 });

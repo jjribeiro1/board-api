@@ -6,3 +6,7 @@ export const mockCreateCommentDto = {
 };
 
 export const mockCommentEntity = new Comment('any-id', 'any-content', 'any-id', 'any-id', new Date(), new Date(), null);
+
+export const mockCommentRepository = {
+  create: jest.fn(),
+};

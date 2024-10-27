@@ -15,6 +15,7 @@ export const mockOrganizationEntity: Organization = {
   organizationTags: [],
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 };
 
 export const mockOrganizationsRepository = {

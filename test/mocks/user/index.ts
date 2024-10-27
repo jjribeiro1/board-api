@@ -7,7 +7,16 @@ export const mockCreateUserDto: CreateUserDto = {
   password: 'any-password',
 };
 
-export const mockUserEntity = new User('any-id', 'any-name', 'any-email', 'any-password', new Date(), new Date());
+export const mockUserEntity = new User(
+  'any-id',
+  'any-name',
+  'any-email',
+  'any-password',
+  [],
+  new Date(),
+  new Date(),
+  null,
+);
 
 export const mockUsersService = {
   create: jest.fn(),

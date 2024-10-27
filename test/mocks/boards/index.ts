@@ -11,6 +11,7 @@ export const mockBoardEntity: Board = {
   organizationId: 'any-id',
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 };
 
 export const mockCreateBoardDto: CreateBoardDto = {

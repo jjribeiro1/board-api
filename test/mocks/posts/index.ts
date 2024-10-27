@@ -20,6 +20,7 @@ export const mockPostEntity = {
   tags: [{ tagId: 'any-id' }],
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 };
 
 export const mockPostsRepository = {

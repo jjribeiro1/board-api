@@ -10,3 +10,7 @@ export const mockCommentEntity = new Comment('any-id', 'any-content', 'any-id', 
 export const mockCommentRepository = {
   create: jest.fn(),
 };
+
+export const mockCommentService = {
+  create: jest.fn(),
+};

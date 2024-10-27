@@ -34,6 +34,7 @@ async function bootstrap() {
     .addTag('organizations')
     .addTag('boards')
     .addTag('posts')
+    .addTag('comments')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

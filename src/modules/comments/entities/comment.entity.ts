@@ -1,5 +1,6 @@
 export class Comment {
   constructor(
+    readonly id: string,
     readonly content: string,
     readonly authorId: string,
     readonly postId: string,

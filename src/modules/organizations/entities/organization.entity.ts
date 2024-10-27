@@ -10,6 +10,7 @@ export class Organization {
     readonly organizationTags: Tag[],
     readonly createdAt: Date,
     readonly updatedAt: Date,
+    readonly deletedAt: Date | null,
   ) {}
 }
 

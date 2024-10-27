@@ -12,5 +12,6 @@ export class Post {
     readonly tagsId: string[],
     readonly createdAt: Date,
     readonly updatedAt: Date,
+    readonly deletedAt: Date | null,
   ) {}
 }

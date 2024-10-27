@@ -4,9 +4,10 @@ export class User {
     readonly name: string,
     readonly email: string,
     readonly password: string,
+    readonly organizationIds: string[],
     readonly createdAt: Date,
     readonly updatedAt: Date,
-    readonly organizationIds?: string[],
+    readonly deletedAt: Date | null,
   ) {}
 
   toPresentation() {

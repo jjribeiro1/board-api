@@ -61,6 +61,7 @@ export class OrganizationsRepository {
       result.organizationCustomTags,
       result.createdAt,
       result.updatedAt,
+      null,
     );
   }
 

@@ -52,6 +52,7 @@ export class PostsRepository {
       result.tags.map((data) => data.tagId),
       result.createdAt,
       result.updatedAt,
+      null,
     );
   }
 }

@@ -25,9 +25,10 @@ export class UsersRepository {
       result.name,
       result.email,
       result.password,
+      organizationIds ?? [],
       result.createdAt,
       result.updatedAt,
-      organizationIds,
+      null,
     );
   }
 
@@ -38,7 +39,16 @@ export class UsersRepository {
       return null;
     }
 
-    return new User(result.id, result.name, result.email, result.password, result.createdAt, result.updatedAt);
+    return new User(
+      result.id,
+      result.name,
+      result.email,
+      result.password,
+      [],
+      result.createdAt,
+      result.updatedAt,
+      null,
+    );
   }
 
   async organizationsFromUser(userId: string) {

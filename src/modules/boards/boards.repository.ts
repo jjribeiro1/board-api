@@ -43,6 +43,7 @@ export class BoardsRepository {
       result.authorId,
       result.createdAt,
       result.updatedAt,
+      null,
     );
   }
 

@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateCommentDto } from './create-comment.dto';
+import { IsNotEmpty } from 'class-validator';
 
-export class UpdateCommentDto extends PartialType(CreateCommentDto) {}
+export class UpdateCommentDto {
+  /**
+   * content of comment
+   * @example 'I like this suggestion'
+   */
+  @IsNotEmpty({ message: 'Comentário não pode estar vazio' })
+  content: string;
+}

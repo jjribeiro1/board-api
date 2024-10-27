@@ -62,7 +62,14 @@ describe('UsersRepository', () => {
   describe('organizationsFromUser', () => {
     it('should return organizations from an user', async () => {
       const data = [
-        { id: 'any-id', name: 'any-name', logoUrl: 'any-url', createdAt: new Date(), updatedAt: new Date() },
+        {
+          id: 'any-id',
+          name: 'any-name',
+          logoUrl: 'any-url',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        },
       ];
       mockCtx.prisma.organization.findMany.mockResolvedValueOnce(data);
 

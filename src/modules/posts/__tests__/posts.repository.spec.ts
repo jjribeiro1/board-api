@@ -44,6 +44,7 @@ describe('PostsRepository', () => {
         tagsId: ['any-id'],
         createdAt: mockPostEntity.createdAt,
         updatedAt: mockPostEntity.updatedAt,
+        deletedAt: mockPostEntity.deletedAt,
       });
     });
 

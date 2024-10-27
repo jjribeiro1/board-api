@@ -53,6 +53,7 @@ describe('BoardsRepository', () => {
           isLocked: false,
           createdAt: new Date(),
           updatedAt: new Date(),
+          deletedAt: null,
           boardId: 'any-id',
           authorId: 'any-id',
           statusId: 'any-id',

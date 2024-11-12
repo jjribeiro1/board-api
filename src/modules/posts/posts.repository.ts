@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { Post } from './entities/post.entity';
+import { Comment } from '../comments/entities/comment.entity';
 
 @Injectable()
 export class PostsRepository {
@@ -53,6 +54,43 @@ export class PostsRepository {
       result.createdAt,
       result.updatedAt,
       null,
+    );
+  }
+
+  async findCommentsFromPost(postId: string) {
+    const results = await this.prisma.comment.findMany({
+      where: {
+        post: {
+          id: postId,
+        },
+      },
+      select: {
+        id: true,
+        content: true,
+        postId: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return results.map(
+      (result) =>
+        new Comment(
+          result.id,
+          result.content,
+          result.author.id,
+          result.postId,
+          result.createdAt,
+          result.updatedAt,
+          result.deletedAt,
+        ),
     );
   }
 }

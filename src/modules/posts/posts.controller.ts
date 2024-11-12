@@ -33,4 +33,16 @@ export class PostsController {
       data: post,
     };
   }
+
+  /**
+   *
+   * Returns comments from an Post
+   */
+  @Get(':id/comments')
+  async findComments(@Param('id') id: string) {
+    const comments = await this.postsService.findCommentsFromPost(id);
+    return {
+      data: comments,
+    };
+  }
 }

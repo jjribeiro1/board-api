@@ -18,4 +18,9 @@ export class PostsService {
 
     return post;
   }
+
+  async findCommentsFromPost(postId: string) {
+    await this.findOne(postId);
+    return this.postsRepository.findCommentsFromPost(postId);
+  }
 }

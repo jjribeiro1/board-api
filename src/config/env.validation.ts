@@ -24,11 +24,19 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  JWT_PUBLIC_KEY: string;
+  ACCESS_TOKEN_PUBLIC_KEY: string;
 
   @IsString()
   @IsNotEmpty()
-  JWT_PRIVATE_KEY: string;
+  ACCESS_TOKEN_PRIVATE_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  REFRESH_TOKEN_PUBLIC_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  REFRESH_TOKEN_PRIVATE_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { PrismaClientExceptionFilter } from './common/filters/prisma-exception.filter';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -23,6 +24,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.use(cookieParser());
   app.useGlobalFilters(new PrismaClientExceptionFilter());
 
   const config = new DocumentBuilder()

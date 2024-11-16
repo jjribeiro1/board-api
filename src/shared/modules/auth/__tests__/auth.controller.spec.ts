@@ -1,8 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
+import { createMock } from '@golevelup/ts-jest';
+import { Response } from 'express';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import { mockAuthService, mockSignInDto } from 'test/mocks/auth';
+
+const mockResponse = createMock<Response>({
+  cookie: jest.fn(),
+});
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -18,7 +24,8 @@ describe('AuthController', () => {
 
   describe('signIn', () => {
     it('should call AuthService with correct values', async () => {
-      await controller.signIn(mockSignInDto);
+      mockAuthService.signIn.mockResolvedValueOnce({ accessToken: '', refreshToken: '' });
+      await controller.signIn(mockResponse, mockSignInDto);
       expect(mockAuthService.signIn).toHaveBeenCalledWith(mockSignInDto);
     });
 
@@ -27,14 +34,14 @@ describe('AuthController', () => {
         accessToken: 'jwt-token',
       });
 
-      const result = await controller.signIn(mockSignInDto);
+      const result = await controller.signIn(mockResponse, mockSignInDto);
       expect(result).toEqual({ accessToken: 'jwt-token' });
     });
 
     it('should throw if AuthService throws', async () => {
       mockAuthService.signIn.mockRejectedValueOnce(new UnauthorizedException());
 
-      await expect(controller.signIn(mockSignInDto)).rejects.toThrow(new UnauthorizedException());
+      await expect(controller.signIn(mockResponse, mockSignInDto)).rejects.toThrow(new UnauthorizedException());
     });
   });
 });

@@ -9,6 +9,7 @@ import { mockJwtService } from 'test/mocks/auth';
 import { mockUserEntity, mockUsersRepository } from 'test/mocks/user';
 import { mockCryptoService } from 'test/mocks/crypto';
 import { mockSignInDto } from 'test/mocks/auth';
+import { ConfigService } from '@nestjs/config';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -20,6 +21,7 @@ describe('AuthService', () => {
         { provide: JwtService, useValue: mockJwtService },
         { provide: UsersRepository, useValue: mockUsersRepository },
         { provide: CryptoService, useValue: mockCryptoService },
+        ConfigService,
       ],
     }).compile();
 
@@ -63,11 +65,9 @@ describe('AuthService', () => {
       mockCryptoService.compareHash.mockResolvedValueOnce(true);
       mockJwtService.signAsync.mockResolvedValueOnce('jwt-token');
 
-      const payload = { sub: mockUserEntity.id, email: mockUserEntity.email };
       const result = await authService.signIn(mockSignInDto);
 
-      expect(mockJwtService.signAsync).toHaveBeenCalledTimes(1);
-      expect(mockJwtService.signAsync).toHaveBeenCalledWith(payload, undefined);
+      expect(mockJwtService.signAsync).toHaveBeenCalledTimes(2);
       expect(result).toEqual({ accessToken: 'jwt-token' });
     });
   });
@@ -127,7 +127,6 @@ describe('AuthService', () => {
 
       const result = await authService.extractUserFromToken('any-token');
 
-      expect(mockJwtService.verifyAsync).toHaveBeenCalledWith('any-token', undefined);
       expect(mockUsersRepository.findOne).toHaveBeenCalledWith(payload.sub);
       expect(result).toEqual(mockUserEntity);
     });

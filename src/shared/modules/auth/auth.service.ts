@@ -6,7 +6,6 @@ import { UsersRepository } from 'src/modules/users/users.repository';
 import { CryptoService } from 'src/shared/modules/crypto/crypto.service';
 import { JwtUserPayload } from 'src/common/types/jwt-payload';
 import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_ACCESS_TOKEN_EXPIRES_IN } from 'src/constants';
-import { User } from 'src/modules/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -67,14 +66,20 @@ export class AuthService {
     return user;
   }
 
-  async refreshToken(refresh: string, user: User) {
+  async refreshToken(refresh: string) {
     if (!refresh) {
       throw new UnauthorizedException();
     }
 
-    await this.verifyToken(refresh, {
+    const refreshTokenPayload: JwtUserPayload = await this.verifyToken(refresh, {
       publicKey: this.configService.get('REFRESH_TOKEN_PUBLIC_KEY'),
     });
+
+    const user = await this.usersRepository.findOne(refreshTokenPayload.sub);
+
+    if (!user) {
+      throw new UnauthorizedException('Não autorizado');
+    }
 
     const newAccessToken = await this.generateToken(
       { sub: user.id, email: user.email },

@@ -5,8 +5,6 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request, Response } from 'express';
 import { COOKIE_JWT_ACCESS_TOKEN_EXPIRES_IN, COOKIE_JWT_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
-import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { User } from 'src/modules/users/entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -43,11 +41,10 @@ export class AuthController {
    * Endpoint to generate new access token
    */
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
   @Post('refresh')
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response, @LoggedUser() user: User) {
+  async refresh(@Req() req: Request) {
     const refreshToken = req.cookies['refresh-token'];
-    const newAccessToken = await this.authService.refreshToken(refreshToken, user);
+    const newAccessToken = await this.authService.refreshToken(refreshToken);
 
     return {
       accessToken: newAccessToken,

@@ -4,7 +4,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request, Response } from 'express';
-import { COOKIE_JWT_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
+import { COOKIE_JWT_ACCESS_TOKEN_EXPIRES_IN, COOKIE_JWT_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -21,16 +21,19 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.signIn(dto);
     const isProduction = process.env.NODE_ENV === 'production';
 
+    res.cookie('access-token', accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: COOKIE_JWT_ACCESS_TOKEN_EXPIRES_IN,
+    });
+
     res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
       maxAge: COOKIE_JWT_REFRESH_TOKEN_EXPIRES_IN,
     });
-
-    return {
-      accessToken,
-    };
   }
 
   /**

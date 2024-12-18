@@ -34,7 +34,7 @@ export class AuthService {
     });
 
     return {
-      accessToken: accessToken,
+      accessToken,
       refreshToken,
     };
   }

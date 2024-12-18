@@ -31,11 +31,12 @@ describe('AuthController', () => {
 
     it('should return an access token', async () => {
       mockAuthService.signIn.mockResolvedValueOnce({
-        accessToken: 'jwt-token',
+        accessToken: 'jwt-access-token',
+        refreshToken: 'jwt-refresh-token',
       });
 
       const result = await controller.signIn(mockResponse, mockSignInDto);
-      expect(result).toEqual({ accessToken: 'jwt-token' });
+      expect(result).toEqual(undefined);
     });
 
     it('should throw if AuthService throws', async () => {

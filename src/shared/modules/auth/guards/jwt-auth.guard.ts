@@ -8,28 +8,17 @@ export class JwtAuthGuard implements CanActivate {
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req: Request = ctx.switchToHttp().getRequest();
-    const token = this.extractTokenFromAuthorizationHeader(req);
+    const token = this.extractTokenFromCookie(req);
     const user = await this.authService.extractUserFromToken(token);
-
     req['user'] = user.toPresentation();
     return true;
   }
 
-  private extractTokenFromAuthorizationHeader(req: Request) {
-    if (!req.headers.authorization) {
-      throw new UnauthorizedException('Authorization header inválido');
+  private extractTokenFromCookie(req: Request) {
+    if (req.cookies && 'access-token' in req.cookies) {
+      return req.cookies['access-token'];
     }
 
-    const [type, token] = req.headers.authorization.split(' ') ?? [];
-
-    if (type !== 'Bearer') {
-      throw new UnauthorizedException('Token mal formatado');
-    }
-
-    if (!token) {
-      throw new UnauthorizedException('Token não enviado');
-    }
-
-    return token;
+    throw new UnauthorizedException('Token de acesso inválido ou não foi enviado');
   }
 }

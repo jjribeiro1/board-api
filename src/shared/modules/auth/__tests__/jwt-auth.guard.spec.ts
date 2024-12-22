@@ -18,49 +18,17 @@ describe('JwtAuthGuard', () => {
   });
 
   describe('canActivate', () => {
-    it('should throw UnauthorizedException when authorization header is missing', async () => {
-      const mockExecutionContext = createMock<ExecutionContext>({
-        switchToHttp: () => ({
-          getRequest: () => ({
-            headers: {},
-          }),
-        }),
-      });
-
-      await expect(jwtAuthGuard.canActivate(mockExecutionContext)).rejects.toThrow(
-        new UnauthorizedException('Authorization header inválido'),
-      );
-    });
-
-    it('should throw UnauthorizedException when token is malformed', async () => {
-      const mockExecutionContext = createMock<ExecutionContext>({
-        switchToHttp: () => ({
-          getRequest: () => ({
-            headers: {
-              authorization: 'bearertoken',
-            },
-          }),
-        }),
-      });
-
-      await expect(jwtAuthGuard.canActivate(mockExecutionContext)).rejects.toThrow(
-        new UnauthorizedException('Token mal formatado'),
-      );
-    });
-
     it('should throw UnauthorizedException when the token is not sent', async () => {
       const mockExecutionContext = createMock<ExecutionContext>({
         switchToHttp: () => ({
           getRequest: () => ({
-            headers: {
-              authorization: 'Bearer',
-            },
+            cookies: {},
           }),
         }),
       });
 
       await expect(jwtAuthGuard.canActivate(mockExecutionContext)).rejects.toThrow(
-        new UnauthorizedException('Token não enviado'),
+        new UnauthorizedException('Token de acesso inválido ou não foi enviado'),
       );
     });
 
@@ -69,8 +37,8 @@ describe('JwtAuthGuard', () => {
       const mockExecutionContext = createMock<ExecutionContext>({
         switchToHttp: () => ({
           getRequest: () => ({
-            headers: {
-              authorization: 'Bearer invalid-token',
+            cookies: {
+              'access-token': 'Token',
             },
           }),
         }),
@@ -86,14 +54,13 @@ describe('JwtAuthGuard', () => {
       const mockExecutionContext = createMock<ExecutionContext>({
         switchToHttp: () => ({
           getRequest: () => ({
-            headers: {
-              authorization: 'Bearer Token',
+            cookies: {
+              'access-token': 'Token',
             },
           }),
         }),
       });
       const result = await jwtAuthGuard.canActivate(mockExecutionContext);
-
       expect(mockAuthService.extractUserFromToken).toHaveBeenCalledWith('Token');
       expect(result).toBe(true);
     });

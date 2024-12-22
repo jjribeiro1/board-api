@@ -55,4 +55,30 @@ describe('PostsRepository', () => {
       expect(result).toBe(null);
     });
   });
+
+  describe('findPostsFromOrganization', () => {
+    it('should return posts for a given organization', async () => {
+      const mockPosts = [mockPostEntity];
+      mockCtx.prisma.post.findMany.mockResolvedValueOnce(mockPosts);
+
+      const result = await repository.findPostsFromOrganization('any-org-id');
+      expect(result).toEqual(
+        mockPosts.map((post) => ({
+          id: post.id,
+          title: post.title,
+          description: post.description,
+          isPrivate: post.isPrivate,
+          isPinned: post.isPinned,
+          isLocked: post.isLocked,
+          boardId: post.boardId,
+          authorId: post.authorId,
+          statusId: post.statusId,
+          tagsId: post.tags.map((tag) => tag.tagId),
+          createdAt: post.createdAt,
+          updatedAt: post.updatedAt,
+          deletedAt: post.deletedAt,
+        })),
+      );
+    });
+  });
 });

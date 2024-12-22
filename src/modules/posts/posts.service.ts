@@ -23,4 +23,8 @@ export class PostsService {
     await this.findOne(postId);
     return this.postsRepository.findCommentsFromPost(postId);
   }
+
+  async findPostsFromOrganization(organizationId: string) {
+    return this.postsRepository.findPostsFromOrganization(organizationId);
+  }
 }

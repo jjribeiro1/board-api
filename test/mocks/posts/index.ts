@@ -26,6 +26,8 @@ export const mockPostEntity = {
 export const mockPostsRepository = {
   create: jest.fn(),
   findOne: jest.fn(),
+  findCommentsFromPost: jest.fn(),
+  findPostsFromOrganization: jest.fn(),
 };
 
 export const mockPostsService = {

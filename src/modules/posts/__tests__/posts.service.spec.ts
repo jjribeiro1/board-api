@@ -3,6 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { PostsService } from '../posts.service';
 import { PostsRepository } from '../posts.repository';
 import { mockCreatePostDto, mockPostEntity, mockPostsRepository } from 'test/mocks/posts';
+import { mockCommentEntity } from 'test/mocks/comments';
 
 describe('PostsService', () => {
   let postsService: PostsService;
@@ -51,6 +52,35 @@ describe('PostsService', () => {
     it('should throw if OrganizationsRepository throws', async () => {
       mockPostsRepository.findOne.mockRejectedValueOnce(new Error('error'));
       await expect(postsService.findOne('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
+
+  describe('findCommentsFromPost', () => {
+    it('should return comments for a given post', async () => {
+      mockPostsRepository.findOne.mockResolvedValueOnce(mockPostEntity);
+      mockPostsRepository.findCommentsFromPost.mockResolvedValueOnce([mockCommentEntity]);
+      const result = await postsService.findCommentsFromPost('any-id');
+      expect(result).toEqual([mockCommentEntity]);
+    });
+
+    it('should throw NotFoundException if Post not exists', async () => {
+      mockPostsRepository.findOne.mockResolvedValueOnce(null);
+      await expect(postsService.findCommentsFromPost('any-id')).rejects.toThrow(
+        new NotFoundException(`post com id: any-id não encontrado`),
+      );
+    });
+  });
+
+  describe('findPostsFromOrganization', () => {
+    it('should return posts for a given organization', async () => {
+      mockPostsRepository.findPostsFromOrganization.mockResolvedValueOnce([mockPostEntity]);
+      const result = await postsService.findPostsFromOrganization('any-org-id');
+      expect(result).toEqual([mockPostEntity]);
+    });
+
+    it('should throw if PostsRepository throws', async () => {
+      mockPostsRepository.findPostsFromOrganization.mockRejectedValueOnce(new Error('error'));
+      await expect(postsService.findPostsFromOrganization('any-org-id')).rejects.toThrow(new Error('error'));
     });
   });
 });

@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
+import { Request } from 'express';
 import { CreatePostDto } from './dto/create-post.dto';
-import { User } from '../users/entities/user.entity';
-import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { PostsService } from './posts.service';
+import { User } from '../users/entities/user.entity';
+import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -20,6 +21,20 @@ export class PostsController {
   @Post('')
   async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {
     return this.postsService.create(dto, loggedUser.id);
+  }
+
+  /**
+   *
+   * Returns posts from an Organization
+   */
+  @UseGuards(JwtAuthGuard)
+  @Get('organization')
+  async findPostsFromOrganization(@Req() req: Request) {
+    const orgId = req.cookies['orgId'];
+    const posts = await this.postsService.findPostsFromOrganization(orgId);
+    return {
+      data: posts,
+    };
   }
 
   /**

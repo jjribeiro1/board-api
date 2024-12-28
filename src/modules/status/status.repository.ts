@@ -18,6 +18,9 @@ export class StatusRepository {
               isSystemDefault: true,
             }),
       },
+      orderBy: {
+        order: 'asc',
+      },
     });
     return results.map(
       (result) =>
@@ -26,6 +29,7 @@ export class StatusRepository {
           result.name,
           result.color,
           result.isSystemDefault,
+          result.order,
           result.organizationId,
           result.createdAt,
           result.updatedAt,

@@ -52,10 +52,10 @@ describe('StatusRepository', () => {
           deletedAt: new Date(),
         },
       ];
-      mockCtx.prisma.status.findMany.mockResolvedValueOnce(await new Promise((resolve) => resolve(mockStatuses)));
+      mockCtx.prisma.status.findMany.mockResolvedValueOnce(await new Promise((resolve) => resolve([mockStatuses[1]])));
 
       const result = await repository.getAllStatus(null);
-      expect(result).toEqual(mockStatuses[1]);
+      expect(result).toEqual([mockStatuses[1]]);
     });
 
     it('should return an empty array if no statuses are found', async () => {

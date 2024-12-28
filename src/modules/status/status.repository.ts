@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
+import { Status } from './entities/status.entity';
 
 @Injectable()
 export class StatusRepository {
@@ -18,6 +19,18 @@ export class StatusRepository {
             }),
       },
     });
-    return results;
+    return results.map(
+      (result) =>
+        new Status(
+          result.id,
+          result.name,
+          result.color,
+          result.isSystemDefault,
+          result.organizationId,
+          result.createdAt,
+          result.updatedAt,
+          result.deletedAt,
+        ),
+    );
   }
 }

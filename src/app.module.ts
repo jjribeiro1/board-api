@@ -9,6 +9,7 @@ import { BoardsModule } from './modules/boards/boards.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { validate } from 'src/config/env.validation';
 import { CommentsModule } from './modules/comments/comments.module';
+import { StatusModule } from './modules/status/status.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     BoardsModule,
     PostsModule,
     CommentsModule,
+    StatusModule,
   ],
 })
 export class AppModule {}

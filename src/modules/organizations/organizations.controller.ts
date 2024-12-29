@@ -47,4 +47,17 @@ export class OrganizationsController {
       data: boards,
     };
   }
+
+  /**
+   *
+   * Returns posts from an Organization
+   */
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/posts')
+  async findPostsFromOrganization(@Param('id') orgId: string) {
+    const posts = await this.organizationsService.findPostsFromOrganization(orgId);
+    return {
+      data: posts,
+    };
+  }
 }

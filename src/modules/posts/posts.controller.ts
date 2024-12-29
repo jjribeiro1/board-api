@@ -1,6 +1,5 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
@@ -21,20 +20,6 @@ export class PostsController {
   @Post('')
   async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {
     return this.postsService.create(dto, loggedUser.id);
-  }
-
-  /**
-   *
-   * Returns posts from an Organization
-   */
-  @UseGuards(JwtAuthGuard)
-  @Get('organization')
-  async findPostsFromOrganization(@Req() req: Request) {
-    const orgId = req.cookies['orgId'];
-    const posts = await this.postsService.findPostsFromOrganization(orgId);
-    return {
-      data: posts,
-    };
   }
 
   /**

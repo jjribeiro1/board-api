@@ -23,4 +23,8 @@ export class OrganizationsService {
     await this.findOne(organizationId);
     return this.organizationsRepository.findBoardsFromOrganization(organizationId);
   }
+
+  async findPostsFromOrganization(organizationId: string) {
+    return this.organizationsRepository.findPostsFromOrganization(organizationId);
+  }
 }

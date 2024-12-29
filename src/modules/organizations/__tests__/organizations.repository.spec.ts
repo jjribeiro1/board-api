@@ -50,4 +50,38 @@ describe('OrganizationsRepository', () => {
       expect(result).toEqual([mockBoardEntity]);
     });
   });
+
+  describe('findPostsFromOrganization', () => {
+    it('should return posts for a given organization', async () => {
+      const mockPosts = [
+        {
+          id: 'post-id',
+          title: 'Post Title',
+          createdAt: new Date(),
+          board: {
+            id: 'board-id',
+            title: 'Board Title',
+          },
+          status: {
+            id: 'status-id',
+            name: 'Status Name',
+            color: 'Status Color',
+          },
+          tags: [
+            {
+              tag: {
+                id: 'tag-id',
+                name: 'Tag Name',
+                color: 'Tag Color',
+              },
+            },
+          ],
+        },
+      ];
+      mockCtx.prisma.post.findMany.mockResolvedValueOnce(mockPosts as any);
+
+      const result = await repository.findPostsFromOrganization('any-org-id');
+      expect(result).toEqual(mockPosts);
+    });
+  });
 });

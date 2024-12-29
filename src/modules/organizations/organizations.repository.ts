@@ -92,4 +92,45 @@ export class OrganizationsRepository {
 
     return result;
   }
+
+  async findPostsFromOrganization(organizationId: string) {
+    const results = await this.prisma.post.findMany({
+      where: {
+        board: {
+          organizationId: organizationId,
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        createdAt: true,
+        board: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        status: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+          },
+        },
+        tags: {
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                color: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return results;
+  }
 }

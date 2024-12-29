@@ -8,6 +8,7 @@ import {
   mockOrganizationEntity,
 } from 'test/mocks/organizations';
 import { mockBoardEntity } from 'test/mocks/boards';
+import { mockPostEntity, mockPostsRepository } from 'test/mocks/posts';
 
 describe('OrganizationsService', () => {
   let organizationsService: OrganizationsService;
@@ -87,6 +88,19 @@ describe('OrganizationsService', () => {
       mockOrganizationsRepository.findOne.mockResolvedValueOnce(mockOrganizationEntity);
       mockOrganizationsRepository.findBoardsFromOrganization.mockRejectedValueOnce(new Error('error'));
       await expect(organizationsService.findBoardsFromOrganization('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
+
+  describe('findPostsFromOrganization', () => {
+    it('should return posts for a given organization', async () => {
+      mockPostsRepository.findPostsFromOrganization.mockResolvedValueOnce([mockPostEntity]);
+      const result = await organizationsService.findPostsFromOrganization('any-org-id');
+      expect(result).toEqual([mockPostEntity]);
+    });
+
+    it('should throw if PostsRepository throws', async () => {
+      mockPostsRepository.findPostsFromOrganization.mockRejectedValueOnce(new Error('error'));
+      await expect(organizationsService.findPostsFromOrganization('any-org-id')).rejects.toThrow(new Error('error'));
     });
   });
 });

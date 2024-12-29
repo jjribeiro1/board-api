@@ -22,10 +22,12 @@ export const mockOrganizationsRepository = {
   create: jest.fn(),
   findOne: jest.fn(),
   findBoardsFromOrganization: jest.fn(),
+  findPostsFromOrganization: jest.fn(),
 };
 
 export const mockOrganizationsService = {
   create: jest.fn(),
   findOne: jest.fn(),
   findBoardsFromOrganization: jest.fn(),
+  findPostsFromOrganization: jest.fn(),
 };

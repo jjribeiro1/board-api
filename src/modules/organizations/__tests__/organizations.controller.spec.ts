@@ -5,6 +5,7 @@ import { OrganizationsService } from '../organizations.service';
 import { mockOrganizationsService, mockCreateOrganizationDto, mockOrganizationEntity } from 'test/mocks/organizations';
 import { mockUserEntity } from 'test/mocks/user';
 import { mockBoardEntity } from 'test/mocks/boards';
+import { mockPostEntity } from 'test/mocks/posts';
 import 'src/shared/modules/auth/guards/jwt-auth.guard';
 
 jest.mock('src/shared/modules/auth/guards/jwt-auth.guard', () => ({
@@ -69,6 +70,20 @@ describe('OrganizationsController', () => {
     it('should throw if OrganizationsService throws', async () => {
       mockOrganizationsService.findBoardsFromOrganization.mockRejectedValueOnce(new Error('error'));
       await expect(controller.findBoards('any-id')).rejects.toThrow(new Error('error'));
+    });
+  });
+
+  describe('findPostsFromOrganization', () => {
+    it('should return posts from an organization', async () => {
+      mockOrganizationsService.findPostsFromOrganization.mockResolvedValueOnce([mockPostEntity]);
+
+      const result = await controller.findPostsFromOrganization('any-org-id');
+      expect(result).toEqual({ data: [mockPostEntity] });
+    });
+
+    it('should throw if OrganizationsService throws', async () => {
+      mockOrganizationsService.findPostsFromOrganization.mockRejectedValueOnce(new Error('error'));
+      await expect(controller.findPostsFromOrganization('any-org-id')).rejects.toThrow(new Error('error'));
     });
   });
 });

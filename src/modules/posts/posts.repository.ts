@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
 import { Comment } from '../comments/entities/comment.entity';
 
@@ -92,5 +93,14 @@ export class PostsRepository {
           result.deletedAt,
         ),
     );
+  }
+
+  async update(postId: string, dto: UpdatePostDto) {
+    await this.prisma.post.update({
+      where: { id: postId },
+      data: {
+        ...dto,
+      },
+    });
   }
 }

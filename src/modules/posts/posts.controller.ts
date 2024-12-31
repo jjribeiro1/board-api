@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
@@ -44,5 +45,13 @@ export class PostsController {
     return {
       data: comments,
     };
+  }
+
+  /**
+   * Update Post
+   */
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
+    await this.postsService.update(id, dto);
   }
 }

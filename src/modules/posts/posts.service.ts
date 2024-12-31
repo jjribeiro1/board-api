@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -22,5 +23,10 @@ export class PostsService {
   async findCommentsFromPost(postId: string) {
     await this.findOne(postId);
     return this.postsRepository.findCommentsFromPost(postId);
+  }
+
+  async update(postId: string, dto: UpdatePostDto) {
+    await this.findOne(postId);
+    await this.postsRepository.update(postId, dto);
   }
 }

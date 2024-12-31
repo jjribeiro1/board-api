@@ -95,6 +95,11 @@ export class OrganizationsRepository {
 
   async findPostsFromOrganization(organizationId: string) {
     const results = await this.prisma.post.findMany({
+      orderBy: {
+        status: {
+          order: 'asc',
+        },
+      },
       where: {
         board: {
           organizationId: organizationId,
@@ -115,6 +120,7 @@ export class OrganizationsRepository {
             id: true,
             name: true,
             color: true,
+            order: true,
           },
         },
         tags: {

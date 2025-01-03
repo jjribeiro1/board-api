@@ -96,11 +96,21 @@ export class PostsRepository {
   }
 
   async update(postId: string, dto: UpdatePostDto) {
-    await this.prisma.post.update({
+    const updatedPost = await this.prisma.post.update({
       where: { id: postId },
       data: {
         ...dto,
       },
+      include: {
+        status: {
+          select: {
+            id: true,
+            name: true,
+            order: true,
+          },
+        },
+      },
     });
+    return updatedPost;
   }
 }

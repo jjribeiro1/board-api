@@ -27,6 +27,6 @@ export class PostsService {
 
   async update(postId: string, dto: UpdatePostDto) {
     await this.findOne(postId);
-    await this.postsRepository.update(postId, dto);
+    return this.postsRepository.update(postId, dto);
   }
 }

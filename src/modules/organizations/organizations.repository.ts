@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { Organization } from './entities/organization.entity';
 
 @Injectable()
@@ -93,7 +94,7 @@ export class OrganizationsRepository {
     return result;
   }
 
-  async findPostsFromOrganization(organizationId: string) {
+  async findPostsFromOrganization(organizationId: string, filters: ListPostsQueryDto) {
     const results = await this.prisma.post.findMany({
       orderBy: {
         status: {
@@ -104,6 +105,7 @@ export class OrganizationsRepository {
         board: {
           organizationId: organizationId,
         },
+        statusId: filters.status,
       },
       select: {
         id: true,

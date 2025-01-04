@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { OrganizationsRepository } from './organizations.repository';
 
 @Injectable()
@@ -24,7 +25,7 @@ export class OrganizationsService {
     return this.organizationsRepository.findBoardsFromOrganization(organizationId);
   }
 
-  async findPostsFromOrganization(organizationId: string) {
-    return this.organizationsRepository.findPostsFromOrganization(organizationId);
+  async findPostsFromOrganization(organizationId: string, filters: ListPostsQueryDto) {
+    return this.organizationsRepository.findPostsFromOrganization(organizationId, filters);
   }
 }

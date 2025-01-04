@@ -1,10 +1,11 @@
-import { Controller, Post, Body, UseGuards, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Param, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
 import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { User } from 'src/modules/users/entities/user.entity';
+import { ListPostsQueryDto } from './dto/list-post-query.dto';
 
 @ApiBearerAuth()
 @ApiTags('organizations')
@@ -54,8 +55,8 @@ export class OrganizationsController {
    */
   @UseGuards(JwtAuthGuard)
   @Get(':id/posts')
-  async findPostsFromOrganization(@Param('id') orgId: string) {
-    const posts = await this.organizationsService.findPostsFromOrganization(orgId);
+  async findPostsFromOrganization(@Param('id') orgId: string, @Query() query: ListPostsQueryDto) {
+    const posts = await this.organizationsService.findPostsFromOrganization(orgId, query);
     return {
       data: posts,
     };

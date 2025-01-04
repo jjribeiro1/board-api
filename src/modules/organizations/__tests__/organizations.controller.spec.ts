@@ -77,13 +77,13 @@ describe('OrganizationsController', () => {
     it('should return posts from an organization', async () => {
       mockOrganizationsService.findPostsFromOrganization.mockResolvedValueOnce([mockPostEntity]);
 
-      const result = await controller.findPostsFromOrganization('any-org-id');
+      const result = await controller.findPostsFromOrganization('any-org-id', {});
       expect(result).toEqual({ data: [mockPostEntity] });
     });
 
     it('should throw if OrganizationsService throws', async () => {
       mockOrganizationsService.findPostsFromOrganization.mockRejectedValueOnce(new Error('error'));
-      await expect(controller.findPostsFromOrganization('any-org-id')).rejects.toThrow(new Error('error'));
+      await expect(controller.findPostsFromOrganization('any-org-id', {})).rejects.toThrow(new Error('error'));
     });
   });
 });

@@ -94,13 +94,15 @@ describe('OrganizationsService', () => {
   describe('findPostsFromOrganization', () => {
     it('should return posts for a given organization', async () => {
       mockOrganizationsRepository.findPostsFromOrganization.mockResolvedValueOnce([mockPostEntity]);
-      const result = await organizationsService.findPostsFromOrganization('any-org-id');
+      const result = await organizationsService.findPostsFromOrganization('any-org-id', {});
       expect(result).toEqual([mockPostEntity]);
     });
 
     it('should throw if OrganizationsRepository throws', async () => {
       mockOrganizationsRepository.findPostsFromOrganization.mockRejectedValueOnce(new Error('error'));
-      await expect(organizationsService.findPostsFromOrganization('any-org-id')).rejects.toThrow(new Error('error'));
+      await expect(organizationsService.findPostsFromOrganization('any-org-id', {})).rejects.toThrow(
+        new Error('error'),
+      );
     });
   });
 });

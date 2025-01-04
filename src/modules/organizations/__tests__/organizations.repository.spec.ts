@@ -80,7 +80,7 @@ describe('OrganizationsRepository', () => {
       ];
       mockCtx.prisma.post.findMany.mockResolvedValueOnce(mockPosts as any);
 
-      const result = await repository.findPostsFromOrganization('any-org-id');
+      const result = await repository.findPostsFromOrganization('any-org-id', {});
       expect(result).toEqual(mockPosts);
     });
   });

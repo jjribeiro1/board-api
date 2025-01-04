@@ -3,6 +3,7 @@ import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { Organization } from './entities/organization.entity';
+import { Board } from '../boards/entities/board.entity';
 
 @Injectable()
 export class OrganizationsRepository {
@@ -67,31 +68,28 @@ export class OrganizationsRepository {
   }
 
   async findBoardsFromOrganization(organizationId: string) {
-    const result = await this.prisma.board.findMany({
+    const results = await this.prisma.board.findMany({
       where: {
         organizationId,
-      },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        isPrivate: true,
-        isLocked: true,
-        organizationId: true,
-        createdAt: true,
-        author: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        _count: {
-          select: { posts: true },
-        },
+        deletedAt: null,
       },
     });
 
-    return result;
+    return results.map(
+      (board) =>
+        new Board(
+          board.id,
+          board.title,
+          board.description,
+          board.isPrivate,
+          board.isLocked,
+          board.organizationId,
+          board.authorId,
+          board.createdAt,
+          board.updatedAt,
+          board.deletedAt,
+        ),
+    );
   }
 
   async findPostsFromOrganization(organizationId: string, filters: ListPostsQueryDto) {

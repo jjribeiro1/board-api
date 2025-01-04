@@ -101,6 +101,7 @@ export class OrganizationsRepository {
       },
       where: {
         board: {
+          id: filters.board,
           organizationId: organizationId,
         },
         statusId: filters.status,

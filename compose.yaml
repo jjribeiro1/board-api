@@ -2,7 +2,6 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: board-api-postgres
-    restart: always
     ports:
       - 5432:5432
     env_file:

@@ -1,8 +1,7 @@
-import { Controller, Post, Body, UseGuards, Get, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
-import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { User } from 'src/modules/users/entities/user.entity';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
@@ -17,7 +16,6 @@ export class OrganizationsController {
    *
    * Create new organization and returns the ID
    */
-  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() dto: CreateOrganizationDto, @LoggedUser() user: User) {
     return this.organizationsService.create(dto, user.id);
@@ -27,7 +25,6 @@ export class OrganizationsController {
    *
    * Returns an organization by ID
    */
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const organization = await this.organizationsService.findOne(id);
@@ -40,7 +37,6 @@ export class OrganizationsController {
    *
    * Returns all boards from an organization
    */
-  @UseGuards(JwtAuthGuard)
   @Get(':id/boards')
   async findBoards(@Param('id') id: string) {
     const boards = await this.organizationsService.findBoardsFromOrganization(id);
@@ -53,7 +49,6 @@ export class OrganizationsController {
    *
    * Returns posts from an Organization
    */
-  @UseGuards(JwtAuthGuard)
   @Get(':id/posts')
   async findPostsFromOrganization(@Param('id') orgId: string, @Query() query: ListPostsQueryDto) {
     const posts = await this.organizationsService.findPostsFromOrganization(orgId, query);

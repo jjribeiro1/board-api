@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Request, Response } from 'express';
 import { COOKIE_JWT_ACCESS_TOKEN_EXPIRES_IN, COOKIE_JWT_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
+import { Public } from 'src/common/decorators/is-public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -15,6 +15,7 @@ export class AuthController {
    *
    * Generate jwt access and refresh token
    */
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   async signIn(@Res({ passthrough: true }) res: Response, @Body() dto: SignInDto) {
@@ -40,6 +41,7 @@ export class AuthController {
    *
    * Endpoint to generate new access token
    */
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
   async refresh(@Req() req: Request) {
@@ -56,7 +58,6 @@ export class AuthController {
    * Returns logged user profile
    */
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Get('/me')
   getProfile(@Req() req) {
     return req.user;

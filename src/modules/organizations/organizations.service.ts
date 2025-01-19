@@ -1,14 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { EVENTS } from 'src/constants/events';
+import { OrganizationCreatedEventDto } from '../events/dto/organization-created-event.dto';
 import { OrganizationsRepository } from './organizations.repository';
 
 @Injectable()
 export class OrganizationsService {
-  constructor(private readonly organizationsRepository: OrganizationsRepository) {}
+  constructor(
+    private readonly organizationsRepository: OrganizationsRepository,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   async create(dto: CreateOrganizationDto, userId: string) {
-    return this.organizationsRepository.create(dto, userId);
+    const createdOrganizationId = await this.organizationsRepository.create(dto, userId);
+    this.eventEmitter.emit(EVENTS.organization.created, new OrganizationCreatedEventDto(createdOrganizationId, userId));
+    return createdOrganizationId;
   }
 
   async findOne(organizationId: string) {

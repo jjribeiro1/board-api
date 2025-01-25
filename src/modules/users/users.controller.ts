@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
+import { Public } from 'src/common/decorators/is-public.decorator';
 
 @ApiTags('users')
 @Controller('users')
@@ -12,6 +13,7 @@ export class UsersController {
    *
    * Create new user and returns the ID
    */
+  @Public()
   @Post()
   async create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);

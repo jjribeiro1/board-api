@@ -21,6 +21,20 @@ export class CommentsRepository {
   async findOne(commendId: string) {
     const result = await this.prisma.comment.findUnique({
       where: { id: commendId, deletedAt: null },
+      select: {
+        id: true,
+        content: true,
+        postId: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     if (!result) {
@@ -30,7 +44,8 @@ export class CommentsRepository {
     return new Comment(
       result.id,
       result.content,
-      result.authorId,
+      result.author.id,
+      result.author.name,
       result.postId,
       result.createdAt,
       result.updatedAt,

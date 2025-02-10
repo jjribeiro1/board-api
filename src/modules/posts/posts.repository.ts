@@ -87,6 +87,7 @@ export class PostsRepository {
           result.id,
           result.content,
           result.author.id,
+          result.author.name,
           result.postId,
           result.createdAt,
           result.updatedAt,

@@ -23,7 +23,7 @@ export class CommentsService {
     const comment = await this.findOne(commentId);
 
     if (userId !== comment.authorId) {
-      throw new ForbiddenException();
+      throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
     }
 
     await this.commentsRepository.update(comment.id, dto);
@@ -31,10 +31,9 @@ export class CommentsService {
 
   async delete(commentId: string, userId: string) {
     const comment = await this.findOne(commentId);
-    if (userId === comment.authorId) {
-      return this.commentsRepository.delete(commentId);
+    if (userId !== comment.authorId) {
+      throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
     }
-
-    throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
+    return this.commentsRepository.delete(commentId);
   }
 }

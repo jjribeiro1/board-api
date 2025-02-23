@@ -61,6 +61,7 @@ export class PostsRepository {
   async findCommentsFromPost(postId: string) {
     const results = await this.prisma.comment.findMany({
       where: {
+        deletedAt: null,
         post: {
           id: postId,
         },

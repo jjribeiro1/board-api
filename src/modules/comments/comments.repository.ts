@@ -59,4 +59,11 @@ export class CommentsRepository {
       data: { content: dto.content },
     });
   }
+
+  async delete(commentId: string) {
+    await this.prisma.comment.update({
+      where: { id: commentId },
+      data: { deletedAt: new Date() },
+    });
+  }
 }

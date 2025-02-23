@@ -32,7 +32,7 @@ export class CommentsService {
   async delete(commentId: string, userId: string) {
     const comment = await this.findOne(commentId);
     if (userId === comment.authorId) {
-      await this.commentsRepository.delete(commentId);
+      return this.commentsRepository.delete(commentId);
     }
 
     throw new ForbiddenException('Usuário sem permissão para realizar esta ação');

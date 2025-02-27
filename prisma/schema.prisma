@@ -19,6 +19,22 @@ model User {
   posts         Post[]
   boards        Board[]
   comments      Comment[]
+  session       Session[]
+}
+
+model Session {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  refreshToken String    @unique @map("refresh_token")
+  expiresAt    DateTime  @map("expires_at") @db.Timestamptz
+  userAgent    String?   @map("user_agent")
+  device       String?   @map("device")
+  ipAddress    String?   @map("ip_address")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model UserOrganization {

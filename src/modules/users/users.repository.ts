@@ -14,8 +14,9 @@ export class UsersRepository {
 
   async findOne(id: string) {
     const result = await this.prisma.user.findUnique({ where: { id }, include: { organizations: true } });
-    const userOrganizations = result?.organizations;
-    const organizationIds = userOrganizations?.map((value) => value.organizationId);
+    const organizations = result?.organizations
+      ? result.organizations.map((data) => ({ organizationId: data.organizationId, role: data.role }))
+      : [];
     if (!result) {
       return null;
     }
@@ -25,7 +26,7 @@ export class UsersRepository {
       result.name,
       result.email,
       result.password,
-      organizationIds ?? [],
+      organizations,
       result.createdAt,
       result.updatedAt,
       null,

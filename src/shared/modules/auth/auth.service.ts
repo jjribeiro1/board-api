@@ -5,7 +5,9 @@ import { SignInDto } from './dto/sign-in.dto';
 import { UsersRepository } from 'src/modules/users/users.repository';
 import { CryptoService } from 'src/shared/modules/crypto/crypto.service';
 import { JwtUserPayload } from 'src/common/types/jwt-payload';
-import { JWT_REFRESH_TOKEN_EXPIRES_IN, JWT_ACCESS_TOKEN_EXPIRES_IN } from 'src/constants';
+import { ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
+import { PrismaService } from '../database/prisma/prisma.service';
+import dayjs from '../../../utils/dayjs';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +16,7 @@ export class AuthService {
     private readonly usersRepository: UsersRepository,
     private readonly cryptoService: CryptoService,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async signIn(dto: SignInDto) {
@@ -21,17 +24,17 @@ export class AuthService {
     const user = await this.validateUser(email, password);
     const tokenPayload = {
       sub: user.id,
-      email: user.email,
     };
-
     const accessToken = await this.generateToken(tokenPayload, {
       privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
-      expiresIn: JWT_ACCESS_TOKEN_EXPIRES_IN,
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
     const refreshToken = await this.generateToken(tokenPayload, {
-      privateKey: this.configService.get<string>('REFRESH_TOKEN_PRIVATE_KEY'),
-      expiresIn: JWT_REFRESH_TOKEN_EXPIRES_IN,
+      privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
+      expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
+
+    await this.createSession(refreshToken, user.id);
 
     return {
       accessToken,
@@ -39,7 +42,49 @@ export class AuthService {
     };
   }
 
-  async validateUser(email: string, password: string) {
+  async refreshToken(token: string) {
+    await this.verifyToken(token);
+    const { session, user } = await this.getSession(token);
+    if (Date.now() >= session.expiresAt.getTime()) {
+      await this.prisma.session.delete({ where: { refreshToken: token } });
+      throw new UnauthorizedException('Sessão inválida');
+    }
+
+    const accessToken = await this.generateToken(
+      { sub: user.id },
+      {
+        privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
+        expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+      },
+    );
+    const refreshToken = await this.generateToken(
+      { sub: user.id },
+      {
+        privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
+        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+      },
+    );
+
+    await this.prisma.session.update({
+      where: { id: session.id, userId: user.id },
+      data: { refreshToken, expiresAt: dayjs().add(REFRESH_TOKEN_EXPIRES_IN, 'seconds').toDate() },
+    });
+
+    return { accessToken, refreshToken };
+  }
+
+  async extractUserFromAccessToken(token: string) {
+    const payload: JwtUserPayload = await this.verifyToken(token, {
+      publicKey: this.configService.get<string>('ACCESS_TOKEN_PRIVATE_KEY'),
+    });
+    const user = await this.usersRepository.findOne(payload.sub);
+    if (!user) {
+      throw new UnauthorizedException('Não autorizado');
+    }
+    return user;
+  }
+
+  private async validateUser(email: string, password: string) {
     const user = await this.usersRepository.findByEmail(email);
 
     if (!user) {
@@ -55,41 +100,41 @@ export class AuthService {
     return user;
   }
 
-  async extractUserFromToken(token: string) {
-    const payload: JwtUserPayload = await this.verifyToken(token, {
-      publicKey: this.configService.get<string>('ACCESS_TOKEN_PRIVATE_KEY'),
+  private async createSession(token: string, userId: string) {
+    await this.prisma.session.create({
+      data: {
+        userId,
+        refreshToken: token,
+        expiresAt: dayjs().add(REFRESH_TOKEN_EXPIRES_IN, 'seconds').toDate(),
+      },
     });
-    const user = await this.usersRepository.findOne(payload.sub);
-    if (!user) {
-      throw new UnauthorizedException('Não autorizado');
-    }
-    return user;
   }
 
-  async refreshToken(refresh: string) {
-    if (!refresh) {
-      throw new UnauthorizedException();
-    }
-
-    const refreshTokenPayload: JwtUserPayload = await this.verifyToken(refresh, {
-      publicKey: this.configService.get('REFRESH_TOKEN_PUBLIC_KEY'),
+  private async getSession(token: string) {
+    const session = await this.prisma.session.findUnique({
+      where: { refreshToken: token },
+      select: {
+        id: true,
+        refreshToken: true,
+        expiresAt: true,
+        device: true,
+        ipAddress: true,
+        userAgent: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
-    const user = await this.usersRepository.findOne(refreshTokenPayload.sub);
-
-    if (!user) {
-      throw new UnauthorizedException('Não autorizado');
+    if (!session) {
+      throw new UnauthorizedException('Sessão inválida');
     }
 
-    const newAccessToken = await this.generateToken(
-      { sub: user.id, email: user.email },
-      {
-        privateKey: this.configService.get<string>('ACCESS_TOKEN_PRIVATE_KEY'),
-        expiresIn: JWT_ACCESS_TOKEN_EXPIRES_IN,
-      },
-    );
-
-    return newAccessToken;
+    return { session, user: session.user };
   }
 
   private async generateToken(payload: any, options?: JwtSignOptions) {

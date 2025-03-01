@@ -43,7 +43,9 @@ export class AuthService {
   }
 
   async refreshToken(token: string) {
-    await this.verifyToken(token);
+    await this.verifyToken(token, {
+      publicKey: this.configService.get<string>('REFRESH_TOKEN_PUBLIC_KEY'),
+    });
     const { session, user } = await this.getSession(token);
     if (Date.now() >= session.expiresAt.getTime()) {
       await this.prisma.session.delete({ where: { refreshToken: token } });
@@ -75,7 +77,7 @@ export class AuthService {
 
   async extractUserFromAccessToken(token: string) {
     const payload: JwtUserPayload = await this.verifyToken(token, {
-      publicKey: this.configService.get<string>('ACCESS_TOKEN_PRIVATE_KEY'),
+      publicKey: this.configService.get<string>('ACCESS_TOKEN_PUBLIC_KEY'),
     });
     const user = await this.usersRepository.findOne(payload.sub);
     if (!user) {

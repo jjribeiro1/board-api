@@ -35,6 +35,8 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
     });
+
+    return { accessToken, refreshToken };
   }
 
   /**
@@ -62,6 +64,8 @@ export class AuthController {
       sameSite: 'lax',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
     });
+
+    return { accessToken, refreshToken };
   }
 
   /**

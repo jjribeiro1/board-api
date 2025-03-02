@@ -51,7 +51,7 @@ model UserOrganization {
 model Organization {
   id                       String             @id @default(uuid()) @db.Uuid
   name                     String             @db.VarChar(140)
-  slug                     String?
+  slug                     String
   logoUrl                  String?            @map("logo_url")
   createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt                DateTime           @updatedAt @map("updated_at") @db.Timestamptz

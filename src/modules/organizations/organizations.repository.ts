@@ -9,12 +9,13 @@ import { Board } from '../boards/entities/board.entity';
 export class OrganizationsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateOrganizationDto, userId: string) {
+  async create(dto: CreateOrganizationDto, slug: string, userId: string) {
     const { name, logoUrl } = dto;
 
     const result = await this.prisma.organization.create({
       data: {
         name,
+        slug,
         logoUrl,
         members: {
           create: {

@@ -5,6 +5,7 @@ import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { EVENTS } from 'src/constants/events';
 import { OrganizationCreatedEventDto } from '../events/dto/organization-created-event.dto';
 import { OrganizationsRepository } from './organizations.repository';
+import { slugify } from 'src/utils/slug';
 
 @Injectable()
 export class OrganizationsService {
@@ -14,7 +15,8 @@ export class OrganizationsService {
   ) {}
 
   async create(dto: CreateOrganizationDto, userId: string) {
-    const createdOrganizationId = await this.organizationsRepository.create(dto, userId);
+    const slug = slugify(dto.name);
+    const createdOrganizationId = await this.organizationsRepository.create(dto, slug, userId);
     this.eventEmitter.emit(EVENTS.organization.created, new OrganizationCreatedEventDto(createdOrganizationId, userId));
     return createdOrganizationId;
   }

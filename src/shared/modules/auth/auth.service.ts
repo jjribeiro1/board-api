@@ -24,6 +24,7 @@ export class AuthService {
     const user = await this.validateUser(email, password);
     const tokenPayload = {
       sub: user.id,
+      organizations: user.organizations,
     };
     const accessToken = await this.generateToken(tokenPayload, {
       privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
@@ -47,25 +48,23 @@ export class AuthService {
       publicKey: this.configService.get<string>('REFRESH_TOKEN_PUBLIC_KEY'),
     });
     const { session, user } = await this.getSession(token);
+    const tokenPayload = {
+      sub: user.id,
+      organizations: user.organizations,
+    };
     if (Date.now() >= session.expiresAt.getTime()) {
       await this.prisma.session.delete({ where: { refreshToken: token } });
       throw new UnauthorizedException('Sessão inválida');
     }
 
-    const accessToken = await this.generateToken(
-      { sub: user.id },
-      {
-        privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
-        expiresIn: ACCESS_TOKEN_EXPIRES_IN,
-      },
-    );
-    const refreshToken = await this.generateToken(
-      { sub: user.id },
-      {
-        privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
-        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
-      },
-    );
+    const accessToken = await this.generateToken(tokenPayload, {
+      privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+    });
+    const refreshToken = await this.generateToken(tokenPayload, {
+      privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
+      expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+    });
 
     await this.prisma.session.update({
       where: { id: session.id, userId: user.id },
@@ -127,6 +126,12 @@ export class AuthService {
             id: true,
             name: true,
             email: true,
+            organizations: {
+              select: {
+                organizationId: true,
+                role: true,
+              },
+            },
           },
         },
       },

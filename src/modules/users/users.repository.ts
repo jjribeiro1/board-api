@@ -34,8 +34,10 @@ export class UsersRepository {
   }
 
   async findByEmail(email: string) {
-    const result = await this.prisma.user.findUnique({ where: { email } });
-
+    const result = await this.prisma.user.findUnique({ where: { email }, include: { organizations: true } });
+    const organizations = result?.organizations
+      ? result.organizations.map((data) => ({ organizationId: data.organizationId, role: data.role }))
+      : [];
     if (!result) {
       return null;
     }
@@ -45,7 +47,7 @@ export class UsersRepository {
       result.name,
       result.email,
       result.password,
-      [],
+      organizations,
       result.createdAt,
       result.updatedAt,
       null,

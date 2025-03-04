@@ -14,12 +14,14 @@ model User {
   password      String             @db.VarChar(200)
   createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt     DateTime?          @db.Timestamptz
+  deletedAt     DateTime?          @map("deleted_at") @db.Timestamptz
   organizations UserOrganization[]
   posts         Post[]
   boards        Board[]
   comments      Comment[]
   session       Session[]
+
+  @@map("user")
 }
 
 model Session {
@@ -28,13 +30,14 @@ model Session {
   refreshToken String   @unique @map("refresh_token")
   expiresAt    DateTime @map("expires_at") @db.Timestamptz
   userAgent    String?  @map("user_agent")
-  device       String?  @map("device")
+  device       String?
   ipAddress    String?  @map("ip_address")
   createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@map("session")
 }
 
 model UserOrganization {
@@ -46,6 +49,7 @@ model UserOrganization {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([userId, organizationId])
+  @@map("user_organization")
 }
 
 model Organization {
@@ -60,6 +64,8 @@ model Organization {
   members                  UserOrganization[]
   organizationCustomStatus Status[]
   organizationCustomTags   Tag[]
+
+  @@map("organization")
 }
 
 model Board {
@@ -76,26 +82,30 @@ model Board {
   author         User         @relation(fields: [authorId], references: [id])
   authorId       String       @map("author_id") @db.Uuid
   posts          Post[]
+
+  @@map("board")
 }
 
 model Post {
-  id          String     @id @default(uuid()) @db.Uuid
-  title       String     @db.VarChar(200)
-  description String     @db.VarChar(300)
-  isPrivate   Boolean    @default(false) @map("is_private")
-  isPinned    Boolean    @default(false) @map("is_pinned")
-  isLocked    Boolean    @default(false) @map("is_locked")
-  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt   DateTime?  @map("deleted_at") @db.Timestamptz
-  board       Board      @relation(fields: [boardId], references: [id])
-  boardId     String     @map("board_id") @db.Uuid
-  author      User       @relation(fields: [authorId], references: [id])
-  authorId    String     @map("author_id") @db.Uuid
-  status      Status     @relation(fields: [statusId], references: [id])
-  statusId    String     @map("status_id") @db.Uuid
-  tags        PostTags[]
+  id          String    @id @default(uuid()) @db.Uuid
+  title       String    @db.VarChar(200)
+  description String    @db.VarChar(300)
+  isPrivate   Boolean   @default(false) @map("is_private")
+  isPinned    Boolean   @default(false) @map("is_pinned")
+  isLocked    Boolean   @default(false) @map("is_locked")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz
+  board       Board     @relation(fields: [boardId], references: [id])
+  boardId     String    @map("board_id") @db.Uuid
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String    @map("author_id") @db.Uuid
+  status      Status    @relation(fields: [statusId], references: [id])
+  statusId    String    @map("status_id") @db.Uuid
+  tags        PostTag[]
   comments    Comment[]
+
+  @@map("post")
 }
 
 model Comment {
@@ -108,15 +118,18 @@ model Comment {
   authorId  String    @map("author_id") @db.Uuid
   post      Post      @relation(fields: [postId], references: [id])
   postId    String    @map("post_id") @db.Uuid
+
+  @@map("comment")
 }
 
-model PostTags {
+model PostTag {
   postId String @map("post_id") @db.Uuid
   tagId  String @map("tag_id") @db.Uuid
   post   Post   @relation(fields: [postId], references: [id])
   tag    Tag    @relation(fields: [tagId], references: [id])
 
   @@id([postId, tagId])
+  @@map("post_tag")
 }
 
 model Tag {
@@ -127,9 +140,11 @@ model Tag {
   createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz
-  posts           PostTags[]
+  posts           PostTag[]
   organization    Organization? @relation(fields: [organizationId], references: [id])
   organizationId  String?       @map("organization_id") @db.Uuid
+
+  @@map("tag")
 }
 
 model Status {
@@ -146,6 +161,7 @@ model Status {
   organizationId  String?       @map("organization_id") @db.Uuid
 
   @@unique([organizationId, name])
+  @@map("status")
 }
 
 enum Role {

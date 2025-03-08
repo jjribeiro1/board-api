@@ -59,6 +59,7 @@ export class BoardsRepository {
         isPinned: true,
         isPrivate: true,
         description: true,
+        createdAt: true,
         author: {
           select: {
             id: true,

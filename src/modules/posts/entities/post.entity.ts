@@ -8,10 +8,17 @@ export class Post {
     readonly isLocked: boolean,
     readonly boardId: string,
     readonly authorId: string,
-    readonly statusId: string,
+    readonly status: Status,
     readonly tagsId: string[],
     readonly createdAt: Date,
     readonly updatedAt: Date,
     readonly deletedAt: Date | null,
   ) {}
 }
+
+type Status = {
+  id: string;
+  name: string;
+  color: string;
+  order: number | null;
+};

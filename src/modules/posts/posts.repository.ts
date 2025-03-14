@@ -31,9 +31,21 @@ export class PostsRepository {
     const result = await this.prisma.post.findUnique({
       where: {
         id: postId,
+        deletedAt: null,
       },
-      include: {
-        tags: true,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        isPrivate: true,
+        isPinned: true,
+        isLocked: true,
+        boardId: true,
+        authorId: true,
+        status: { select: { id: true, name: true, color: true, order: true } },
+        tags: { select: { tagId: true } },
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -50,7 +62,7 @@ export class PostsRepository {
       result.isLocked,
       result.boardId,
       result.authorId,
-      result.statusId,
+      result.status,
       result.tags.map((data) => data.tagId),
       result.createdAt,
       result.updatedAt,

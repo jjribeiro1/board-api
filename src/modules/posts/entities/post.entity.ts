@@ -7,7 +7,7 @@ export class Post {
     readonly isPinned: boolean,
     readonly isLocked: boolean,
     readonly boardId: string,
-    readonly authorId: string,
+    readonly author: Author,
     readonly status: Status,
     readonly tagsId: string[],
     readonly createdAt: Date,
@@ -15,6 +15,11 @@ export class Post {
     readonly deletedAt: Date | null,
   ) {}
 }
+
+type Author = {
+  id: string;
+  name: string;
+};
 
 type Status = {
   id: string;

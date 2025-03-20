@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class PostsService {
@@ -28,5 +29,20 @@ export class PostsService {
   async update(postId: string, dto: UpdatePostDto) {
     await this.findOne(postId);
     return this.postsRepository.update(postId, dto);
+  }
+
+  async remove(postId: string, user: User) {
+    await this.verifyIfUserCanRemovePost(postId, user);
+    await this.postsRepository.delete(postId);
+  }
+
+  async verifyIfUserCanRemovePost(postId: string, user: User) {
+    const post = await this.findOne(postId);
+    if (post.author.id !== user.id) {
+      throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
+    }
+    if (!user.organizations.some((org) => org.organizationId === post.organizationId && org.role === 'OWNER')) {
+      throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
+    }
   }
 }

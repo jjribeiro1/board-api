@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -50,6 +50,7 @@ export class PostsController {
   /**
    * Update Post
    */
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
     const updatedPost = await this.postsService.update(id, dto);
@@ -58,5 +59,14 @@ export class PostsController {
         post: updatedPost,
       },
     };
+  }
+
+  /**
+   * Delete Post
+   */
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async remove(@Param('id') id: string, @LoggedUser() user: User) {
+    await this.postsService.remove(id, user);
   }
 }

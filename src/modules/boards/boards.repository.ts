@@ -51,6 +51,7 @@ export class BoardsRepository {
     const result = await this.prisma.post.findMany({
       where: {
         boardId,
+        deletedAt: null,
       },
       select: {
         id: true,

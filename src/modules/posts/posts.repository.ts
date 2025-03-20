@@ -41,6 +41,11 @@ export class PostsRepository {
         isPinned: true,
         isLocked: true,
         boardId: true,
+        board: {
+          select: {
+            organizationId: true,
+          },
+        },
         author: { select: { id: true, name: true } },
         status: { select: { id: true, name: true, color: true, order: true } },
         tags: { select: { tagId: true } },
@@ -61,6 +66,7 @@ export class PostsRepository {
       result.isPinned,
       result.isLocked,
       result.boardId,
+      result.board.organizationId,
       result.author,
       result.status,
       result.tags.map((data) => data.tagId),
@@ -126,5 +132,9 @@ export class PostsRepository {
       },
     });
     return updatedPost;
+  }
+
+  async delete(postId: string) {
+    await this.prisma.post.update({ where: { id: postId }, data: { deletedAt: new Date() } });
   }
 }

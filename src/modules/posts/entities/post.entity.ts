@@ -7,6 +7,7 @@ export class Post {
     readonly isPinned: boolean,
     readonly isLocked: boolean,
     readonly boardId: string,
+    readonly organizationId: string,
     readonly author: Author,
     readonly status: Status,
     readonly tagsId: string[],

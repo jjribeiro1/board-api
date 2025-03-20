@@ -101,11 +101,12 @@ export class OrganizationsRepository {
         },
       },
       where: {
+        deletedAt: null,
+        statusId: filters.status,
         board: {
           id: filters.board,
           organizationId: organizationId,
         },
-        statusId: filters.status,
       },
       select: {
         id: true,

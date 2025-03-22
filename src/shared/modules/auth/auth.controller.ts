@@ -36,7 +36,7 @@ export class AuthController {
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
     });
 
-    return { accessToken, refreshToken };
+    return;
   }
 
   /**

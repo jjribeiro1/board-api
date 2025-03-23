@@ -48,15 +48,16 @@ export class AuthService {
       publicKey: this.configService.get<string>('REFRESH_TOKEN_PUBLIC_KEY'),
     });
     const { session, user } = await this.getSession(token);
+
+    if (!session || session.expiresAt < new Date()) {
+      await this.prisma.session.delete({ where: { refreshToken: token } });
+      throw new UnauthorizedException('Sessão inválida ou expirada');
+    }
+
     const tokenPayload = {
       sub: user.id,
       organizations: user.organizations,
     };
-    if (Date.now() >= session.expiresAt.getTime()) {
-      await this.prisma.session.delete({ where: { refreshToken: token } });
-      throw new UnauthorizedException('Sessão inválida');
-    }
-
     const accessToken = await this.generateToken(tokenPayload, {
       privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
@@ -78,10 +79,18 @@ export class AuthService {
     const payload: JwtUserPayload = await this.verifyToken(token, {
       publicKey: this.configService.get<string>('ACCESS_TOKEN_PUBLIC_KEY'),
     });
+    const session = await this.prisma.session.findFirst({
+      where: { userId: payload.sub },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (!session || session.expiresAt < new Date()) {
+      throw new UnauthorizedException('Sessão inválida ou expirada');
+    }
     const user = await this.usersRepository.findOne(payload.sub);
     if (!user) {
       throw new UnauthorizedException('Não autorizado');
     }
+
     return user;
   }
 

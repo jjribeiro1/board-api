@@ -1,0 +1,11 @@
+node_modules
+dist
+test
+.dockerignore
+.editorconfig
+.eslintrc
+.gitignore
+.prettierrc
+compose.yaml
+jest
+README.md 

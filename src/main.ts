@@ -31,6 +31,7 @@ async function bootstrap() {
     .setTitle('Feedback board api')
     .setDescription('Api to manage and collect user feedback')
     .setVersion('1.0')
+    .addTag('health')
     .addTag('auth')
     .addTag('users')
     .addTag('organizations')

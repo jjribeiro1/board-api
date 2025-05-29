@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { validate } from 'src/config/env.validation';
+import { AppController } from './app.controller';
 import { AuthModule } from './shared/modules/auth/auth.module';
 import { CryptoModule } from './shared/modules/crypto/crypto.module';
 import { PrismaModule } from './shared/modules/database/prisma/prisma.module';
@@ -29,5 +30,6 @@ import { EventsModule } from './modules/events/events.module';
     CommentsModule,
     StatusModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

@@ -72,7 +72,6 @@ export class BoardsRepository {
             id: true,
             name: true,
             color: true,
-            isSystemDefault: true,
           },
         },
       },

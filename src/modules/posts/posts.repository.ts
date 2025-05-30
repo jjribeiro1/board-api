@@ -47,7 +47,7 @@ export class PostsRepository {
           },
         },
         author: { select: { id: true, name: true } },
-        status: { select: { id: true, name: true, color: true, order: true } },
+        status: { select: { id: true, name: true, color: true } },
         tags: { select: { tagId: true } },
         createdAt: true,
         updatedAt: true,
@@ -126,7 +126,6 @@ export class PostsRepository {
           select: {
             id: true,
             name: true,
-            order: true,
           },
         },
       },

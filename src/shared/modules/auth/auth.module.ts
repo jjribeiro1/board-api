@@ -4,7 +4,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CryptoModule } from 'src/shared/modules/crypto/crypto.module';
 import { UsersModule } from 'src/modules/users/users.module';
 
 @Global()
@@ -23,7 +22,6 @@ import { UsersModule } from 'src/modules/users/users.module';
       },
     }),
     UsersModule,
-    CryptoModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, { provide: APP_GUARD, useClass: JwtAuthGuard }],

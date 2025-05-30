@@ -3,18 +3,17 @@ import { JwtService, JwtSignOptions, JwtVerifyOptions, TokenExpiredError } from 
 import { ConfigService } from '@nestjs/config';
 import { SignInDto } from './dto/sign-in.dto';
 import { UsersRepository } from 'src/modules/users/users.repository';
-import { CryptoService } from 'src/shared/modules/crypto/crypto.service';
 import { JwtUserPayload } from 'src/common/types/jwt-payload';
 import { ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
 import { PrismaService } from '../database/prisma/prisma.service';
 import dayjs from '../../../utils/dayjs';
+import { compareHash } from 'src/utils/hasher';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersRepository: UsersRepository,
-    private readonly cryptoService: CryptoService,
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
   ) {}
@@ -101,7 +100,7 @@ export class AuthService {
       throw new UnauthorizedException('Email e/ou senha incorretos');
     }
 
-    const passwordIsValid = await this.cryptoService.compareHash(password, user.password);
+    const passwordIsValid = await compareHash(password, user.password);
 
     if (!passwordIsValid) {
       throw new UnauthorizedException('Email e/ou senha incorretos');

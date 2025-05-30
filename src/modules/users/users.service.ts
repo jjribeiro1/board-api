@@ -1,14 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersRepository } from './users.repository';
-import { CryptoService } from 'src/shared/modules/crypto/crypto.service';
+import { hashData } from 'src/utils/hasher';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersRepository: UsersRepository,
-    private readonly cryptoService: CryptoService,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async create(dto: CreateUserDto) {
     const { email, name, password } = dto;
@@ -21,7 +18,7 @@ export class UsersService {
     return this.usersRepository.create({
       email,
       name,
-      password: await this.cryptoService.hasher(password, 10),
+      password: await hashData(password, 10),
     });
   }
 

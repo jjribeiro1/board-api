@@ -11,6 +11,7 @@ export class StatusRepository {
     const results = await this.prisma.status.findMany({
       where: {
         organizationId,
+        deletedAt: null,
       },
     });
     return results.map(

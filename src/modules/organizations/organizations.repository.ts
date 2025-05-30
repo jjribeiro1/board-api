@@ -95,6 +95,7 @@ export class OrganizationsRepository {
 
   async findPostsFromOrganization(organizationId: string, filters: ListPostsQueryDto) {
     const results = await this.prisma.post.findMany({
+      orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         deletedAt: null,
         statusId: filters.status,

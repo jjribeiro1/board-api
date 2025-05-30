@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { StatusRepository } from './status.repository';
-import { FromOrgOptions, ListStatusQueryDto } from './dto/list-status-query.dto';
 
 @Injectable()
 export class StatusService {
   constructor(private readonly statusRepository: StatusRepository) {}
-  async findAll(dto: ListStatusQueryDto, organizationId: string) {
-    const isFromOrg = dto.fromOrg === FromOrgOptions.true;
-    return this.statusRepository.getAllStatus(isFromOrg ? organizationId : null);
+  async findAll(organizationId: string) {
+    return this.statusRepository.getAllStatus(organizationId);
+  }
+
+  async createDefaultStatusForOrg(organizationId: string) {
+    const defaultStatus = ['Aberto', 'Em revisão', 'Planejado', 'Em progresso', 'Concluído', 'Cancelado'];
+    await this.statusRepository.createMany(defaultStatus.map((s) => ({ name: s, organizationId: organizationId })));
   }
 }

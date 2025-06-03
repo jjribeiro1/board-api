@@ -74,6 +74,11 @@ export class BoardsRepository {
             color: true,
           },
         },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
       },
     });
 

@@ -49,6 +49,7 @@ export class BoardsRepository {
 
   async findPostsFromBoard(boardId: string) {
     const result = await this.prisma.post.findMany({
+      orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         boardId,
         deletedAt: null,

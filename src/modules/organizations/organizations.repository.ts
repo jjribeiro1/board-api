@@ -108,6 +108,7 @@ export class OrganizationsRepository {
         id: true,
         title: true,
         isPinned: true,
+        description: true,
         createdAt: true,
         board: {
           select: {

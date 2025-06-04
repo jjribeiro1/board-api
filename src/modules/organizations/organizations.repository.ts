@@ -134,6 +134,12 @@ export class OrganizationsRepository {
             },
           },
         },
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         _count: {
           select: {
             comments: true,

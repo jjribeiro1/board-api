@@ -133,6 +133,11 @@ export class OrganizationsRepository {
             },
           },
         },
+        _count: {
+          select: {
+            comments: true,
+          },
+        },
       },
     });
 

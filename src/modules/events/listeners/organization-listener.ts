@@ -17,7 +17,7 @@ export class OrganizationEventsListener {
     await this.boardsService.create(
       {
         organizationId: payload.organizationId,
-        title: 'Feedback Board',
+        title: 'Novas funcionalidades',
         description: 'Como podemos melhorar nosso produto?',
       },
       payload.ownerId,

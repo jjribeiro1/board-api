@@ -142,7 +142,11 @@ export class OrganizationsRepository {
         },
         _count: {
           select: {
-            comments: true,
+            comments: {
+              where: {
+                deletedAt: null,
+              },
+            },
           },
         },
       },

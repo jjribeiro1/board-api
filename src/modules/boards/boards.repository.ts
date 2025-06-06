@@ -77,7 +77,11 @@ export class BoardsRepository {
         },
         _count: {
           select: {
-            comments: true,
+            comments: {
+              where: {
+                deletedAt: null,
+              },
+            },
           },
         },
       },

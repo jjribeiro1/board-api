@@ -1,4 +1,4 @@
-import { Role } from 'src/common/types/user-organization-role';
+import { OrganizationRole } from 'src/common/types/user-organization-role';
 
 export class Organization {
   constructor(
@@ -17,7 +17,7 @@ export class Organization {
 type Member = {
   id: string;
   userId: string;
-  role: Role;
+  role: OrganizationRole;
   organizationId: string;
 };
 

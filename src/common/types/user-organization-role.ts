@@ -1,7 +1,7 @@
-enum RoleOptions {
-  OWNER,
-  ADMIN,
-  MEMBER,
-}
+export const OrganizationRolesOptions = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER',
+} as const;
 
-export type Role = keyof typeof RoleOptions;
+export type OrganizationRole = keyof typeof OrganizationRolesOptions;

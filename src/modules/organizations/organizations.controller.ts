@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, ParseUUIDPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
@@ -26,7 +26,7 @@ export class OrganizationsController {
    * Returns an organization by ID
    */
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const organization = await this.organizationsService.findOne(id);
     return {
       data: organization,
@@ -38,7 +38,7 @@ export class OrganizationsController {
    * Returns all boards from an organization
    */
   @Get(':id/boards')
-  async findBoards(@Param('id') id: string) {
+  async findBoards(@Param('id', ParseUUIDPipe) id: string) {
     const boards = await this.organizationsService.findBoardsFromOrganization(id);
     return {
       data: boards,
@@ -50,7 +50,7 @@ export class OrganizationsController {
    * Returns posts from an Organization
    */
   @Get(':id/posts')
-  async findPostsFromOrganization(@Param('id') orgId: string, @Query() query: ListPostsQueryDto) {
+  async findPostsFromOrganization(@Param('id', ParseUUIDPipe) orgId: string, @Query() query: ListPostsQueryDto) {
     const posts = await this.organizationsService.findPostsFromOrganization(orgId, query);
     return {
       data: posts,

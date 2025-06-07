@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
-import { JwtAuthGuard } from 'src/shared/modules/auth/guards/jwt-auth.guard';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 
 @ApiTags('posts')
@@ -17,7 +16,6 @@ export class PostsController {
    * Create new Post and returns the ID
    */
   @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
   @Post('')
   async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {
     return this.postsService.create(dto, loggedUser.id);
@@ -50,7 +48,7 @@ export class PostsController {
   /**
    * Update Post
    */
-  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
     const updatedPost = await this.postsService.update(id, dto);
@@ -64,7 +62,7 @@ export class PostsController {
   /**
    * Delete Post
    */
-  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string, @LoggedUser() user: User) {
     await this.postsService.remove(id, user);

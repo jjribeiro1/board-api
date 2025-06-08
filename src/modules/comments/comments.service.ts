@@ -36,4 +36,8 @@ export class CommentsService {
     }
     return this.commentsRepository.delete(commentId);
   }
+
+  async findAuthorAndOrgIdFromComment(commendId: string) {
+    return this.commentsRepository.findAuthorAndOrgIdFromComment(commendId);
+  }
 }

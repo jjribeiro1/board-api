@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { User } from '../users/entities/user.entity';
+import { MutateCommentGuard } from './guards/comment.guard';
 
 @ApiBearerAuth()
 @ApiTags('comments')
@@ -25,6 +26,7 @@ export class CommentsController {
    *
    * Update the comment
    */
+  @UseGuards(MutateCommentGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateCommentDto, @LoggedUser() user: User) {
     return this.commentsService.update(id, dto, user.id);
@@ -33,6 +35,7 @@ export class CommentsController {
   /**
    * Delete the comment
    */
+  @UseGuards(MutateCommentGuard)
   @Delete(':id')
   async remove(@Param('id') id: string, @LoggedUser() user: User) {
     return this.commentsService.delete(id, user.id);

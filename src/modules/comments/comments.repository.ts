@@ -66,4 +66,31 @@ export class CommentsRepository {
       data: { deletedAt: new Date() },
     });
   }
+
+  async findAuthorAndOrgIdFromComment(commendId: string) {
+    const result = await this.prisma.comment.findUnique({
+      where: { id: commendId, deletedAt: null },
+      select: {
+        authorId: true,
+        post: {
+          select: {
+            board: {
+              select: {
+                organizationId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      authorId: result.authorId,
+      organizationId: result.post.board.organizationId,
+    };
+  }
 }

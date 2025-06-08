@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { MutatePostGuard } from './guards/post.guard';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -48,6 +49,7 @@ export class PostsController {
   /**
    * Update Post
    */
+  @UseGuards(MutatePostGuard)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
@@ -62,9 +64,10 @@ export class PostsController {
   /**
    * Delete Post
    */
+  @UseGuards(MutatePostGuard)
   @ApiBearerAuth()
   @Delete(':id')
-  async remove(@Param('id') id: string, @LoggedUser() user: User) {
-    await this.postsService.remove(id, user);
+  async remove(@Param('id') id: string) {
+    await this.postsService.remove(id);
   }
 }

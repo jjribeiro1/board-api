@@ -136,4 +136,27 @@ export class PostsRepository {
   async delete(postId: string) {
     await this.prisma.post.update({ where: { id: postId }, data: { deletedAt: new Date() } });
   }
+
+  async findAuthorAndOrgIdFromPost(postId: string) {
+    const result = await this.prisma.post.findUnique({
+      where: { id: postId, deletedAt: null },
+      select: {
+        authorId: true,
+        board: {
+          select: {
+            organizationId: true,
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      authorId: result.authorId,
+      organizationId: result.board.organizationId,
+    };
+  }
 }

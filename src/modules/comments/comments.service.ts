@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentsRepository } from './comments.repository';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -19,21 +19,13 @@ export class CommentsService {
     return comment;
   }
 
-  async update(commentId: string, dto: UpdateCommentDto, userId: string) {
+  async update(commentId: string, dto: UpdateCommentDto) {
     const comment = await this.findOne(commentId);
-
-    if (userId !== comment.authorId) {
-      throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
-    }
-
     await this.commentsRepository.update(comment.id, dto);
   }
 
-  async delete(commentId: string, userId: string) {
-    const comment = await this.findOne(commentId);
-    if (userId !== comment.authorId) {
-      throw new ForbiddenException('Usuário sem permissão para realizar esta ação');
-    }
+  async delete(commentId: string) {
+    await this.findOne(commentId);
     return this.commentsRepository.delete(commentId);
   }
 

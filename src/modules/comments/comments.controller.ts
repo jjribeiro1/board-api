@@ -28,8 +28,8 @@ export class CommentsController {
    */
   @UseGuards(MutateCommentGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateCommentDto, @LoggedUser() user: User) {
-    return this.commentsService.update(id, dto, user.id);
+  async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {
+    return this.commentsService.update(id, dto);
   }
 
   /**
@@ -37,7 +37,7 @@ export class CommentsController {
    */
   @UseGuards(MutateCommentGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string, @LoggedUser() user: User) {
-    return this.commentsService.delete(id, user.id);
+  async remove(@Param('id') id: string) {
+    return this.commentsService.delete(id);
   }
 }

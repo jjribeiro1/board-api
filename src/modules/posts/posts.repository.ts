@@ -3,7 +3,6 @@ import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post } from './entities/post.entity';
-import { Comment } from '../comments/entities/comment.entity';
 
 @Injectable()
 export class PostsRepository {
@@ -97,22 +96,28 @@ export class PostsRepository {
             name: true,
           },
         },
+        post: {
+          select: {
+            board: {
+              select: {
+                organizationId: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    return results.map(
-      (result) =>
-        new Comment(
-          result.id,
-          result.content,
-          result.author.id,
-          result.author.name,
-          result.postId,
-          result.createdAt,
-          result.updatedAt,
-          result.deletedAt,
-        ),
-    );
+    return results.map((result) => ({
+      id: result.id,
+      content: result.content,
+      author: { id: result.author.id, name: result.author.name },
+      postId: result.postId,
+      organizationId: result.post.board.organizationId,
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
+      deletedAt: result.deletedAt,
+    }));
   }
 
   async update(postId: string, dto: UpdatePostDto) {

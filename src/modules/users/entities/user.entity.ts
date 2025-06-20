@@ -6,7 +6,7 @@ export class User {
     readonly name: string,
     readonly email: string,
     readonly password: string,
-    readonly organizations: Array<{ organizationId: string; role: Role }>,
+    readonly organizations: Array<{ organizationId: string; name: string; role: Role }>,
     readonly createdAt: Date,
     readonly updatedAt: Date,
     readonly deletedAt: Date | null,

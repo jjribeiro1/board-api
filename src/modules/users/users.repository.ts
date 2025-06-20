@@ -14,9 +14,7 @@ export class UsersRepository {
 
   async findOne(id: string) {
     const result = await this.prisma.user.findUnique({ where: { id }, include: { organizations: true } });
-    const organizations = result?.organizations
-      ? result.organizations.map((data) => ({ organizationId: data.organizationId, role: data.role }))
-      : [];
+
     if (!result) {
       return null;
     }
@@ -26,7 +24,7 @@ export class UsersRepository {
       result.name,
       result.email,
       result.password,
-      organizations,
+      result.organizations.map((data) => ({ organizationId: data.organizationId, name: data.name, role: data.role })),
       result.createdAt,
       result.updatedAt,
       null,
@@ -35,9 +33,6 @@ export class UsersRepository {
 
   async findByEmail(email: string) {
     const result = await this.prisma.user.findUnique({ where: { email }, include: { organizations: true } });
-    const organizations = result?.organizations
-      ? result.organizations.map((data) => ({ organizationId: data.organizationId, role: data.role }))
-      : [];
     if (!result) {
       return null;
     }
@@ -47,7 +42,7 @@ export class UsersRepository {
       result.name,
       result.email,
       result.password,
-      organizations,
+      result.organizations.map((data) => ({ organizationId: data.organizationId, name: data.name, role: data.role })),
       result.createdAt,
       result.updatedAt,
       null,

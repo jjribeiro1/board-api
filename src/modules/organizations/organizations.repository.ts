@@ -20,6 +20,7 @@ export class OrganizationsRepository {
         members: {
           create: {
             role: 'OWNER',
+            name,
             userId,
           },
         },

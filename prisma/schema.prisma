@@ -44,6 +44,10 @@ model UserOrganization {
   id             String       @id @default(uuid()) @db.Uuid
   userId         String       @map("user_id") @db.Uuid
   organizationId String       @map("organization_id") @db.Uuid
+  name           String       @db.VarChar(200)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
   role           Role         @default(MEMBER)
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -148,15 +152,15 @@ model Tag {
 }
 
 model Status {
-  id              String        @id @default(uuid()) @db.Uuid
-  name            String        @db.VarChar(50)
-  color           String        @db.VarChar(50)
-  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz
-  posts           Post[]
-  organization    Organization @relation(fields: [organizationId], references: [id])
-  organizationId  String      @map("organization_id") @db.Uuid
+  id             String       @id @default(uuid()) @db.Uuid
+  name           String       @db.VarChar(50)
+  color          String       @db.VarChar(50)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
+  posts          Post[]
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String       @map("organization_id") @db.Uuid
 
   @@unique([organizationId, name])
   @@map("status")

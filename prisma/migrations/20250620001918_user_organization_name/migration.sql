@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "user_organization" ADD COLUMN     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "deleted_at" TIMESTAMPTZ,
+ADD COLUMN     "name" VARCHAR(200),
+ADD COLUMN     "updated_at" TIMESTAMPTZ;

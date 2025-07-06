@@ -42,6 +42,14 @@ export class AuthService {
     };
   }
 
+  async logout(userId: string) {
+    await this.prisma.session.deleteMany({
+      where: {
+        userId,
+      },
+    });
+  }
+
   async refreshToken(token: string) {
     await this.verifyToken(token, {
       publicKey: this.configService.get<string>('REFRESH_TOKEN_PUBLIC_KEY'),

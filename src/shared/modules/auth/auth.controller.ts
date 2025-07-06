@@ -1,10 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { COOKIE_ACCESS_TOKEN_EXPIRES_IN, COOKIE_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
 import { Public } from 'src/common/decorators/is-public.decorator';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { User } from 'src/modules/users/entities/user.entity';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -76,5 +79,20 @@ export class AuthController {
   @Get('/me')
   getProfile(@Req() req) {
     return req.user;
+  }
+
+  /**
+   *
+   * Endpoint to sign out user
+   */
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete('sign-out')
+  @HttpCode(HttpStatus.OK)
+  async signOut(@Res({ passthrough: true }) res: Response, @LoggedUser() user: User) {
+    res.clearCookie('access-token');
+    res.clearCookie('refresh-token');
+    res.clearCookie('org-id');
+    return this.authService.logout(user.id);
   }
 }

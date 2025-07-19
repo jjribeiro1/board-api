@@ -38,6 +38,7 @@ export class CommentsController {
   /**
    * Delete the comment
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(MutateCommentGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {

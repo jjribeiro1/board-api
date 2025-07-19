@@ -1,6 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { OrganizationRole, OrganizationRolesOptions } from 'src/common/types/user-organization-role';
+import { OrganizationRole } from 'src/common/types/user-organization-role';
 import { CommentsService } from '../comments.service';
+import { Reflector } from '@nestjs/core';
+import { ORG_ROLES_KEY } from 'src/common/decorators/organization-role-decorator';
 
 type UserPayload = {
   id: string;
@@ -16,13 +18,19 @@ type UserPayload = {
 
 @Injectable()
 export class MutateCommentGuard implements CanActivate {
-  constructor(private readonly commentService: CommentsService) {}
+  constructor(
+    private reflector: Reflector,
+    private readonly commentService: CommentsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const user: UserPayload = request.user;
     const commentId = request.params.id;
-    const allowedRoles: OrganizationRole[] = [OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN];
+    const allowedRoles = this.reflector.getAllAndOverride<OrganizationRole[]>(ORG_ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
 
     const authorAndOrgIdFromComment = await this.commentService.findAuthorAndOrgIdFromComment(commentId);
     if (!authorAndOrgIdFromComment) {

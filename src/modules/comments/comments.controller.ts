@@ -4,6 +4,8 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { User } from '../users/entities/user.entity';
 import { MutateCommentGuard } from './guards/comment.guard';
 
@@ -26,6 +28,7 @@ export class CommentsController {
    *
    * Update the comment
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(MutateCommentGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {

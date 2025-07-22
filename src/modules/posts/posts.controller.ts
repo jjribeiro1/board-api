@@ -70,6 +70,7 @@ export class PostsController {
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.ADMIN, OrganizationRolesOptions.OWNER])
   @UseGuards(ManagePostGuard)
+  @Patch(':id/settings')
   async managePost(@Param('id') id: string, @Body() dto: ManagePostDto) {
     const post = await this.postsService.update(id, dto);
     return {

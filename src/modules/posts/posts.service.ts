@@ -37,7 +37,7 @@ export class PostsService {
   }
 
   async findAuthorAndOrgIdFromPost(postId: string) {
-    return this.postsRepository.findAuthorAndOrgIdFromPost(postId);
+    return await this.postsRepository.findAuthorAndOrgIdFromPost(postId);
   }
 
   async toggleCommentsLock(postId: string, dto: TogglePostCommentsLockDto) {

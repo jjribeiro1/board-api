@@ -2,11 +2,14 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@n
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { TogglePostCommentsLockDto } from './dto/toggle-comments-lock.dto';
 import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { MutatePostGuard } from './guards/post.guard';
-import { TogglePostCommentsLockDto } from './dto/toggle-comments-lock.dto';
+import { ManagePostGuard } from './guards/manage-post-guard';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -65,6 +68,8 @@ export class PostsController {
   /**
    * Toggle comments lock on a post
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.ADMIN, OrganizationRolesOptions.OWNER])
+  @UseGuards(ManagePostGuard)
   async togglePostCommentsLock(@Param('id') id: string, @Body() dto: TogglePostCommentsLockDto) {
     const post = await this.postsService.toggleCommentsLock(id, dto);
     return {

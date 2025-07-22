@@ -1,19 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { OrganizationRole } from 'src/common/types/user-organization-role';
 import { PostsService } from '../posts.service';
-
-type UserPayload = {
-  id: string;
-  name: string;
-  email: string;
-  organizations: {
-    organizationId: string;
-    role: OrganizationRole;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { OrganizationRole } from 'src/common/types/user-organization-role';
+import { UserPayload } from 'src/common/types/user-payload';
+import { ORG_ROLES_KEY } from 'src/common/decorators/organization-role-decorator';
 
 @Injectable()
 export class ManagePostGuard implements CanActivate {
@@ -26,10 +16,10 @@ export class ManagePostGuard implements CanActivate {
     const postId = request.params.id;
     const user = request.user as UserPayload;
 
-    const allowedRoles: OrganizationRole[] = this.reflector.get<OrganizationRole[]>(
+    const allowedRoles: OrganizationRole[] = this.reflector.getAllAndOverride<OrganizationRole[]>(ORG_ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
-    );
+    ]);
 
     const orgAndAuthorIdFromPost = await this.postsService.findAuthorAndOrgIdFromPost(postId);
     if (!orgAndAuthorIdFromPost) {

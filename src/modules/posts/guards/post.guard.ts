@@ -1,18 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { OrganizationRole, OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { PostsService } from '../posts.service';
-
-type UserPayload = {
-  id: string;
-  name: string;
-  email: string;
-  organizations: {
-    organizationId: string;
-    role: OrganizationRole;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { OrganizationRole, OrganizationRolesOptions } from 'src/common/types/user-organization-role';
+import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
 export class MutatePostGuard implements CanActivate {

@@ -1,20 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { OrganizationRole } from 'src/common/types/user-organization-role';
-import { CommentsService } from '../comments.service';
 import { Reflector } from '@nestjs/core';
+import { CommentsService } from '../comments.service';
+import { OrganizationRole } from 'src/common/types/user-organization-role';
 import { ORG_ROLES_KEY } from 'src/common/decorators/organization-role-decorator';
-
-type UserPayload = {
-  id: string;
-  name: string;
-  email: string;
-  organizations: {
-    organizationId: string;
-    role: OrganizationRole;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-};
+import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
 export class MutateCommentGuard implements CanActivate {

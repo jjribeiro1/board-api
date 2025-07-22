@@ -6,6 +6,7 @@ import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { MutatePostGuard } from './guards/post.guard';
+import { TogglePostCommentsLockDto } from './dto/toggle-comments-lock.dto';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -57,6 +58,18 @@ export class PostsController {
     return {
       data: {
         post: updatedPost,
+      },
+    };
+  }
+
+  /**
+   * Toggle comments lock on a post
+   */
+  async togglePostCommentsLock(@Param('id') id: string, @Body() dto: TogglePostCommentsLockDto) {
+    const post = await this.postsService.toggleCommentsLock(id, dto);
+    return {
+      data: {
+        post,
       },
     };
   }

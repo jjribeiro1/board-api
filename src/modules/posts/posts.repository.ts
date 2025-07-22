@@ -164,4 +164,13 @@ export class PostsRepository {
       organizationId: result.board.organizationId,
     };
   }
+
+  async toggleCommentsLock(postId: string, isLocked: boolean) {
+    const result = await this.prisma.post.update({
+      where: { id: postId },
+      data: { isLocked },
+    });
+
+    return result;
+  }
 }

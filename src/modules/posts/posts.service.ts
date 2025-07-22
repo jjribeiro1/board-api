@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { TogglePostCommentsLockDto } from './dto/toggle-comments-lock.dto';
 
 @Injectable()
 export class PostsService {
@@ -37,5 +38,10 @@ export class PostsService {
 
   async findAuthorAndOrgIdFromPost(postId: string) {
     return this.postsRepository.findAuthorAndOrgIdFromPost(postId);
+  }
+
+  async toggleCommentsLock(postId: string, dto: TogglePostCommentsLockDto) {
+    await this.findOne(postId);
+    return this.postsRepository.toggleCommentsLock(postId, dto.isLocked);
   }
 }

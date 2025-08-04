@@ -1,13 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentsRepository } from './comments.repository';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { PostsService } from '../posts/posts.service';
 
 @Injectable()
 export class CommentsService {
-  constructor(private readonly commentsRepository: CommentsRepository) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly commentsRepository: CommentsRepository,
+  ) {}
 
   async create(dto: CreateCommentDto, userId: string) {
+    const post = await this.postsService.findOne(dto.postId);
+    if (post.isLocked) {
+      throw new ForbiddenException('Não é possível comentar em um post bloqueado');
+    }
+
     return this.commentsRepository.create(dto, userId);
   }
 

@@ -89,4 +89,11 @@ export class BoardsRepository {
 
     return result;
   }
+
+  async delete(boardId: string): Promise<void> {
+    await this.prisma.board.update({
+      where: { id: boardId },
+      data: { deletedAt: new Date() },
+    });
+  }
 }

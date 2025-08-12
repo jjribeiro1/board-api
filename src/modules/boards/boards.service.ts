@@ -23,4 +23,9 @@ export class BoardsService {
     await this.findOne(boardId);
     return this.boardsRepository.findPostsFromBoard(boardId);
   }
+
+  async remove(boardId: string): Promise<void> {
+    await this.findOne(boardId);
+    await this.boardsRepository.delete(boardId);
+  }
 }

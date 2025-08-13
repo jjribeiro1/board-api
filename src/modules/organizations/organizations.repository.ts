@@ -105,6 +105,7 @@ export class OrganizationsRepository {
         board: {
           id: filters.board,
           organizationId: organizationId,
+          deletedAt: null,
         },
       },
       select: {

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ManageBoardDto } from './dto/manage-board.dto';
 import { BoardsRepository } from './boards.repository';
 
 @Injectable()
@@ -22,6 +23,11 @@ export class BoardsService {
   async findPostsFromBoard(boardId: string) {
     await this.findOne(boardId);
     return this.boardsRepository.findPostsFromBoard(boardId);
+  }
+
+  async manageBoard(boardId: string, dto: ManageBoardDto) {
+    await this.findOne(boardId);
+    return this.boardsRepository.update(boardId, dto);
   }
 
   async remove(boardId: string): Promise<void> {

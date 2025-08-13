@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ManageBoardDto } from './dto/manage-board.dto';
 import { Board } from './entities/board.entity';
 
 @Injectable()
@@ -88,6 +89,13 @@ export class BoardsRepository {
     });
 
     return result;
+  }
+
+  async update(boardId: string, dto: ManageBoardDto) {
+    return await this.prisma.board.update({
+      where: { id: boardId },
+      data: { ...dto },
+    });
   }
 
   async delete(boardId: string): Promise<void> {

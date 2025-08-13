@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Get, Param, HttpStatus, UseGuards, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpStatus, UseGuards, Delete, HttpCode, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ManageBoardDto } from './dto/manage-board.dto';
 import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
@@ -45,6 +46,17 @@ export class BoardsController {
     return {
       data: posts,
     };
+  }
+
+  /**
+   * Manage Board settings
+   */
+  @ApiBearerAuth()
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(ManageBoardGuard)
+  @Patch(':id/settings')
+  async manageBoard(@Param('id') boardId: string, @Body() dto: ManageBoardDto) {
+    return await this.boardsService.manageBoard(boardId, dto);
   }
 
   /**

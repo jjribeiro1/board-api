@@ -8,8 +8,8 @@ import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
-import { MutatePostGuard } from './guards/post.guard';
-import { ManagePostGuard } from './guards/manage-post-guard';
+import { MutatePostGuard } from './guards/mutate-post.guard';
+import { ManagePostGuard } from './guards/manage-post.guard';
 
 @ApiTags('posts')
 @Controller('posts')

@@ -7,7 +7,7 @@ import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { User } from '../users/entities/user.entity';
-import { MutateCommentGuard } from './guards/comment.guard';
+import { MutateCommentGuard } from './guards/mutate-comment.guard';
 
 @ApiBearerAuth()
 @ApiTags('comments')

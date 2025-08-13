@@ -87,7 +87,11 @@ export class OrganizationsRepository {
         deletedAt: true,
         _count: {
           select: {
-            posts: true,
+            posts: {
+              where: {
+                deletedAt: null,
+              },
+            },
           },
         },
       },

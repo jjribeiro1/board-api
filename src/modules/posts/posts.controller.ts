@@ -53,6 +53,7 @@ export class PostsController {
   /**
    * Update Post
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(MutatePostGuard)
   @ApiBearerAuth()
   @Patch(':id')

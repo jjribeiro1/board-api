@@ -41,6 +41,13 @@ export class OrganizationsService {
 
   async findMembersFromOrganization(organizationId: string) {
     await this.findOne(organizationId);
-    return await this.organizationsRepository.findMembersFromOrganization(organizationId);
+    const data = await this.organizationsRepository.findMembersFromOrganization(organizationId);
+    const members = data.map((member) => ({
+      id: member.user.id,
+      name: member.user.name,
+      role: member.role,
+      createdAt: member.createdAt,
+    }));
+    return members;
   }
 }

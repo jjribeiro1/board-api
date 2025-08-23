@@ -38,4 +38,9 @@ export class OrganizationsService {
   async findPostsFromOrganization(organizationId: string, filters: ListPostsQueryDto) {
     return this.organizationsRepository.findPostsFromOrganization(organizationId, filters);
   }
+
+  async findMembersFromOrganization(organizationId: string) {
+    await this.findOne(organizationId);
+    return await this.organizationsRepository.findMembersFromOrganization(organizationId);
+  }
 }

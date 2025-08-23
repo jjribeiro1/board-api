@@ -56,4 +56,16 @@ export class OrganizationsController {
       data: posts,
     };
   }
+
+  /**
+   *
+   * Returns all members from an organization
+   */
+  @Get(':id/members')
+  async findMembersFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
+    const members = await this.organizationsService.findMembersFromOrganization(orgId);
+    return {
+      data: members,
+    };
+  }
 }

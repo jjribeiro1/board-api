@@ -162,4 +162,32 @@ export class OrganizationsRepository {
 
     return results;
   }
+
+  async findMembersFromOrganization(organizationId: string) {
+    const results = await this.prisma.userOrganization.findMany({
+      where: {
+        organizationId,
+        deletedAt: null,
+      },
+      select: {
+        id: true,
+        userId: true,
+        name: true,
+        role: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    return results;
+  }
 }

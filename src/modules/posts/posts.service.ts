@@ -1,13 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PostsRepository } from './posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { BoardsService } from '../boards/boards.service';
 
 @Injectable()
 export class PostsService {
-  constructor(private readonly postsRepository: PostsRepository) {}
+  constructor(
+    private readonly postsRepository: PostsRepository,
+    private readonly boardsService: BoardsService,
+  ) {}
 
   async create(dto: CreatePostDto, userId: string) {
+    const board = await this.boardsService.findOne(dto.boardId);
+    if (board.isLocked) {
+      throw new BadRequestException(`novas postagens não são permitidas em um board bloqueado`);
+    }
     return this.postsRepository.create(dto, userId);
   }
 

@@ -45,6 +45,7 @@ export class OrganizationsService {
     const members = data.map((member) => ({
       id: member.user.id,
       name: member.user.name,
+      email: member.user.email,
       role: member.role,
       createdAt: member.createdAt,
     }));

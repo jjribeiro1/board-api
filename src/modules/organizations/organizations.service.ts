@@ -51,4 +51,9 @@ export class OrganizationsService {
     }));
     return members;
   }
+
+  async findTagsFromOrganization(organizationId: string) {
+    await this.findOne(organizationId);
+    return this.organizationsRepository.findTagsFromOrganization(organizationId);
+  }
 }

@@ -68,4 +68,16 @@ export class OrganizationsController {
       data: members,
     };
   }
+
+  /**
+   *
+   * Returns all tags from an organization
+   */
+  @Get(':id/tags')
+  async findTagsFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
+    const tags = await this.organizationsService.findTagsFromOrganization(orgId);
+    return {
+      data: tags,
+    };
+  }
 }

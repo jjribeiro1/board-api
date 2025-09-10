@@ -190,4 +190,18 @@ export class OrganizationsRepository {
 
     return results;
   }
+
+  async findTagsFromOrganization(organizationId: string) {
+    const results = await this.prisma.tag.findMany({
+      where: {
+        OR: [
+          { organizationId, deletedAt: null },
+          { isSystemDefault: true, deletedAt: null },
+        ],
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return results;
+  }
 }

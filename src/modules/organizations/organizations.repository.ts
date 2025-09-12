@@ -132,6 +132,11 @@ export class OrganizationsRepository {
           },
         },
         tags: {
+          where: {
+            tag: {
+              deletedAt: null,
+            },
+          },
           select: {
             tag: {
               select: {

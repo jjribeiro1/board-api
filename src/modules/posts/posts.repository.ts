@@ -9,7 +9,7 @@ export class PostsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreatePostDto, userId: string) {
-    const { boardId, description, isLocked, isPinned, isPrivate, statusId, title } = dto;
+    const { boardId, description, isLocked, isPinned, isPrivate, statusId, title, tagIds } = dto;
     const result = await this.prisma.post.create({
       data: {
         authorId: userId,
@@ -20,6 +20,14 @@ export class PostsRepository {
         isPrivate,
         statusId,
         title,
+        tags:
+          tagIds && tagIds.length > 0
+            ? {
+                create: tagIds.map((tagId) => ({
+                  tagId,
+                })),
+              }
+            : undefined,
       },
     });
 

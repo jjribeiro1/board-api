@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString, IsUUID, Length } from 'class-validator';
 
 export class CreatePostDto {
   /**
@@ -54,4 +54,13 @@ export class CreatePostDto {
    */
   @IsUUID()
   statusId: string;
+
+  /**
+   * Array of tag IDs to associate with the post
+   * @example ["eb36e562-3762-45c3-8214-b0688c518d01", "a1b2c3d4-5678-9abc-def0-123456789abc"]
+   */
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  tagIds?: string[];
 }

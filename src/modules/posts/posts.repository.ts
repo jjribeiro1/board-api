@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Post } from './entities/post.entity';
 
 @Injectable()
 export class PostsRepository {
@@ -55,7 +54,7 @@ export class PostsRepository {
         },
         author: { select: { id: true, name: true } },
         status: { select: { id: true, name: true, color: true } },
-        tags: { select: { tagId: true } },
+        tags: { select: { tag: { select: { id: true, name: true, color: true } } } },
         createdAt: true,
         updatedAt: true,
       },
@@ -65,22 +64,11 @@ export class PostsRepository {
       return null;
     }
 
-    return new Post(
-      result.id,
-      result.title,
-      result.description,
-      result.isPrivate,
-      result.isPinned,
-      result.isLocked,
-      result.boardId,
-      result.board.organizationId,
-      result.author,
-      result.status,
-      result.tags.map((data) => data.tagId),
-      result.createdAt,
-      result.updatedAt,
-      null,
-    );
+    return {
+      ...result,
+      tags: result.tags.map((t) => t.tag),
+      organizationId: result.board.organizationId,
+    };
   }
 
   async findCommentsFromPost(postId: string) {

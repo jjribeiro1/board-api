@@ -165,7 +165,10 @@ export class OrganizationsRepository {
       },
     });
 
-    return results;
+    return results.map((post) => ({
+      ...post,
+      tags: post.tags.map((t) => t.tag),
+    }));
   }
 
   async findMembersFromOrganization(organizationId: string) {

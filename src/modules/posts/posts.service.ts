@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PostsRepository } from './posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { BoardsService } from '../boards/boards.service';
 
 @Injectable()
@@ -41,6 +42,11 @@ export class PostsService {
   async remove(postId: string) {
     await this.findOne(postId);
     await this.postsRepository.delete(postId);
+  }
+
+  async updateTags(postId: string, dto: UpdatePostTagsDto) {
+    await this.findOne(postId);
+    return this.postsRepository.updateTags(postId, dto.tagIds);
   }
 
   async findAuthorAndOrgIdFromPost(postId: string) {

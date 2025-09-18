@@ -3,6 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ManagePostDto } from './dto/manage-post.dto';
+import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { PostsService } from './posts.service';
 import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
@@ -79,6 +80,17 @@ export class PostsController {
         post,
       },
     };
+  }
+
+  /**
+   * Update Post Tags
+   */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(ManagePostGuard)
+  @ApiBearerAuth()
+  @Patch(':id/tags')
+  async updateTags(@Param('id') id: string, @Body() dto: UpdatePostTagsDto) {
+    return await this.postsService.updateTags(id, dto);
   }
 
   /**

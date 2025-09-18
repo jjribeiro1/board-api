@@ -160,4 +160,22 @@ export class PostsRepository {
       organizationId: result.board.organizationId,
     };
   }
+
+  async updateTags(postId: string, tagIds: string[]) {
+    await this.prisma.$transaction([
+      this.prisma.postTag.deleteMany({
+        where: { postId },
+      }),
+      ...(tagIds.length > 0
+        ? [
+            this.prisma.postTag.createMany({
+              data: tagIds.map((tagId) => ({
+                postId,
+                tagId,
+              })),
+            }),
+          ]
+        : []),
+    ]);
+  }
 }

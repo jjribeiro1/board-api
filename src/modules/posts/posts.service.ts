@@ -5,6 +5,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { BoardsService } from '../boards/boards.service';
 import { OrganizationsService } from '../organizations/organizations.service';
+import { VotesService } from '../votes/votes.service';
 
 @Injectable()
 export class PostsService {
@@ -12,6 +13,7 @@ export class PostsService {
     private readonly postsRepository: PostsRepository,
     private readonly boardsService: BoardsService,
     private readonly organizationsService: OrganizationsService,
+    private readonly votesService: VotesService,
   ) {}
 
   async create(dto: CreatePostDto, userId: string) {
@@ -62,6 +64,14 @@ export class PostsService {
     }
 
     return await this.postsRepository.updateTags(postId, dto.tagIds);
+  }
+
+  async vote(postId: string, userId: string) {
+    const post = await this.findOne(postId);
+    if (post.isLocked) {
+      throw new BadRequestException('Não é possível votar em um post bloqueado');
+    }
+    return await this.votesService.togglePostVote(postId, userId);
   }
 
   async findAuthorAndOrgIdFromPost(postId: string) {

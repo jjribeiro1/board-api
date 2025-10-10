@@ -55,6 +55,11 @@ export class PostsRepository {
         author: { select: { id: true, name: true } },
         status: { select: { id: true, name: true, color: true } },
         tags: { select: { tag: { select: { id: true, name: true, color: true } } } },
+        _count: {
+          select: {
+            votes: true,
+          },
+        },
         createdAt: true,
         updatedAt: true,
       },
@@ -68,6 +73,7 @@ export class PostsRepository {
       ...result,
       tags: result.tags.map((t) => t.tag),
       organizationId: result.board.organizationId,
+      votesCount: result._count.votes,
     };
   }
 

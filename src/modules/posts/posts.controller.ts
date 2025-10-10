@@ -102,4 +102,13 @@ export class PostsController {
   async remove(@Param('id') id: string) {
     await this.postsService.remove(id);
   }
+
+  /**
+   * Add or remove vote from Post
+   */
+  @ApiBearerAuth()
+  @Post(':id/vote')
+  async vote(@Param('id') postId: string, @LoggedUser() loggedUser: User) {
+    return this.postsService.vote(postId, loggedUser.id);
+  }
 }

@@ -12,6 +12,7 @@ import { PostsModule } from './modules/posts/posts.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { StatusModule } from './modules/status/status.module';
 import { TagsModule } from './modules/tags/tags.module';
+import { VotesModule } from './modules/votes/votes.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { TagsModule } from './modules/tags/tags.module';
     CommentsModule,
     StatusModule,
     TagsModule,
+    VotesModule,
   ],
   controllers: [AppController],
 })

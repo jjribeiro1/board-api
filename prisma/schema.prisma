@@ -179,7 +179,7 @@ model PostVote {
   @@unique([userId, postId])
   @@index([postId])
   @@index([userId])
-  @@map("vote")
+  @@map("post_vote")
 }
 
 enum Role {

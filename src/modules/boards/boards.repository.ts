@@ -83,6 +83,7 @@ export class BoardsRepository {
                 deletedAt: null,
               },
             },
+            votes: true,
           },
         },
       },

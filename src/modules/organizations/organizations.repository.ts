@@ -160,6 +160,7 @@ export class OrganizationsRepository {
                 deletedAt: null,
               },
             },
+            votes: true,
           },
         },
       },

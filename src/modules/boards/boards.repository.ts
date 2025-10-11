@@ -48,7 +48,7 @@ export class BoardsRepository {
     );
   }
 
-  async findPostsFromBoard(boardId: string) {
+  async findPostsFromBoard(boardId: string, userId: string) {
     const result = await this.prisma.post.findMany({
       orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
@@ -86,10 +86,18 @@ export class BoardsRepository {
             votes: true,
           },
         },
+        votes: {
+          where: {
+            userId,
+          },
+        },
       },
     });
 
-    return result;
+    return result.map((post) => ({
+      ...post,
+      userHasVoted: post.votes.length > 0,
+    }));
   }
 
   async update(boardId: string, dto: ManageBoardDto) {

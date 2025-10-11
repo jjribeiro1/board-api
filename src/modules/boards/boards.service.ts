@@ -20,9 +20,9 @@ export class BoardsService {
     return board;
   }
 
-  async findPostsFromBoard(boardId: string) {
+  async findPostsFromBoard(boardId: string, userId: string) {
     await this.findOne(boardId);
-    return this.boardsRepository.findPostsFromBoard(boardId);
+    return this.boardsRepository.findPostsFromBoard(boardId, userId);
   }
 
   async manageBoard(boardId: string, dto: ManageBoardDto) {

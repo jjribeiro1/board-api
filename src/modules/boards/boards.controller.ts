@@ -41,8 +41,8 @@ export class BoardsController {
    * Returns all posts from an board
    */
   @Get(':id/posts')
-  async findPosts(@Param('id') boardId: string) {
-    const posts = await this.boardsService.findPostsFromBoard(boardId);
+  async findPosts(@Param('id') boardId: string, @LoggedUser() user: User) {
+    const posts = await this.boardsService.findPostsFromBoard(boardId, user.id);
     return {
       data: posts,
     };

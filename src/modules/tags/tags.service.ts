@@ -25,12 +25,6 @@ export class TagsService {
   }
 
   async remove(id: string) {
-    const tag = await this.findOne(id); // Verifica se a tag existe
-
-    if (tag.isSystemDefault) {
-      throw new ConflictException('Não é possível deletar uma tag padrão do sistema');
-    }
-
-    return this.tagsRepository.delete(id);
+    return await this.tagsRepository.delete(id);
   }
 }

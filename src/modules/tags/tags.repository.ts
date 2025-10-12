@@ -10,8 +10,7 @@ export class TagsRepository {
   async create(dto: CreateTagDto) {
     const result = await this.prisma.tag.create({
       data: {
-        ...dto,
-        isSystemDefault: dto.organizationId ? false : true,
+        ...dto,  
       },
     });
     return result.id;

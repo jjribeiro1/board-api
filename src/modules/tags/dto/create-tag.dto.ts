@@ -20,10 +20,9 @@ export class CreateTagDto {
   color: string;
 
   /**
-   * ID of the organization (optional for system default tags)
+   * ID of the organization
    * @example eb36e562-3762-45c3-8214-b0688c518d01
    */
-  @IsOptional()
   @IsUUID('4')
-  organizationId?: string;
+  organizationId: string;
 }

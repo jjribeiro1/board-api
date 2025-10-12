@@ -56,4 +56,9 @@ export class OrganizationsService {
     await this.findOne(organizationId);
     return this.organizationsRepository.findTagsFromOrganization(organizationId);
   }
+
+  async findStatusFromOrganization(organizationId: string) {
+    await this.findOne(organizationId);
+    return this.organizationsRepository.findStatusFromOrganization(organizationId);
+  }
 }

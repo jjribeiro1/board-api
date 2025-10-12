@@ -211,4 +211,16 @@ export class OrganizationsRepository {
 
     return results;
   }
+
+  async findStatusFromOrganization(organizationId: string) {
+    const results = await this.prisma.status.findMany({
+      where: {
+        organizationId,
+        deletedAt: null,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return results;
+  }
 }

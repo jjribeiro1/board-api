@@ -80,4 +80,17 @@ export class OrganizationsController {
       data: tags,
     };
   }
+
+    /**
+   *
+   * Returns all status from an organization
+   */
+  @Get(':id/status')
+  async findStatusFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
+    const status = await this.organizationsService.findStatusFromOrganization(orgId);
+    return {
+      data: status,
+    };
+  }
 }
+

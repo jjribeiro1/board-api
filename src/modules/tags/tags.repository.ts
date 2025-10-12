@@ -16,6 +16,12 @@ export class TagsRepository {
     return result.id;
   }
 
+  async createMany(dtos: CreateTagDto[]) {
+    await this.prisma.tag.createMany({
+      data: dtos,
+    });
+  }
+
   async findOne(tagId: string) {
     const result = await this.prisma.tag.findUnique({
       where: {

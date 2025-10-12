@@ -10,7 +10,7 @@ export class TagsRepository {
   async create(dto: CreateTagDto) {
     const result = await this.prisma.tag.create({
       data: {
-        ...dto,  
+        ...dto,
       },
     });
     return result.id;

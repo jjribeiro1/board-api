@@ -142,7 +142,6 @@ model Tag {
   id              String        @id @default(uuid()) @db.Uuid
   name            String        @db.VarChar(50)
   color           String        @db.VarChar(50)
-  isSystemDefault Boolean       @default(false) @map("is_system_default")
   createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt       DateTime?     @map("deleted_at") @db.Timestamptz

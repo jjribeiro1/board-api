@@ -62,6 +62,8 @@ model Organization {
   name                     String             @unique @db.VarChar(140)
   slug                     String             @unique
   logoUrl                  String?            @map("logo_url")
+  defaultStatusId          String?            @map("default_status_id") @db.Uuid @unique
+  defaultStatus            Status?            @relation("DefaultStatus", fields: [defaultStatusId], references: [id])
   createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt                DateTime           @updatedAt @map("updated_at") @db.Timestamptz
   deletedAt                DateTime?          @map("deleted_at") @db.Timestamptz
@@ -162,6 +164,7 @@ model Status {
   posts          Post[]
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String       @map("organization_id") @db.Uuid
+  defaultOf      Organization? @relation("DefaultStatus")
 
   @@unique([organizationId, name])
   @@map("status")

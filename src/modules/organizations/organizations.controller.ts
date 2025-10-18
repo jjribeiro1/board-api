@@ -81,7 +81,7 @@ export class OrganizationsController {
     };
   }
 
-    /**
+  /**
    *
    * Returns all status from an organization
    */
@@ -93,4 +93,3 @@ export class OrganizationsController {
     };
   }
 }
-

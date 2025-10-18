@@ -11,7 +11,7 @@ export class OrganizationEventsListener {
   constructor(
     private readonly boardsService: BoardsService,
     private readonly statusService: StatusService,
-    private readonly tagsService: TagsService
+    private readonly tagsService: TagsService,
   ) {}
 
   @OnEvent(EVENTS.organization.created)

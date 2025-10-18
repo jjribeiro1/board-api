@@ -24,7 +24,7 @@ export class PostsController {
   @ApiBearerAuth()
   @Post('')
   async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {
-    return this.postsService.create(dto, loggedUser.id);
+    return this.postsService.create(dto, loggedUser);
   }
 
   /**

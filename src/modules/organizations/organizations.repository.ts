@@ -59,6 +59,7 @@ export class OrganizationsRepository {
       result.id,
       result.name,
       result.logoUrl,
+      result.defaultStatusId,
       result.members,
       result.organizationCustomStatus,
       result.organizationCustomTags,

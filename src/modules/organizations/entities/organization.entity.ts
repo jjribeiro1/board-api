@@ -5,6 +5,7 @@ export class Organization {
     readonly id: string,
     readonly name: string,
     readonly logoUrl: string | null,
+    readonly defaultStatusId: string | null,
     readonly members: Member[],
     readonly organizationStatus: Status[],
     readonly organizationTags: Tag[],

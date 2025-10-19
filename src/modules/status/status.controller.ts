@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { StatusService } from './status.service';
@@ -6,6 +6,8 @@ import { CreateStatusDto } from './dto/create-status.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { ManageStatusGuard } from './guards/manage-status.guard';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 
 @ApiTags('status')
 @Controller('status')
@@ -41,6 +43,8 @@ export class StatusController {
    * Update an existing status
    */
   @ApiBearerAuth()
+  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
+  @UseGuards(ManageStatusGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
     const updatedStatus = await this.statusService.update(id, dto);

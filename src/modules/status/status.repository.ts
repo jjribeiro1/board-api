@@ -56,4 +56,11 @@ export class StatusRepository {
     });
     return result;
   }
+
+  async findOne(id: string) {
+    const result = await this.prisma.status.findUnique({
+      where: { id, deletedAt: null },
+    });
+    return result;
+  }
 }

@@ -27,6 +27,10 @@ export class StatusService {
     return await this.statusRepository.update(id, dto);
   }
 
+  async findOne(statusId: string) {
+    return await this.statusRepository.findOne(statusId);
+  }
+
   async createInitialStatusForOrg(organizationId: string) {
     const initialStatus = [
       { name: 'Em revisão', color: '#FFC107' },

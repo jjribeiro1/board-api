@@ -1,7 +1,10 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { StatusService } from './status.service';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateStatusDto } from './dto/create-status.dto';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { User } from '../users/entities/user.entity';
 
 @ApiTags('status')
 @Controller('status')
@@ -12,6 +15,7 @@ export class StatusController {
    *
    * Returns all status from an organization
    */
+  @ApiBearerAuth()
   @Get()
   async findAll(@Req() req: Request) {
     const orgId = req.cookies['org-id'];
@@ -19,5 +23,16 @@ export class StatusController {
     return {
       data: status,
     };
+  }
+
+  /**
+   * Creates a new status
+   *
+   */
+  @ApiBearerAuth()
+  @Post()
+  async create(@Body() dto: CreateStatusDto, @LoggedUser() user: User, @Req() req: Request) {
+    const orgId = req.cookies['org-id'];
+    return await this.statusService.create(dto, user, orgId);
   }
 }

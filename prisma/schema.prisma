@@ -107,8 +107,8 @@ model Post {
   boardId     String     @map("board_id") @db.Uuid
   author      User       @relation(fields: [authorId], references: [id])
   authorId    String     @map("author_id") @db.Uuid
-  status      Status     @relation(fields: [statusId], references: [id])
-  statusId    String     @map("status_id") @db.Uuid
+  status      Status?     @relation(fields: [statusId], references: [id])
+  statusId    String?     @map("status_id") @db.Uuid
   tags        PostTag[]
   comments    Comment[]
   votes       PostVote[]

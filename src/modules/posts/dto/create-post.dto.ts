@@ -52,8 +52,9 @@ export class CreatePostDto {
    * Post status ID
    * @example eb36e562-3762-45c3-8214-b0688c518d01
    */
+  @IsOptional()
   @IsUUID()
-  statusId: string;
+  statusId?: string;
 
   /**
    * Array of tag IDs to associate with the post

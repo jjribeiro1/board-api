@@ -30,7 +30,7 @@ export class StatusRepository {
 
   async createMany(dto: Array<CreateStatusDto>) {
     await this.prisma.status.createMany({
-      data: dto.map((value) => ({ ...value, color: '#FAFAFA' })),
+      data: dto.map((value) => ({ ...value })),
     });
   }
 }

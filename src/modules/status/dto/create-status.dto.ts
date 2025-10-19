@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, MaxLength } from 'class-validator';
 
 export class CreateStatusDto {
   /**
@@ -7,6 +7,15 @@ export class CreateStatusDto {
    */
   @IsNotEmpty()
   name: string;
+
+  /**
+   * Tag color in hex format
+   * @example #FF5733
+   */
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  color: string;
 
   /**
    * ID of the organization

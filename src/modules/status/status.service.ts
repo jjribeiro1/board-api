@@ -12,6 +12,10 @@ export class StatusService {
     return this.statusRepository.getAllStatus(organizationId);
   }
 
+  async findOne(statusId: string) {
+    return await this.statusRepository.findOne(statusId);
+  }
+
   async create(dto: CreateStatusDto, user: User, organizationId: string) {
     const userIsOwnerOrAdminFromOrg = user.organizations.some(
       (org) => org.organizationId === organizationId && (org.role === 'OWNER' || org.role === 'ADMIN'),
@@ -27,8 +31,8 @@ export class StatusService {
     return await this.statusRepository.update(id, dto);
   }
 
-  async findOne(statusId: string) {
-    return await this.statusRepository.findOne(statusId);
+  async remove(id: string) {
+    await this.statusRepository.delete(id);
   }
 
   async createInitialStatusForOrg(organizationId: string) {

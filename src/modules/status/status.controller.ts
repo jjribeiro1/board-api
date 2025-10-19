@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { StatusService } from './status.service';
@@ -51,5 +51,16 @@ export class StatusController {
     return {
       data: updatedStatus,
     };
+  }
+
+  /**
+   * Delete an existing status
+   */
+  @ApiBearerAuth()
+  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
+  @UseGuards(ManageStatusGuard)
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.statusService.remove(id);
   }
 }

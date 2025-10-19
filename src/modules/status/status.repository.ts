@@ -63,4 +63,13 @@ export class StatusRepository {
     });
     return result;
   }
+
+  async delete(id: string) {
+    await this.prisma.status.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+  }
 }

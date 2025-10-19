@@ -61,4 +61,8 @@ export class OrganizationsService {
     await this.findOne(organizationId);
     return this.organizationsRepository.findStatusFromOrganization(organizationId);
   }
+
+  async setDefaultStatus(organizationId: string, statusId: string) {
+    return await this.organizationsRepository.setDefaultStatus(organizationId, statusId);
+  }
 }

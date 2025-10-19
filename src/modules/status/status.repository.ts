@@ -28,6 +28,17 @@ export class StatusRepository {
     );
   }
 
+  async create(dto: CreateStatusDto) {
+    const result = await this.prisma.status.create({
+      data: {
+        name: dto.name,
+        color: dto.color,
+        organizationId: dto.organizationId,
+      },
+    });
+    return result;
+  }
+
   async createMany(dto: Array<CreateStatusDto>) {
     await this.prisma.status.createMany({
       data: dto.map((value) => ({ ...value })),

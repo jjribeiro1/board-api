@@ -224,4 +224,11 @@ export class OrganizationsRepository {
 
     return results;
   }
+
+  async setDefaultStatus(organizationId: string, statusId: string) {
+    await this.prisma.organization.update({
+      where: { id: organizationId },
+      data: { defaultStatusId: statusId },
+    });
+  }
 }

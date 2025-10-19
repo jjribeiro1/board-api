@@ -8,15 +8,22 @@ export class StatusService {
     return this.statusRepository.getAllStatus(organizationId);
   }
 
-  async createDefaultStatusForOrg(organizationId: string) {
-    const defaultStatus = [
-      { name: 'Aberto', color: '#007BFF' },
+  async createInitialStatusForOrg(organizationId: string) {
+    const initialStatus = [
       { name: 'Em revisão', color: '#FFC107' },
       { name: 'Planejado', color: '#6C757D' },
       { name: 'Em progresso', color: '#FD7E14' },
       { name: 'Concluído', color: '#28A745' },
       { name: 'Cancelado', color: '#DC3545' },
     ];
-    await this.statusRepository.createMany(defaultStatus.map((s) => ({ ...s, organizationId: organizationId })));
+
+    await this.statusRepository.createMany(initialStatus.map((s) => ({ ...s, organizationId: organizationId })));
+    const defaultStatusFromOrg = await this.statusRepository.create({
+      name: 'Aberto',
+      color: '#007BFF',
+      organizationId,
+    });
+
+    return { defaultStatusId: defaultStatusFromOrg.id };
   }
 }

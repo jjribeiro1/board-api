@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { Status } from './entities/status.entity';
 import { CreateStatusDto } from './dto/create-status.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Injectable()
 export class StatusRepository {
@@ -43,5 +44,16 @@ export class StatusRepository {
     await this.prisma.status.createMany({
       data: dto.map((value) => ({ ...value })),
     });
+  }
+
+  async update(id: string, dto: UpdateStatusDto) {
+    const result = await this.prisma.status.update({
+      where: { id },
+      data: {
+        name: dto.name,
+        color: dto.color,
+      },
+    });
+    return result;
   }
 }

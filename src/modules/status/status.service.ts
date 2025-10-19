@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { StatusRepository } from './status.repository';
 import { CreateStatusDto } from './dto/create-status.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
@@ -20,6 +21,10 @@ export class StatusService {
       throw new ForbiddenException('Usuário não tem permissão para criar status nesta organização');
     }
     return await this.statusRepository.create(dto);
+  }
+
+  async update(id: string, dto: UpdateStatusDto) {
+    return await this.statusRepository.update(id, dto);
   }
 
   async createInitialStatusForOrg(organizationId: string) {

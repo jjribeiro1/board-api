@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
 import { IS_PUBLIC_KEY } from 'src/common/decorators/is-public.decorator';
+import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -20,7 +21,15 @@ export class JwtAuthGuard implements CanActivate {
     const req: Request = ctx.switchToHttp().getRequest();
     const token = this.extractTokenFromCookie(req);
     const user = await this.authService.extractUserFromAccessToken(token);
-    req['user'] = user.toPresentation();
+    const requestUser: UserPayload = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      organizations: user.organizations,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+    req['user'] = requestUser;
     return true;
   }
 

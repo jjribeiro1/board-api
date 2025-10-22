@@ -2,7 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { StatusRepository } from './status.repository';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { User } from '../users/entities/user.entity';
+import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
 export class StatusService {
@@ -16,9 +16,9 @@ export class StatusService {
     return await this.statusRepository.findOne(statusId);
   }
 
-  async create(dto: CreateStatusDto, user: User, organizationId: string) {
+  async create(dto: CreateStatusDto, user: UserPayload, organizationId: string) {
     const userIsOwnerOrAdminFromOrg = user.organizations.some(
-      (org) => org.organizationId === organizationId && (org.role === 'OWNER' || org.role === 'ADMIN'),
+      (org) => org.id === organizationId && (org.role === 'OWNER' || org.role === 'ADMIN'),
     );
 
     if (!userIsOwnerOrAdminFromOrg) {

@@ -6,7 +6,7 @@ import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { BoardsService } from '../boards/boards.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { VotesService } from '../votes/votes.service';
-import { User } from '../users/entities/user.entity';
+import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
 export class PostsService {
@@ -17,14 +17,14 @@ export class PostsService {
     private readonly votesService: VotesService,
   ) {}
 
-  async create(dto: CreatePostDto, user: User) {
+  async create(dto: CreatePostDto, user: UserPayload) {
     const board = await this.boardsService.findOne(dto.boardId);
     if (board.isLocked) {
       throw new BadRequestException(`novas postagens não são permitidas em um board bloqueado`);
     }
 
     const userIsAdminOrOwnerOfOrg = user.organizations.some(
-      (org) => org.organizationId === board.organizationId && (org.role === 'ADMIN' || org.role === 'OWNER'),
+      (org) => org.id === board.organizationId && (org.role === 'ADMIN' || org.role === 'OWNER'),
     );
 
     if (userIsAdminOrOwnerOfOrg) {

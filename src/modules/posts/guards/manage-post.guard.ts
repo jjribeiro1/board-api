@@ -27,9 +27,7 @@ export class ManagePostGuard implements CanActivate {
     }
     const organizationIdFromPost = orgAndAuthorIdFromPost.organizationId;
 
-    const userRoles = user.organizations
-      .filter((org) => org.organizationId === organizationIdFromPost)
-      .map((org) => org.role);
+    const userRoles = user.organizations.filter((org) => org.id === organizationIdFromPost).map((org) => org.role);
 
     return userRoles.some((role) => allowedRoles.includes(role));
   }

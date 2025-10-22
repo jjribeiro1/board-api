@@ -28,7 +28,7 @@ export class UsersController {
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
     return {
-      data: user.toPresentation(),
+      data: { ...user, password: undefined },
     };
   }
 

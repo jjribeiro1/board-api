@@ -28,7 +28,7 @@ export class ManageStatusGuard implements CanActivate {
     }
 
     const userRolesInOrg = user.organizations
-      .filter((org) => org.organizationId === statusInfo.organizationId)
+      .filter((org) => org.id === statusInfo.organizationId)
       .map((org) => org.role);
 
     return userRolesInOrg.some((role) => allowedRoles.includes(role));

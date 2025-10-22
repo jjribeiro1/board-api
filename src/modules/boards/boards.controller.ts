@@ -3,11 +3,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
-import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { ManageBoardGuard } from './guards/manage-board.guard';
+import { UserPayload } from 'src/common/types/user-payload';
 
 @ApiTags('boards')
 @Controller('boards')
@@ -20,7 +20,7 @@ export class BoardsController {
    */
   @ApiBearerAuth()
   @Post()
-  async create(@Body() dto: CreateBoardDto, @LoggedUser() user: User) {
+  async create(@Body() dto: CreateBoardDto, @LoggedUser() user: UserPayload) {
     return this.boardsService.create(dto, user.id);
   }
 
@@ -43,7 +43,7 @@ export class BoardsController {
    */
   @ApiBearerAuth()
   @Get(':id/posts')
-  async findPosts(@Param('id') boardId: string, @LoggedUser() user: User) {
+  async findPosts(@Param('id') boardId: string, @LoggedUser() user: UserPayload) {
     const posts = await this.boardsService.findPostsFromBoard(boardId, user.id);
     return {
       data: posts,

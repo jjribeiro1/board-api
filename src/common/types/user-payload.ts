@@ -5,7 +5,8 @@ export type UserPayload = {
   name: string;
   email: string;
   organizations: {
-    organizationId: string;
+    id: string;
+    name: string;
     role: OrganizationRole;
   }[];
   createdAt: Date;

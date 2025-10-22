@@ -6,7 +6,7 @@ import { Request, Response } from 'express';
 import { COOKIE_ACCESS_TOKEN_EXPIRES_IN, COOKIE_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { User } from 'src/modules/users/entities/user.entity';
+import { UserPayload } from 'src/common/types/user-payload';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('auth')
@@ -89,7 +89,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Delete('sign-out')
   @HttpCode(HttpStatus.OK)
-  async signOut(@Res({ passthrough: true }) res: Response, @LoggedUser() user: User) {
+  async signOut(@Res({ passthrough: true }) res: Response, @LoggedUser() user: UserPayload) {
     res.clearCookie('access-token');
     res.clearCookie('refresh-token');
     res.clearCookie('org-id');

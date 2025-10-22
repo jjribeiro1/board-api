@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 
 @Injectable()
@@ -13,40 +12,36 @@ export class UsersRepository {
   }
 
   async findOne(id: string) {
-    const result = await this.prisma.user.findUnique({ where: { id }, include: { organizations: true } });
+    const result = await this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        organizations: {
+          select: { id: true, name: true, role: true },
+        },
+      },
+    });
 
     if (!result) {
       return null;
     }
 
-    return new User(
-      result.id,
-      result.name,
-      result.email,
-      result.password,
-      result.organizations.map((data) => ({ organizationId: data.organizationId, name: data.name, role: data.role })),
-      result.createdAt,
-      result.updatedAt,
-      null,
-    );
+    return result;
   }
 
   async findByEmail(email: string) {
-    const result = await this.prisma.user.findUnique({ where: { email }, include: { organizations: true } });
+    const result = await this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        organizations: {
+          select: { id: true, name: true, role: true },
+        },
+      },
+    });
     if (!result) {
       return null;
     }
 
-    return new User(
-      result.id,
-      result.name,
-      result.email,
-      result.password,
-      result.organizations.map((data) => ({ organizationId: data.organizationId, name: data.name, role: data.role })),
-      result.createdAt,
-      result.updatedAt,
-      null,
-    );
+    return result;
   }
 
   async organizationsFromUser(userId: string) {

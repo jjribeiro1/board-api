@@ -31,7 +31,7 @@ export class MutatePostGuard implements CanActivate {
     }
 
     const userRoles = user.organizations
-      .filter((org) => org.organizationId === authorAndOrgIdFromPost.organizationId)
+      .filter((org) => org.id === authorAndOrgIdFromPost.organizationId)
       .map((org) => org.role);
 
     return userRoles.some((role) => allowedRoles.includes(role));

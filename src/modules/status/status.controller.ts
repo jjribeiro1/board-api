@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { User } from '../users/entities/user.entity';
+import { UserPayload } from 'src/common/types/user-payload';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { ManageStatusGuard } from './guards/manage-status.guard';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
@@ -34,7 +34,7 @@ export class StatusController {
    */
   @ApiBearerAuth()
   @Post()
-  async create(@Body() dto: CreateStatusDto, @LoggedUser() user: User, @Req() req: Request) {
+  async create(@Body() dto: CreateStatusDto, @LoggedUser() user: UserPayload, @Req() req: Request) {
     const orgId = req.cookies['org-id'];
     return await this.statusService.create(dto, user, orgId);
   }

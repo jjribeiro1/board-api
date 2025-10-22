@@ -30,7 +30,7 @@ export class MutateCommentGuard implements CanActivate {
     }
 
     const userRoles = user.organizations
-      .filter((org) => org.organizationId === authorAndOrgIdFromComment.organizationId)
+      .filter((org) => org.id === authorAndOrgIdFromComment.organizationId)
       .map((org) => org.role);
 
     return userRoles.some((role) => allowedRoles.includes(role));

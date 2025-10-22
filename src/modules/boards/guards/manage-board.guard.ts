@@ -26,7 +26,7 @@ export class ManageBoardGuard implements CanActivate {
     const organizationIdFromBoard = board.organizationId;
 
     const userRolesInOrg = user.organizations
-      .filter((org) => org.organizationId === organizationIdFromBoard)
+      .filter((org) => org.id === organizationIdFromBoard)
       .map((org) => org.role);
 
     return userRolesInOrg.some((role) => allowedRoles.includes(role));

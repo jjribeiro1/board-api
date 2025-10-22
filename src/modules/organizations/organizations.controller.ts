@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { OrganizationsService } from './organizations.service';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { User } from 'src/modules/users/entities/user.entity';
+import { UserPayload } from 'src/common/types/user-payload';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
 
 @ApiBearerAuth()
@@ -18,7 +18,7 @@ export class OrganizationsController {
    */
   @ApiBearerAuth()
   @Post()
-  async create(@Body() dto: CreateOrganizationDto, @LoggedUser() user: User) {
+  async create(@Body() dto: CreateOrganizationDto, @LoggedUser() user: UserPayload) {
     return this.organizationsService.create(dto, user.id);
   }
 

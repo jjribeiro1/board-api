@@ -5,8 +5,8 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { ManagePostDto } from './dto/manage-post.dto';
 import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { PostsService } from './posts.service';
-import { User } from '../users/entities/user.entity';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { UserPayload } from 'src/common/types/user-payload';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { MutatePostGuard } from './guards/mutate-post.guard';
@@ -23,7 +23,7 @@ export class PostsController {
    */
   @ApiBearerAuth()
   @Post('')
-  async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: User) {
+  async create(@Body() dto: CreatePostDto, @LoggedUser() loggedUser: UserPayload) {
     return this.postsService.create(dto, loggedUser);
   }
 
@@ -112,7 +112,7 @@ export class PostsController {
    */
   @ApiBearerAuth()
   @Post(':id/vote')
-  async vote(@Param('id') postId: string, @LoggedUser() loggedUser: User) {
+  async vote(@Param('id') postId: string, @LoggedUser() loggedUser: UserPayload) {
     return this.postsService.vote(postId, loggedUser.id);
   }
 }

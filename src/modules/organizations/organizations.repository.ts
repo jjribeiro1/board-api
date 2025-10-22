@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
-import { Organization } from './entities/organization.entity';
 
 @Injectable()
 export class OrganizationsRepository {
@@ -55,18 +54,7 @@ export class OrganizationsRepository {
       return null;
     }
 
-    return new Organization(
-      result.id,
-      result.name,
-      result.logoUrl,
-      result.defaultStatusId,
-      result.members,
-      result.organizationCustomStatus,
-      result.organizationCustomTags,
-      result.createdAt,
-      result.updatedAt,
-      null,
-    );
+    return result;
   }
 
   async findBoardsFromOrganization(organizationId: string) {

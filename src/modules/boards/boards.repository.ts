@@ -27,6 +27,7 @@ export class BoardsRepository {
     const result = await this.prisma.board.findUnique({
       where: {
         id: boardId,
+        deletedAt: null,
       },
     });
 

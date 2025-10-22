@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { Comment } from './entities/comment.entity';
 
 @Injectable()
 export class CommentsRepository {
@@ -41,16 +40,7 @@ export class CommentsRepository {
       return null;
     }
 
-    return new Comment(
-      result.id,
-      result.content,
-      result.author.id,
-      result.author.name,
-      result.postId,
-      result.createdAt,
-      result.updatedAt,
-      result.deletedAt,
-    );
+    return result;
   }
 
   async update(commentId: string, dto: UpdateCommentDto) {

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
-import { Status } from './entities/status.entity';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 
@@ -15,18 +14,7 @@ export class StatusRepository {
         deletedAt: null,
       },
     });
-    return results.map(
-      (result) =>
-        new Status(
-          result.id,
-          result.name,
-          result.color,
-          result.organizationId,
-          result.createdAt,
-          result.updatedAt,
-          result.deletedAt,
-        ),
-    );
+    return results;
   }
 
   async create(dto: CreateStatusDto) {

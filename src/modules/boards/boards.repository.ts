@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
-import { Board } from './entities/board.entity';
 
 @Injectable()
 export class BoardsRepository {
@@ -35,18 +34,7 @@ export class BoardsRepository {
       return null;
     }
 
-    return new Board(
-      result.id,
-      result.title,
-      result.description,
-      result.isPrivate,
-      result.isLocked,
-      result.organizationId,
-      result.authorId,
-      result.createdAt,
-      result.updatedAt,
-      null,
-    );
+    return result;
   }
 
   async findPostsFromBoard(boardId: string, userId: string) {

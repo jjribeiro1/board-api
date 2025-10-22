@@ -31,7 +31,7 @@ export class OrganizationsRepository {
 
   async findOne(organizationId: string) {
     const result = await this.prisma.organization.findUnique({
-      where: { id: organizationId },
+      where: { id: organizationId, deletedAt: null },
       include: {
         members: true,
         organizationCustomStatus: {

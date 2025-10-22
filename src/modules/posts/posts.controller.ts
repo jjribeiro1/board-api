@@ -96,6 +96,7 @@ export class PostsController {
   /**
    * Delete Post
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(MutatePostGuard)
   @ApiBearerAuth()
   @Delete(':id')

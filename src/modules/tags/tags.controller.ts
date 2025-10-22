@@ -21,6 +21,7 @@ export class TagsController {
   /**
    * Returns a tag by ID
    */
+  @ApiBearerAuth()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const tag = await this.tagsService.findOne(id);
@@ -45,8 +46,8 @@ export class TagsController {
    * Remove a tag by ID
    */
   @ApiBearerAuth()
-  @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.tagsService.remove(id);
   }

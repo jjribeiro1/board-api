@@ -16,6 +16,7 @@ export class OrganizationsController {
    *
    * Create new organization and returns the ID
    */
+  @ApiBearerAuth()
   @Post()
   async create(@Body() dto: CreateOrganizationDto, @LoggedUser() user: User) {
     return this.organizationsService.create(dto, user.id);
@@ -25,6 +26,7 @@ export class OrganizationsController {
    *
    * Returns an organization by ID
    */
+  @ApiBearerAuth()
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     const organization = await this.organizationsService.findOne(id);
@@ -37,6 +39,7 @@ export class OrganizationsController {
    *
    * Returns all boards from an organization
    */
+  @ApiBearerAuth()
   @Get(':id/boards')
   async findBoards(@Param('id', ParseUUIDPipe) id: string) {
     const boards = await this.organizationsService.findBoardsFromOrganization(id);
@@ -49,6 +52,7 @@ export class OrganizationsController {
    *
    * Returns posts from an Organization
    */
+  @ApiBearerAuth()
   @Get(':id/posts')
   async findPostsFromOrganization(@Param('id', ParseUUIDPipe) orgId: string, @Query() query: ListPostsQueryDto) {
     const posts = await this.organizationsService.findPostsFromOrganization(orgId, query);
@@ -61,6 +65,7 @@ export class OrganizationsController {
    *
    * Returns all members from an organization
    */
+  @ApiBearerAuth()
   @Get(':id/members')
   async findMembersFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
     const members = await this.organizationsService.findMembersFromOrganization(orgId);
@@ -73,6 +78,7 @@ export class OrganizationsController {
    *
    * Returns all tags from an organization
    */
+  @ApiBearerAuth()
   @Get(':id/tags')
   async findTagsFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
     const tags = await this.organizationsService.findTagsFromOrganization(orgId);
@@ -85,6 +91,7 @@ export class OrganizationsController {
    *
    * Returns all status from an organization
    */
+  @ApiBearerAuth()
   @Get(':id/status')
   async findStatusFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
     const status = await this.organizationsService.findStatusFromOrganization(orgId);

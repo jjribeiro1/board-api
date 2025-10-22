@@ -28,6 +28,7 @@ export class BoardsController {
    *
    * Returns an board by ID
    */
+  @ApiBearerAuth()
   @Get(':id')
   async findOne(@Param('id') boardId: string) {
     const board = await this.boardsService.findOne(boardId);
@@ -40,6 +41,7 @@ export class BoardsController {
    *
    * Returns all posts from an board
    */
+  @ApiBearerAuth()
   @Get(':id/posts')
   async findPosts(@Param('id') boardId: string, @LoggedUser() user: User) {
     const posts = await this.boardsService.findPostsFromBoard(boardId, user.id);
@@ -51,9 +53,9 @@ export class BoardsController {
   /**
    * Manage Board settings
    */
-  @ApiBearerAuth()
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(ManageBoardGuard)
+  @ApiBearerAuth()
   @Patch(':id/settings')
   async manageBoard(@Param('id') boardId: string, @Body() dto: ManageBoardDto) {
     return await this.boardsService.manageBoard(boardId, dto);
@@ -63,11 +65,11 @@ export class BoardsController {
    *
    * Removes a board by ID
    */
-  @ApiBearerAuth()
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER])
   @UseGuards(ManageBoardGuard)
-  @Delete(':id')
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
   async remove(@Param('id') boardId: string) {
     return this.boardsService.remove(boardId);
   }

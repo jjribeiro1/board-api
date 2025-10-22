@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
@@ -23,6 +23,7 @@ export class UsersController {
    *
    * Returns an user by ID
    */
+  @ApiBearerAuth()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
@@ -34,6 +35,7 @@ export class UsersController {
   /**
    * Returns organizations from an user
    */
+  @ApiBearerAuth()
   @Get(':id/organizations')
   async findOrgFromUser(@Param('id') id: string) {
     const organizations = await this.usersService.organizationsFromUser(id);

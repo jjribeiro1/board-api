@@ -19,6 +19,7 @@ export class CommentsController {
    *
    * Create new comment and returns the ID
    */
+  @ApiBearerAuth()
   @Post()
   async create(@Body() dto: CreateCommentDto, @LoggedUser() user: User) {
     return this.commentsService.create(dto, user.id);
@@ -30,6 +31,7 @@ export class CommentsController {
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(MutateCommentGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {
     return this.commentsService.update(id, dto);
@@ -40,6 +42,7 @@ export class CommentsController {
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(MutateCommentGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.commentsService.delete(id);

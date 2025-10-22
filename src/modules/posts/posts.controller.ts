@@ -31,6 +31,7 @@ export class PostsController {
    *
    * Returns an post by ID
    */
+  @ApiBearerAuth()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const post = await this.postsService.findOne(id);
@@ -43,6 +44,7 @@ export class PostsController {
    *
    * Returns comments from an Post
    */
+  @ApiBearerAuth()
   @Get(':id/comments')
   async findComments(@Param('id') id: string) {
     const comments = await this.postsService.findCommentsFromPost(id);
@@ -72,6 +74,7 @@ export class PostsController {
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.ADMIN, OrganizationRolesOptions.OWNER])
   @UseGuards(ManagePostGuard)
+  @ApiBearerAuth()
   @Patch(':id/settings')
   async managePost(@Param('id') id: string, @Body() dto: ManagePostDto) {
     const post = await this.postsService.update(id, dto);

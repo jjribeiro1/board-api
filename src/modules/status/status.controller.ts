@@ -42,9 +42,9 @@ export class StatusController {
   /**
    * Update an existing status
    */
-  @ApiBearerAuth()
   @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
   @UseGuards(ManageStatusGuard)
+  @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
     const updatedStatus = await this.statusService.update(id, dto);
@@ -56,9 +56,9 @@ export class StatusController {
   /**
    * Delete an existing status
    */
-  @ApiBearerAuth()
   @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
   @UseGuards(ManageStatusGuard)
+  @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.statusService.remove(id);

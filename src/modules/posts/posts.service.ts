@@ -33,7 +33,15 @@ export class PostsService {
 
     const organizationInfo = await this.organizationsService.findOne(board.organizationId);
 
-    return await this.postsRepository.create({ ...dto, statusId: organizationInfo.defaultStatusId! }, user.id);
+    return await this.postsRepository.create(
+      {
+        boardId: dto.boardId,
+        title: dto.title,
+        description: dto.description,
+        statusId: organizationInfo.defaultStatusId!,
+      },
+      user.id,
+    );
   }
 
   async findOne(postId: string) {

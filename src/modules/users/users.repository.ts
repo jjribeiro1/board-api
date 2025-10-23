@@ -16,7 +16,7 @@ export class UsersRepository {
       where: { id },
       include: {
         organizations: {
-          select: { id: true, name: true, role: true },
+          select: { id: true, name: true, role: true, organization: { select: { id: true } } },
         },
       },
     });
@@ -25,7 +25,10 @@ export class UsersRepository {
       return null;
     }
 
-    return result;
+    return {
+      ...result,
+      organizations: result.organizations.map((org) => ({ id: org.organization.id, name: org.name, role: org.role })),
+    };
   }
 
   async findByEmail(email: string) {
@@ -33,7 +36,7 @@ export class UsersRepository {
       where: { email },
       include: {
         organizations: {
-          select: { id: true, name: true, role: true },
+          select: { id: true, name: true, role: true, organization: { select: { id: true } } },
         },
       },
     });
@@ -41,7 +44,10 @@ export class UsersRepository {
       return null;
     }
 
-    return result;
+    return {
+      ...result,
+      organizations: result.organizations.map((org) => ({ id: org.organization.id, name: org.name, role: org.role })),
+    };
   }
 
   async organizationsFromUser(userId: string) {

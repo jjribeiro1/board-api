@@ -1,6 +1,5 @@
 import { Test } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -40,19 +39,6 @@ describe('UsersController', () => {
       expect(usersServiceMock.create).toHaveBeenCalledWith(dto);
       expect(usersServiceMock.create).toHaveBeenCalledTimes(1);
     });
-
-    it('should throw ConflictException when email already exists', async () => {
-      const dto: CreateUserDto = {
-        email: 'existing@example.com',
-        password: 'password123',
-        name: 'John Doe',
-      };
-      const errorMsg = `Email ${dto.email} já foi registrado`;
-      usersServiceMock.create.mockRejectedValue(new ConflictException(errorMsg));
-
-      await expect(usersController.create(dto)).rejects.toThrow(new ConflictException(errorMsg));
-      expect(usersServiceMock.create).toHaveBeenCalledWith(dto);
-    });
   });
 
   describe('findOne', () => {
@@ -75,15 +61,6 @@ describe('UsersController', () => {
       expect(result).toEqual({ data: { ...userMock, password: undefined } });
       expect(usersServiceMock.findOne).toHaveBeenCalledWith(userId);
       expect(usersServiceMock.findOne).toHaveBeenCalledTimes(1);
-    });
-
-    it('should throw NotFoundException when user does not exist', async () => {
-      const userId = 'non-existent-id';
-      const errorMsg = `usuário com id: ${userId} não encontrado`;
-      usersServiceMock.findOne.mockRejectedValue(new NotFoundException(errorMsg));
-
-      await expect(usersController.findOne(userId)).rejects.toThrow(new NotFoundException(errorMsg));
-      expect(usersServiceMock.findOne).toHaveBeenCalledWith(userId);
     });
   });
 

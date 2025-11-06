@@ -34,7 +34,7 @@ export class TagsService {
   }
 
   async update(id: string, updateTagDto: UpdateTagDto) {
-    await this.findOne(id); // Verifica se a tag existe
+    await this.findOne(id);
     return this.tagsRepository.update(id, updateTagDto);
   }
 

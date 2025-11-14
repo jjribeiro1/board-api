@@ -12,8 +12,9 @@ const config: Config = {
   moduleNameMapper: {
     '^@src/(.*)$': '<rootDir>/$1',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  collectCoverageFrom: ['src/**/*.ts', '!src/main.ts', '!src/**/*.module.ts', '!src/**/*.dto.ts'],
 };
 
 export default config;

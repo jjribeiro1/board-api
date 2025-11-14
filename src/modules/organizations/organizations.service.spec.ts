@@ -8,7 +8,6 @@ import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { EVENTS } from 'src/constants/events';
 import { OrganizationCreatedEventDto } from '../events/dto/organization-created-event.dto';
-import * as slugUtils from 'src/utils/slug';
 
 describe('OrganizationsService', () => {
   let service: OrganizationsService;
@@ -51,14 +50,10 @@ describe('OrganizationsService', () => {
       const userId = 'user-id-1';
       const expectedId = 'org-id-1';
       const slug = 'test-organization';
-
-      const slugifySpy = jest.spyOn(slugUtils, 'slugify').mockReturnValue(slug);
       organizationsRepositoryMock.create.mockResolvedValue(expectedId);
 
       const result = await service.create(dto, userId);
 
-      expect(slugifySpy).toHaveBeenCalledWith(dto.name);
-      expect(slugifySpy).toHaveBeenCalledTimes(1);
       expect(organizationsRepositoryMock.create).toHaveBeenCalledWith(dto, slug, userId);
       expect(organizationsRepositoryMock.create).toHaveBeenCalledTimes(1);
       expect(eventEmitterMock.emit).toHaveBeenCalledWith(

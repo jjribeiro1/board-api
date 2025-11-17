@@ -28,6 +28,8 @@ describe('AuthService', () => {
       const config = {
         ACCESS_TOKEN_PRIVATE_KEY: 'access-private-key',
         REFRESH_TOKEN_PRIVATE_KEY: 'refresh-private-key',
+        ACCESS_TOKEN_PUBLIC_KEY: 'access-public-key',
+        REFRESH_TOKEN_PUBLIC_KEY: 'refresh-public-key',
       };
       return config[key];
     });
@@ -148,6 +150,8 @@ describe('AuthService', () => {
       await expect(service.signIn(dto)).rejects.toThrow(
         new UnauthorizedException('Não foi possível gerar token de acesso'),
       );
+
+      expect(prismaServiceMock.session.create).not.toHaveBeenCalled();
     });
 
     it('should throw an error if createSession fails', async () => {
@@ -163,6 +167,237 @@ describe('AuthService', () => {
       prismaServiceMock.session.create.mockRejectedValueOnce(new Error());
 
       await expect(service.signIn(dto)).rejects.toThrow();
+    });
+  });
+
+  describe('logout', () => {
+    it('should delete all user sessions', async () => {
+      const userId = 'user-id-1';
+
+      prismaServiceMock.session.deleteMany.mockResolvedValue({ count: 1 });
+
+      await service.logout(userId);
+
+      expect(prismaServiceMock.session.deleteMany).toHaveBeenCalledWith({
+        where: { userId },
+      });
+    });
+  });
+
+  describe('refreshToken', () => {
+    it('should refresh tokens and return new access and refresh tokens', async () => {
+      const token = 'valid-refresh-token';
+      const mockUser = createMockUser();
+      const mockSession = {
+        id: 'session-id-1',
+        refreshToken: token,
+        expiresAt: new Date(Date.now() + 1000000),
+        device: null,
+        ipAddress: null,
+        userAgent: null,
+        userId: mockUser.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        user: {
+          ...mockUser,
+          organizations: mockUser.organizations.map((org) => ({
+            organizationId: org.id,
+            role: org.role,
+          })),
+        },
+      };
+      const expectedAccessToken = 'new-access-token';
+      const expectedRefreshToken = 'new-refresh-token';
+      const tokenPayload = {
+        sub: mockUser.id,
+        organizations: mockSession.user.organizations,
+      };
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: mockUser.id });
+      prismaServiceMock.session.findUnique.mockResolvedValue(mockSession);
+      jwtServiceMock.signAsync.mockResolvedValueOnce(expectedAccessToken).mockResolvedValueOnce(expectedRefreshToken);
+      prismaServiceMock.session.update.mockResolvedValue({} as any);
+
+      const result = await service.refreshToken(token);
+
+      expect(jwtServiceMock.verifyAsync).toHaveBeenCalledWith(token, {
+        publicKey: configServiceMock.get('REFRESH_TOKEN_PUBLIC_KEY'),
+      });
+
+      expect(prismaServiceMock.session.findUnique).toHaveBeenCalledWith({
+        where: { refreshToken: token },
+        select: expect.any(Object),
+      });
+
+      expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
+        privateKey: 'access-private-key',
+        expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+      });
+
+      expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
+        privateKey: 'refresh-private-key',
+        expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+      });
+
+      expect(prismaServiceMock.session.update).toHaveBeenCalledWith({
+        where: { id: mockSession.id, userId: mockUser.id },
+        data: {
+          refreshToken: expectedRefreshToken,
+          expiresAt: expect.any(Date),
+        },
+      });
+
+      expect(result).toEqual({
+        accessToken: expectedAccessToken,
+        refreshToken: expectedRefreshToken,
+      });
+    });
+
+    it('should throw an error if token verification fails', async () => {
+      const token = 'invalid-token';
+
+      jwtServiceMock.verifyAsync.mockRejectedValueOnce(new Error());
+
+      await expect(service.refreshToken(token)).rejects.toThrow(new UnauthorizedException('Erro ao verificar token'));
+    });
+
+    it('should throw an error if session is not found', async () => {
+      const token = 'refresh-token';
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: 'user-id-1' });
+      prismaServiceMock.session.findUnique.mockResolvedValue(null);
+
+      await expect(service.refreshToken(token)).rejects.toThrow(new UnauthorizedException('Sessão inválida'));
+
+      expect(jwtServiceMock.signAsync).not.toHaveBeenCalled();
+      expect(prismaServiceMock.session.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw an error if session is expired', async () => {
+      const token = 'valid-refresh-token';
+      const mockUser = createMockUser();
+      const expiredSession = {
+        id: 'session-id-1',
+        refreshToken: token,
+        expiresAt: new Date(Date.now() - 1000),
+        device: null,
+        ipAddress: null,
+        userAgent: null,
+        userId: mockUser.id,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        user: {
+          id: mockUser.id,
+          name: mockUser.name,
+          email: mockUser.email,
+          organizations: mockUser.organizations.map((org) => ({
+            organizationId: org.id,
+            role: org.role,
+          })),
+        },
+      };
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: mockUser.id });
+      prismaServiceMock.session.findUnique.mockResolvedValue(expiredSession);
+      prismaServiceMock.session.delete.mockResolvedValue({} as any);
+
+      await expect(service.refreshToken(token)).rejects.toThrow(
+        new UnauthorizedException('Sessão inválida ou expirada'),
+      );
+
+      expect(prismaServiceMock.session.delete).toHaveBeenCalledWith({
+        where: { refreshToken: token },
+      });
+    });
+  });
+
+  describe('extractUserFromAccessToken', () => {
+    it('should extract and return user from valid access token', async () => {
+      const token = 'valid-access-token';
+      const mockUser = createMockUser();
+      const mockSession = {
+        id: 'session-id-1',
+        userId: mockUser.id,
+        expiresAt: new Date(Date.now() + 1000000),
+        createdAt: new Date(),
+      };
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: mockUser.id });
+      prismaServiceMock.session.findFirst.mockResolvedValue(mockSession as any);
+      usersRepositoryMock.findOne.mockResolvedValue(mockUser);
+
+      const result = await service.extractUserFromAccessToken(token);
+
+      expect(jwtServiceMock.verifyAsync).toHaveBeenCalledWith(token, {
+        publicKey: configServiceMock.get('ACCESS_TOKEN_PUBLIC_KEY'),
+      });
+
+      expect(prismaServiceMock.session.findFirst).toHaveBeenCalledWith({
+        where: { userId: mockUser.id },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      expect(usersRepositoryMock.findOne).toHaveBeenCalledWith(mockUser.id);
+
+      expect(result).toEqual(mockUser);
+    });
+
+    it('should throw an error if token verification fails', async () => {
+      const token = 'invalid-token';
+
+      jwtServiceMock.verifyAsync.mockRejectedValueOnce(new Error());
+
+      await expect(service.extractUserFromAccessToken(token)).rejects.toThrow(
+        new UnauthorizedException('Erro ao verificar token'),
+      );
+    });
+
+    it('should throw an error if session is not found', async () => {
+      const token = 'valid-access-token';
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: 'user-id-1' });
+      prismaServiceMock.session.findFirst.mockResolvedValue(null);
+
+      await expect(service.extractUserFromAccessToken(token)).rejects.toThrow(
+        new UnauthorizedException('Sessão inválida ou expirada'),
+      );
+    });
+
+    it('should throw an error if session is expired', async () => {
+      const token = 'valid-access-token';
+      const expiredSession = {
+        id: 'session-id-1',
+        userId: 'user-id-1',
+        expiresAt: new Date(Date.now() - 1000),
+        createdAt: new Date(),
+      };
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: 'user-id-1' });
+      prismaServiceMock.session.findFirst.mockResolvedValue(expiredSession as any);
+
+      await expect(service.extractUserFromAccessToken(token)).rejects.toThrow(
+        new UnauthorizedException('Sessão inválida ou expirada'),
+      );
+    });
+
+    it('should throw an error if user is not found', async () => {
+      const token = 'valid-access-token';
+      const mockSession = {
+        id: 'session-id-1',
+        userId: 'user-id-1',
+        expiresAt: new Date(Date.now() + 1000000),
+        createdAt: new Date(),
+      };
+
+      jwtServiceMock.verifyAsync.mockResolvedValueOnce({ sub: 'user-id-1' });
+      prismaServiceMock.session.findFirst.mockResolvedValue(mockSession as any);
+      usersRepositoryMock.findOne.mockResolvedValue(null);
+
+      await expect(service.extractUserFromAccessToken(token)).rejects.toThrow(
+        new UnauthorizedException('Não autorizado'),
+      );
     });
   });
 });

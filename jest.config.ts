@@ -14,7 +14,15 @@ const config: Config = {
   },
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  collectCoverageFrom: ['src/**/*.ts', '!src/main.ts', '!src/**/*.module.ts', '!src/**/*.dto.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/main.ts',
+    '!src/**/*.module.ts',
+    '!src/**/*.dto.ts',
+    '!src/**/constants/**/*.ts',
+    '!src/config/**/*.ts',
+    '!src/shared/modules/database/prisma/**/*.ts',
+  ],
 };
 
 export default config;

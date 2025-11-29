@@ -23,6 +23,7 @@ const config: Config = {
     '!src/config/**/*.ts',
     '!src/shared/modules/database/prisma/**/*.ts',
   ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 
 export default config;

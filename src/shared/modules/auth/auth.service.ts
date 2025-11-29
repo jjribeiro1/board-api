@@ -165,6 +165,7 @@ export class AuthService {
       const token = await this.jwtService.signAsync(payload, options);
       return token;
     } catch (error) {
+      console.error(error);
       throw new UnauthorizedException('Não foi possível gerar token de acesso');
     }
   }

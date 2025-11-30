@@ -1,7 +1,7 @@
 import { ArgumentsHost } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClientKnownRequestError, PrismaClientRustPanicError } from '@prisma/client/runtime/library';
+import { PrismaClientKnownRequestError, PrismaClientRustPanicError } from 'generated/prisma/internal/prismaNamespace';
 import { PrismaClientExceptionFilter } from './prisma-exception.filter';
 
 describe('PrismaClientExceptionFilter', () => {

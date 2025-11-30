@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { VotesRepository } from './votes.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from 'generated/prisma/client';
 
 describe('VotesRepository', () => {
   let repository: VotesRepository;

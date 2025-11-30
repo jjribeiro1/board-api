@@ -22,6 +22,7 @@ const config: Config = {
     '!src/**/constants/**/*.ts',
     '!src/config/**/*.ts',
     '!src/shared/modules/database/prisma/**/*.ts',
+    '!generated/**',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };

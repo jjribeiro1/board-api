@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client"
+  output     = "../generated/prisma"
+  engineType = "client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -62,7 +63,7 @@ model Organization {
   name                     String             @unique @db.VarChar(140)
   slug                     String             @unique
   logoUrl                  String?            @map("logo_url")
-  defaultStatusId          String?            @map("default_status_id") @db.Uuid @unique
+  defaultStatusId          String?            @unique @map("default_status_id") @db.Uuid
   defaultStatus            Status?            @relation("DefaultStatus", fields: [defaultStatusId], references: [id])
   createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz
   updatedAt                DateTime           @updatedAt @map("updated_at") @db.Timestamptz
@@ -107,8 +108,8 @@ model Post {
   boardId     String     @map("board_id") @db.Uuid
   author      User       @relation(fields: [authorId], references: [id])
   authorId    String     @map("author_id") @db.Uuid
-  status      Status?     @relation(fields: [statusId], references: [id])
-  statusId    String?     @map("status_id") @db.Uuid
+  status      Status?    @relation(fields: [statusId], references: [id])
+  statusId    String?    @map("status_id") @db.Uuid
   tags        PostTag[]
   comments    Comment[]
   votes       PostVote[]
@@ -155,15 +156,15 @@ model Tag {
 }
 
 model Status {
-  id             String       @id @default(uuid()) @db.Uuid
-  name           String       @db.VarChar(50)
-  color          String       @db.VarChar(50)
-  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt      DateTime?    @map("deleted_at") @db.Timestamptz
+  id             String        @id @default(uuid()) @db.Uuid
+  name           String        @db.VarChar(50)
+  color          String        @db.VarChar(50)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime?     @map("deleted_at") @db.Timestamptz
   posts          Post[]
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String       @map("organization_id") @db.Uuid
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  organizationId String        @map("organization_id") @db.Uuid
   defaultOf      Organization? @relation("DefaultStatus")
 
   @@unique([organizationId, name])

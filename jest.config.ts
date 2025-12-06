@@ -24,6 +24,14 @@ const config: Config = {
     '!src/shared/modules/database/prisma/**/*.ts',
     '!generated/**',
   ],
+  coverageThreshold: {
+    global: {
+      lines: 70,
+      statements: 70,
+      functions: 70,
+      branches: 70,
+    },
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 };
 

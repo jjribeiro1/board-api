@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient } from 'generated/prisma/client';
+import { PrismaClient } from 'src/generated/prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { createMockUser } from 'test/factories/user-payload-factory';
 

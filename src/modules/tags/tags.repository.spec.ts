@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TagsRepository } from './tags.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient } from 'generated/prisma/client';
+import { PrismaClient } from 'src/generated/prisma/client';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 

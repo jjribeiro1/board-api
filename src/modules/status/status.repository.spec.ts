@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { StatusRepository } from './status.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient } from 'generated/prisma/client';
+import { PrismaClient } from 'src/generated/prisma/client';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 

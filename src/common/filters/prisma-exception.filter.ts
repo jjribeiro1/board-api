@@ -5,7 +5,7 @@ import {
   PrismaClientUnknownRequestError,
   PrismaClientRustPanicError,
   PrismaClientValidationError,
-} from 'generated/prisma/internal/prismaNamespace';
+} from 'src/generated/prisma/internal/prismaNamespace';
 import { Response } from 'express';
 
 type PrismaClientErrors =

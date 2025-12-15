@@ -57,7 +57,7 @@ describe('AuthController', () => {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
-        maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN - 10,
+        maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', expectedRefreshToken, {
@@ -90,7 +90,7 @@ describe('AuthController', () => {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',
-        maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN - 10,
+        maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', expectedRefreshToken, {

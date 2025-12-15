@@ -24,12 +24,14 @@ export class AuthController {
   async signIn(@Res({ passthrough: true }) res: Response, @Body() dto: SignInDto) {
     const { accessToken, refreshToken } = await this.authService.signIn(dto);
     const isProduction = process.env.NODE_ENV === 'production';
+    const clientDomain = process.env.CLIENT_DOMAIN;
 
     res.cookie('access-token', accessToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN - 10,
+      maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
+      domain: clientDomain,
     });
 
     res.cookie('refresh-token', refreshToken, {
@@ -37,6 +39,7 @@ export class AuthController {
       secure: isProduction,
       sameSite: 'lax',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
+      domain: clientDomain,
     });
 
     return;
@@ -51,14 +54,15 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const { accessToken, refreshToken } = await this.authService.refreshToken(req.cookies['refresh-token']);
-
     const isProduction = process.env.NODE_ENV === 'production';
+    const clientDomain = process.env.CLIENT_DOMAIN;
 
     res.cookie('access-token', accessToken, {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
       maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
+      domain: clientDomain,
     });
 
     res.cookie('refresh-token', refreshToken, {
@@ -66,6 +70,7 @@ export class AuthController {
       secure: isProduction,
       sameSite: 'lax',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
+      domain: clientDomain,
     });
 
     return { accessToken, refreshToken };

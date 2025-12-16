@@ -29,7 +29,7 @@ export class AuthController {
     res.cookie('access-token', accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -37,7 +37,7 @@ export class AuthController {
     res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -60,7 +60,7 @@ export class AuthController {
     res.cookie('access-token', accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -68,7 +68,7 @@ export class AuthController {
     res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -95,9 +95,15 @@ export class AuthController {
   @Delete('sign-out')
   @HttpCode(HttpStatus.OK)
   async signOut(@Res({ passthrough: true }) res: Response, @LoggedUser() user: UserPayload) {
-    res.clearCookie('access-token');
-    res.clearCookie('refresh-token');
-    res.clearCookie('org-id');
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      domain: process.env.CLIENT_DOMAIN,
+    };
+
+    res.clearCookie('access-token', { ...cookieOptions, sameSite: 'none' });
+    res.clearCookie('refresh-token', { ...cookieOptions, sameSite: 'none' });
+    res.clearCookie('org-id', { ...cookieOptions, sameSite: 'none' });
     return this.authService.logout(user.id);
   }
 }

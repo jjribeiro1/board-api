@@ -56,14 +56,14 @@ describe('AuthController', () => {
       expect(mockResponse.cookie).toHaveBeenCalledWith('access-token', expectedAccessToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', expectedRefreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       });
     });
@@ -89,14 +89,14 @@ describe('AuthController', () => {
       expect(mockResponse.cookie).toHaveBeenCalledWith('access-token', expectedAccessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', expectedRefreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       });
 
@@ -140,14 +140,14 @@ describe('AuthController', () => {
       expect(mockResponse.cookie).toHaveBeenCalledWith('access-token', newAccessToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', newRefreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       });
 
@@ -179,14 +179,14 @@ describe('AuthController', () => {
       expect(mockResponse.cookie).toHaveBeenCalledWith('access-token', newAccessToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', newRefreshToken, {
         httpOnly: true,
         secure: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       });
 
@@ -220,28 +220,38 @@ describe('AuthController', () => {
   describe('signOut', () => {
     it('should clear cookies and call authService.logout', async () => {
       const mockUser = createMockUser();
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        domain: process.env.CLIENT_DOMAIN,
+      };
 
       authServiceMock.logout.mockResolvedValue(undefined);
 
       await controller.signOut(mockResponse, mockUser);
 
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token');
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token');
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id');
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', { ...cookieOptions, sameSite: 'none' });
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', { ...cookieOptions, sameSite: 'none' });
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', { ...cookieOptions, sameSite: 'none' });
 
       expect(authServiceMock.logout).toHaveBeenCalledWith(mockUser.id);
     });
 
     it('should throw an error if authService.logout fails', async () => {
       const mockUser = createMockUser();
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        domain: process.env.CLIENT_DOMAIN,
+      };
 
       authServiceMock.logout.mockRejectedValue(new Error());
 
       await expect(controller.signOut(mockResponse, mockUser)).rejects.toThrow();
 
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token');
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token');
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id');
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', { ...cookieOptions, sameSite: 'none' });
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', { ...cookieOptions, sameSite: 'none' });
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', { ...cookieOptions, sameSite: 'none' });
     });
   });
 });

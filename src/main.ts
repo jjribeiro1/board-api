@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
-  const PORT = configService.get('PORT');
+  const PORT = configService.get('PORT') || 3001;
 
   app.enableCors({
     credentials: true,
@@ -45,7 +45,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(PORT, () => {
+  await app.listen(PORT, '0.0.0.0', () => {
     console.log('server is running');
   });
 }

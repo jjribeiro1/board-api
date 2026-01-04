@@ -8,15 +8,15 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  POSTGRES_USER: string;
+  NODE_ENV: string;
 
   @IsString()
   @IsNotEmpty()
-  POSTGRES_PASSWORD: string;
+  CLIENT_DOMAIN: string;
 
   @IsString()
   @IsNotEmpty()
-  POSTGRES_DB: string;
+  CLIENT_URL: string;
 
   @IsString()
   @IsNotEmpty()

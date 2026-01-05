@@ -1,0 +1,87 @@
+{
+  "containerDefinitions": [
+    {
+      "cpu": 0,
+      "environment": [
+        {
+          "name": "CLIENT_URL",
+          "value": "https://www.feedbackboard.tech"
+        },
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        },
+        {
+          "name": "PORT",
+          "value": "3001"
+        },
+        {
+          "name": "CLIENT_DOMAIN",
+          "value": "feedbackboard.tech"
+        }
+      ],
+      "environmentFiles": [],
+      "essential": true,
+      "image": "217793907012.dkr.ecr.sa-east-1.amazonaws.com/feedbackboard-api@sha256:2c2bbade5d50966dae6db671e2b53b928b19c7d1fb50fc46e26a99392993994c",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/feedbackboard-api-task",
+          "awslogs-create-group": "true",
+          "awslogs-region": "sa-east-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "mountPoints": [],
+      "name": "feedbackboard-api",
+      "portMappings": [
+        {
+          "appProtocol": "http",
+          "containerPort": 3001,
+          "hostPort": 3001,
+          "name": "feedbackboard-api-3001-tcp",
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "ACCESS_TOKEN_PRIVATE_KEY",
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:217793907012:secret:ACCESS_TOKEN_PRIVATE_KEY-UyZc6p"
+        },
+        {
+          "name": "ACCESS_TOKEN_PUBLIC_KEY",
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:217793907012:secret:ACCESS_TOKEN_PUBLIC_KEY-zLK8uF"
+        },
+        {
+          "name": "DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:217793907012:secret:DATABASE_URL-yYnHoo"
+        },
+        {
+          "name": "REFRESH_TOKEN_PRIVATE_KEY",
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:217793907012:secret:REFRESH_TOKEN_PRIVATE_KEY-leI7gl"
+        },
+        {
+          "name": "REFRESH_TOKEN_PUBLIC_KEY",
+          "valueFrom": "arn:aws:secretsmanager:sa-east-1:217793907012:secret:REFRESH_TOKEN_PUBLIC_KEY-ga6eDF"
+        }
+      ],
+      "systemControls": [],
+      "ulimits": [],
+      "volumesFrom": []
+    }
+  ],
+  "cpu": "256",
+  "executionRoleArn": "arn:aws:iam::217793907012:role/ecsTaskExecutionRole",
+  "family": "feedbackboard-api-task",
+  "memory": "2048",
+  "networkMode": "awsvpc",
+  "placementConstraints": [],
+  "requiresCompatibilities": ["FARGATE"],
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "taskRoleArn": "arn:aws:iam::217793907012:role/ecsTaskExecutionRole",
+  "volumes": []
+}

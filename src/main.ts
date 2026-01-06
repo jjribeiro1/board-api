@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
 import { PrismaClientExceptionFilter } from './common/filters/prisma-exception.filter';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
@@ -43,7 +44,14 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+
+  app.use(
+    '/api/docs',
+    apiReference({
+      content: document,
+      theme: 'elysiajs',
+    }),
+  );
 
   await app.listen(PORT, '0.0.0.0', () => {
     console.log('server is running');

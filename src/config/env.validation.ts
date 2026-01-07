@@ -1,5 +1,5 @@
 import { Transform, plainToInstance } from 'class-transformer';
-import { IsString, IsNotEmpty, validateSync } from 'class-validator';
+import { IsString, IsNotEmpty, validateSync, IsEmail } from 'class-validator';
 
 export class EnvironmentVariables {
   @IsNotEmpty()
@@ -37,6 +37,22 @@ export class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   REFRESH_TOKEN_PRIVATE_KEY: string;
+
+  @IsEmail()
+  @IsNotEmpty()
+  MAIL_FROM: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_REGION: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_ACCESS_KEY_ID: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_SECRET_ACCESS_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

@@ -4,6 +4,7 @@ import { validate } from 'src/config/env.validation';
 import { AppController } from './app.controller';
 import { AuthModule } from './shared/modules/auth/auth.module';
 import { PrismaModule } from './shared/modules/database/prisma/prisma.module';
+import { MailModule } from './shared/modules/mail/mail.module';
 import { EventsModule } from './modules/events/events.module';
 import { UsersModule } from './modules/users/users.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
@@ -22,6 +23,7 @@ import { VotesModule } from './modules/votes/votes.module';
     }),
     AuthModule,
     PrismaModule,
+    MailModule,
     EventsModule,
     UsersModule,
     OrganizationsModule,

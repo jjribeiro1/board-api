@@ -44,6 +44,14 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
+  MAIL_PROVIDER: string;
+
+  @IsString()
+  @IsNotEmpty()
+  RESEND_API_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
   AWS_REGION: string;
 
   @IsString()

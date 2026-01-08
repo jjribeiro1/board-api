@@ -1,8 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailService } from './mail.service';
 import { MAIL_PROVIDER } from './interfaces/mail-provider.interface';
-import { AwsSesProvider } from './providers/aws-ses.provider';
+import { ResendProvider } from './providers/resend';
+import { AwsSesProvider } from './providers/aws-ses';
 
 @Global()
 @Module({
@@ -10,7 +11,17 @@ import { AwsSesProvider } from './providers/aws-ses.provider';
   providers: [
     {
       provide: MAIL_PROVIDER,
-      useClass: AwsSesProvider,
+      useFactory: (configService: ConfigService) => {
+        const activeEmailProvider = configService.get<string>('MAIL_PROVIDER');
+        if (activeEmailProvider === 'RESEND') {
+          return new ResendProvider(configService);
+        }
+        if (activeEmailProvider === 'AWS_SES') {
+          return new AwsSesProvider(configService);
+        }
+        throw new Error('No valid mail provider configured');
+      },
+      inject: [ConfigService],
     },
     MailService,
   ],

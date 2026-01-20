@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpCode, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -33,6 +35,8 @@ export class TagsController {
   /**
    * Update a tag by ID
    */
+  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTagDto: UpdateTagDto) {
@@ -45,6 +49,8 @@ export class TagsController {
   /**
    * Remove a tag by ID
    */
+  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')

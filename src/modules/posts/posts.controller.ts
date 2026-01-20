@@ -9,8 +9,7 @@ import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
-import { MutatePostGuard } from './guards/mutate-post.guard';
-import { ManagePostGuard } from './guards/manage-post.guard';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -57,7 +56,7 @@ export class PostsController {
    * Update Post
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(MutatePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
@@ -73,7 +72,7 @@ export class PostsController {
    * Manage Post settings
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.ADMIN, OrganizationRolesOptions.OWNER])
-  @UseGuards(ManagePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/settings')
   async managePost(@Param('id') id: string, @Body() dto: ManagePostDto) {
@@ -89,7 +88,7 @@ export class PostsController {
    * Update Post Tags
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(ManagePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/tags')
   async updateTags(@Param('id') id: string, @Body() dto: UpdatePostTagsDto) {
@@ -100,7 +99,7 @@ export class PostsController {
    * Delete Post
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(MutatePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {

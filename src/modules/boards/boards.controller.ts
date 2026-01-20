@@ -6,8 +6,8 @@ import { ManageBoardDto } from './dto/manage-board.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
-import { ManageBoardGuard } from './guards/manage-board.guard';
 import { UserPayload } from 'src/common/types/user-payload';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiTags('boards')
 @Controller('boards')
@@ -54,7 +54,7 @@ export class BoardsController {
    * Manage Board settings
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(ManageBoardGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/settings')
   async manageBoard(@Param('id') boardId: string, @Body() dto: ManageBoardDto) {
@@ -66,7 +66,7 @@ export class BoardsController {
    * Removes a board by ID
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER])
-  @UseGuards(ManageBoardGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')

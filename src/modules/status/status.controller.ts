@@ -6,8 +6,8 @@ import { CreateStatusDto } from './dto/create-status.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { ManageStatusGuard } from './guards/manage-status.guard';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiTags('status')
 @Controller('status')
@@ -43,7 +43,7 @@ export class StatusController {
    * Update an existing status
    */
   @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
-  @UseGuards(ManageStatusGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
@@ -57,7 +57,7 @@ export class StatusController {
    * Delete an existing status
    */
   @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
-  @UseGuards(ManageStatusGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {

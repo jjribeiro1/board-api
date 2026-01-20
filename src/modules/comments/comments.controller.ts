@@ -7,7 +7,7 @@ import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
-import { MutateCommentGuard } from './guards/mutate-comment.guard';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiBearerAuth()
 @ApiTags('comments')
@@ -30,7 +30,7 @@ export class CommentsController {
    * Update the comment
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(MutateCommentGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateCommentDto) {
@@ -41,7 +41,7 @@ export class CommentsController {
    * Delete the comment
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(MutateCommentGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {

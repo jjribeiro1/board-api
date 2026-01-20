@@ -8,6 +8,7 @@ import { UserPayload } from 'src/common/types/user-payload';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { AllowAuthor } from 'src/common/decorators/allow-author.decorator';
 
 @ApiBearerAuth()
 @ApiTags('comments')
@@ -30,6 +31,7 @@ export class CommentsController {
    * Update the comment
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @AllowAuthor()
   @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
@@ -41,6 +43,7 @@ export class CommentsController {
    * Delete the comment
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @AllowAuthor()
   @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Delete(':id')

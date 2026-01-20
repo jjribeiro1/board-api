@@ -5,6 +5,7 @@ import { ResourceOwnershipResolver } from '../interfaces/resource-info.interface
 import { UserPayload } from '../types/user-payload';
 import { OrganizationRole } from '../types/user-organization-role';
 import { ORG_ROLES_KEY } from '../decorators/organization-role.decorator';
+import { ALLOW_AUTHOR_KEY } from '../decorators/allow-author.decorator';
 
 @Injectable()
 export class ResourceGuard implements CanActivate {
@@ -18,25 +19,26 @@ export class ResourceGuard implements CanActivate {
     const user = request.user as UserPayload;
     const resourceId = request.params.id;
 
-    const allowedRoles = this.reflector.getAllAndOverride<OrganizationRole[]>(ORG_ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const allowedRoles =
+      this.reflector.getAllAndOverride<OrganizationRole[]>(ORG_ROLES_KEY, [context.getHandler(), context.getClass()]) ??
+      [];
+
+    const allowAuthor =
+      this.reflector.getAllAndOverride<boolean>(ALLOW_AUTHOR_KEY, [context.getHandler(), context.getClass()]) ?? false;
 
     const resourceInfo = await this.resourceResolver.findOrgAndAuthorId(resourceId);
     if (!resourceInfo) {
       return false;
     }
 
-    const { organizationId } = resourceInfo;
-
-    const userRolesInOrg = user.organizations.filter((org) => org.id === organizationId).map((org) => org.role);
-
-    const hasRoleAccess = userRolesInOrg.some((role) => allowedRoles.includes(role));
-    if (!hasRoleAccess) {
-      return false;
+    if (allowAuthor && resourceInfo.authorId === user.id) {
+      return true;
     }
 
-    return true;
+    const userRolesInOrg = user.organizations
+      .filter((org) => org.id === resourceInfo.organizationId)
+      .map((org) => org.role);
+
+    return userRolesInOrg.some((role) => allowedRoles.includes(role));
   }
 }

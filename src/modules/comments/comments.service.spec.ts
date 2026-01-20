@@ -237,23 +237,23 @@ describe('CommentsService', () => {
         organizationId: 'org-id-1',
       };
 
-      commentsRepositoryMock.findAuthorAndOrgIdFromComment.mockResolvedValue(mockResult);
+      commentsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(mockResult);
 
-      const result = await service.findAuthorAndOrgIdFromComment(commentId);
+      const result = await service.findOrgAndAuthorId(commentId);
 
-      expect(commentsRepositoryMock.findAuthorAndOrgIdFromComment).toHaveBeenCalledWith(commentId);
-      expect(commentsRepositoryMock.findAuthorAndOrgIdFromComment).toHaveBeenCalledTimes(1);
+      expect(commentsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledWith(commentId);
+      expect(commentsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockResult);
     });
 
     it('should return null when comment does not exist', async () => {
       const commentId = 'non-existent-id';
 
-      commentsRepositoryMock.findAuthorAndOrgIdFromComment.mockResolvedValue(null);
+      commentsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(null);
 
-      const result = await service.findAuthorAndOrgIdFromComment(commentId);
+      const result = await service.findOrgAndAuthorId(commentId);
 
-      expect(commentsRepositoryMock.findAuthorAndOrgIdFromComment).toHaveBeenCalledWith(commentId);
+      expect(commentsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledWith(commentId);
       expect(result).toBeNull();
     });
   });

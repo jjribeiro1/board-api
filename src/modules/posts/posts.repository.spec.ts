@@ -401,7 +401,7 @@ describe('PostsRepository', () => {
 
       prismaServiceMock.post.findUnique.mockResolvedValue(mockPost);
 
-      const result = await repository.findAuthorAndOrgIdFromPost(postId);
+      const result = await repository.findOrgAndAuthorId(postId);
 
       expect(prismaServiceMock.post.findUnique).toHaveBeenCalledWith({
         where: { id: postId, deletedAt: null },
@@ -426,7 +426,7 @@ describe('PostsRepository', () => {
 
       prismaServiceMock.post.findUnique.mockResolvedValue(null);
 
-      const result = await repository.findAuthorAndOrgIdFromPost(postId);
+      const result = await repository.findOrgAndAuthorId(postId);
 
       expect(result).toBeNull();
     });

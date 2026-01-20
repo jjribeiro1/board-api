@@ -4,6 +4,7 @@ import { TagsController } from './tags.controller';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('TagsController', () => {
   let controller: TagsController;
@@ -16,6 +17,10 @@ describe('TagsController', () => {
       providers: [
         {
           provide: TagsService,
+          useValue: tagsServiceMock,
+        },
+        {
+          provide: RESOURCE_RESOLVER,
           useValue: tagsServiceMock,
         },
       ],

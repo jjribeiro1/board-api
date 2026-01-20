@@ -4,6 +4,7 @@ import { StatusController } from './status.controller';
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('StatusController', () => {
   let controller: StatusController;
@@ -16,6 +17,10 @@ describe('StatusController', () => {
       providers: [
         {
           provide: StatusService,
+          useValue: statusServiceMock,
+        },
+        {
+          provide: RESOURCE_RESOLVER,
           useValue: statusServiceMock,
         },
       ],

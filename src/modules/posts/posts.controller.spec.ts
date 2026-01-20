@@ -7,6 +7,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { ManagePostDto } from './dto/manage-post.dto';
 import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { UserPayload } from 'src/common/types/user-payload';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('PostsController', () => {
   let controller: PostsController;
@@ -19,6 +20,10 @@ describe('PostsController', () => {
       providers: [
         {
           provide: PostsService,
+          useValue: mockPostsService,
+        },
+        {
+          provide: RESOURCE_RESOLVER,
           useValue: mockPostsService,
         },
       ],

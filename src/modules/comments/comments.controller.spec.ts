@@ -5,6 +5,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { UserPayload } from 'src/common/types/user-payload';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('CommentsController', () => {
   let controller: CommentsController;
@@ -17,6 +18,10 @@ describe('CommentsController', () => {
       providers: [
         {
           provide: CommentsService,
+          useValue: mockCommentsService,
+        },
+        {
+          provide: RESOURCE_RESOLVER,
           useValue: mockCommentsService,
         },
       ],

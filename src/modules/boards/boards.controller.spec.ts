@@ -5,6 +5,7 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 import { UserPayload } from 'src/common/types/user-payload';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('BoardsController', () => {
   let controller: BoardsController;
@@ -17,6 +18,10 @@ describe('BoardsController', () => {
       providers: [
         {
           provide: BoardsService,
+          useValue: mockBoardsService,
+        },
+        {
+          provide: RESOURCE_RESOLVER,
           useValue: mockBoardsService,
         },
       ],

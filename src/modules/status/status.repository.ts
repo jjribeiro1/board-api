@@ -60,4 +60,22 @@ export class StatusRepository {
       },
     });
   }
+
+  async findOrgAndAuthorId(statusId: string) {
+    const result = await this.prisma.status.findUnique({
+      where: { id: statusId, deletedAt: null },
+      select: {
+        organizationId: true,
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      organizationId: result.organizationId,
+      authorId: null,
+    };
+  }
 }

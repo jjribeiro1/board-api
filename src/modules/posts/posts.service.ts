@@ -7,9 +7,10 @@ import { BoardsService } from '../boards/boards.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { VotesService } from '../votes/votes.service';
 import { UserPayload } from 'src/common/types/user-payload';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 
 @Injectable()
-export class PostsService {
+export class PostsService implements ResourceOwnershipResolver {
   constructor(
     private readonly postsRepository: PostsRepository,
     private readonly boardsService: BoardsService,
@@ -70,7 +71,7 @@ export class PostsService {
 
   async updateTags(postId: string, dto: UpdatePostTagsDto) {
     await this.findOne(postId);
-    const authorAndOrgIdFromPost = await this.findAuthorAndOrgIdFromPost(postId);
+    const authorAndOrgIdFromPost = await this.findOrgAndAuthorId(postId);
 
     if (!authorAndOrgIdFromPost) {
       throw new BadRequestException();
@@ -94,7 +95,7 @@ export class PostsService {
     return await this.votesService.togglePostVote(postId, userId);
   }
 
-  async findAuthorAndOrgIdFromPost(postId: string) {
-    return await this.postsRepository.findAuthorAndOrgIdFromPost(postId);
+  async findOrgAndAuthorId(postId: string): Promise<ResourceOwnershipInfo | null> {
+    return await this.postsRepository.findOrgAndAuthorId(postId);
   }
 }

@@ -2,9 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagsRepository } from './tags.repository';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 
 @Injectable()
-export class TagsService {
+export class TagsService implements ResourceOwnershipResolver {
   constructor(private readonly tagsRepository: TagsRepository) {}
 
   async create(createTagDto: CreateTagDto) {
@@ -40,5 +41,9 @@ export class TagsService {
 
   async remove(id: string) {
     return await this.tagsRepository.delete(id);
+  }
+
+  async findOrgAndAuthorId(resourceId: string): Promise<ResourceOwnershipInfo | null> {
+    return await this.tagsRepository.findOrgAndAuthorId(resourceId);
   }
 }

@@ -3,9 +3,10 @@ import { StatusRepository } from './status.repository';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UserPayload } from 'src/common/types/user-payload';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 
 @Injectable()
-export class StatusService {
+export class StatusService implements ResourceOwnershipResolver {
   constructor(private readonly statusRepository: StatusRepository) {}
 
   async findAll(organizationId: string) {
@@ -52,5 +53,9 @@ export class StatusService {
     });
 
     return { defaultStatusId: defaultStatusFromOrg.id };
+  }
+
+  async findOrgAndAuthorId(statusId: string): Promise<ResourceOwnershipInfo | null> {
+    return await this.statusRepository.findOrgAndAuthorId(statusId);
   }
 }

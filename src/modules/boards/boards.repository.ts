@@ -102,4 +102,23 @@ export class BoardsRepository {
       data: { deletedAt: new Date() },
     });
   }
+
+  async findOrgAndAuthorId(resourceId: string) {
+    const board = await this.prisma.board.findUnique({
+      where: { id: resourceId, deletedAt: null },
+      select: {
+        organizationId: true,
+        authorId: true,
+      },
+    });
+
+    if (!board) {
+      return null;
+    }
+
+    return {
+      organizationId: board.organizationId,
+      authorId: board.authorId,
+    };
+  }
 }

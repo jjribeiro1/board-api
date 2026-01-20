@@ -3,9 +3,10 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentsRepository } from './comments.repository';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PostsService } from '../posts/posts.service';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 
 @Injectable()
-export class CommentsService {
+export class CommentsService implements ResourceOwnershipResolver {
   constructor(
     private readonly postsService: PostsService,
     private readonly commentsRepository: CommentsRepository,
@@ -38,7 +39,7 @@ export class CommentsService {
     return this.commentsRepository.delete(commentId);
   }
 
-  async findAuthorAndOrgIdFromComment(commendId: string) {
-    return this.commentsRepository.findAuthorAndOrgIdFromComment(commendId);
+  async findOrgAndAuthorId(commentId: string): Promise<ResourceOwnershipInfo | null> {
+    return this.commentsRepository.findOrgAndAuthorId(commentId);
   }
 }

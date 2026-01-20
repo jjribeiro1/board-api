@@ -57,9 +57,9 @@ export class CommentsRepository {
     });
   }
 
-  async findAuthorAndOrgIdFromComment(commendId: string) {
+  async findOrgAndAuthorId(commentId: string) {
     const result = await this.prisma.comment.findUnique({
-      where: { id: commendId, deletedAt: null },
+      where: { id: commentId, deletedAt: null },
       select: {
         authorId: true,
         post: {

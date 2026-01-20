@@ -7,7 +7,7 @@ import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { PostsService } from './posts.service';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
 

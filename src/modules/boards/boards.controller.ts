@@ -4,7 +4,7 @@ import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { UserPayload } from 'src/common/types/user-payload';
 import { ResourceGuard } from 'src/common/guards/resource.guard';

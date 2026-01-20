@@ -3,7 +3,7 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { TagsService } from './tags.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiTags('tags')

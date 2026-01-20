@@ -4,7 +4,7 @@ import { RESOURCE_RESOLVER } from 'src/constants';
 import { ResourceOwnershipResolver } from '../interfaces/resource-info.interface';
 import { UserPayload } from '../types/user-payload';
 import { OrganizationRole } from '../types/user-organization-role';
-import { ORG_ROLES_KEY } from '../decorators/organization-role-decorator';
+import { ORG_ROLES_KEY } from '../decorators/organization-role.decorator';
 
 @Injectable()
 export class ResourceGuard implements CanActivate {

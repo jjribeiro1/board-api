@@ -6,7 +6,7 @@ import { CreateStatusDto } from './dto/create-status.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
 
 @ApiTags('status')

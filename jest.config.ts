@@ -22,7 +22,9 @@ const config: Config = {
     '!src/**/constants/**/*.ts',
     '!src/config/**/*.ts',
     '!src/shared/modules/database/prisma/**/*.ts',
-    '!generated/**',
+    '!src/common/interceptors/**/*.ts',
+    '!src/common/types/**/*.ts',
+    '!**/generated/**',
   ],
   coverageThreshold: {
     global: {

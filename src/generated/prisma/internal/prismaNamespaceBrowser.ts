@@ -142,6 +142,7 @@ export const OrganizationInviteScalarFieldEnum = {
   email: 'email',
   token: 'token',
   role: 'role',
+  status: 'status',
   expiresAt: 'expiresAt',
   acceptedAt: 'acceptedAt',
   createdAt: 'createdAt',

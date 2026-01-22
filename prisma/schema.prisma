@@ -83,6 +83,7 @@ model OrganizationInvite {
   email          String       @db.VarChar(200)
   token          String       @unique
   role           Role         @default(MEMBER)
+  status         InviteStatus @default(PENDING)
   expiresAt      DateTime     @map("expires_at") @db.Timestamptz
   acceptedAt     DateTime?    @map("accepted_at") @db.Timestamptz
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
@@ -209,4 +210,11 @@ enum Role {
   OWNER
   ADMIN
   MEMBER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
 }

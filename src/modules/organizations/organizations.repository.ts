@@ -219,4 +219,18 @@ export class OrganizationsRepository {
       data: { defaultStatusId: statusId },
     });
   }
+
+  async emailIsMember(organizationId: string, email: string) {
+    const count = await this.prisma.userOrganization.count({
+      where: {
+        organizationId,
+        user: {
+          email,
+        },
+        deletedAt: null,
+      },
+    });
+
+    return count > 0;
+  }
 }

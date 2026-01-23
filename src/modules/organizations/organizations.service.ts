@@ -65,4 +65,8 @@ export class OrganizationsService {
   async setDefaultStatus(organizationId: string, statusId: string) {
     return await this.organizationsRepository.setDefaultStatus(organizationId, statusId);
   }
+
+  async verifyEmailInOrganization(organizationId: string, email: string) {
+    return await this.organizationsRepository.emailIsMember(organizationId, email);
+  }
 }

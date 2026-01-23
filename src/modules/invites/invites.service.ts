@@ -56,6 +56,7 @@ export class InvitesService {
     }
 
     if (dayjs().isAfter(dayjs(invite.expiresAt))) {
+      await this.invitesRepository.update(invite.id, { status: InviteStatus.EXPIRED });
       throw new ConflictException('Convite expirado');
     }
 

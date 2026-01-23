@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Organization, OrganizationInvite } from 'src/generated/prisma/client';
 import { InviteStatus } from 'src/generated/prisma/enums';
+import { OrganizationInviteUpdateInput } from 'src/generated/prisma/models';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 
 type CreateInvite = {
@@ -8,11 +9,6 @@ type CreateInvite = {
   organizationId: string;
   expiresAt: Date;
   token: string;
-};
-
-type UpdateInvite = {
-  status: InviteStatus;
-  acceptedAt?: Date;
 };
 
 type AcceptInvite = {
@@ -47,10 +43,10 @@ export class InvitesRepository {
     return invite;
   }
 
-  async update(id: string, dto: UpdateInvite) {
+  async update(id: string, dto: OrganizationInviteUpdateInput) {
     await this.prisma.organizationInvite.update({
       where: { id },
-      data: { status: dto.status, acceptedAt: dto.acceptedAt },
+      data: { ...dto },
     });
   }
 

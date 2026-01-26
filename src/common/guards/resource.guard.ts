@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RESOURCE_RESOLVER } from 'src/constants';
 import { ResourceOwnershipResolver } from '../interfaces/resource-info.interface';
@@ -23,12 +23,16 @@ export class ResourceGuard implements CanActivate {
       this.reflector.getAllAndOverride<OrganizationRole[]>(ORG_ROLES_KEY, [context.getHandler(), context.getClass()]) ??
       [];
 
+    if (!allowedRoles || allowedRoles.length === 0) {
+      throw new ForbiddenException('Nenhum nível de acesso organizacional foi definido');
+    }
+
     const allowAuthor =
       this.reflector.getAllAndOverride<boolean>(ALLOW_AUTHOR_KEY, [context.getHandler(), context.getClass()]) ?? false;
 
     const resourceInfo = await this.resourceResolver.findOrgAndAuthorId(resourceId);
     if (!resourceInfo) {
-      return false;
+      throw new ForbiddenException('Recurso não encontrado');
     }
 
     if (allowAuthor && resourceInfo.authorId === user.id) {

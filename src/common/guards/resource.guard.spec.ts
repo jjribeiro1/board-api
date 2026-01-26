@@ -34,7 +34,7 @@ describe('ResourceGuard', () => {
   });
 
   describe('canActivate', () => {
-    it('should return false when resource is not found', async () => {
+    it('should throw ForbiddenException when resource is not found', async () => {
       const mockUser = createMockUserPayload();
       const mockRequest = {
         user: mockUser,
@@ -46,9 +46,7 @@ describe('ResourceGuard', () => {
       reflectorMock.getAllAndOverride.mockReturnValue(['ADMIN']);
       resourceResolverMock.findOrgAndAuthorId.mockResolvedValue(null);
 
-      const result = await guard.canActivate(executionContextMock);
-
-      expect(result).toBe(false);
+      await expect(guard.canActivate(executionContextMock)).rejects.toThrow('Recurso não encontrado');
     });
 
     it('should return true when user is the author and allowAuthor is true', async () => {
@@ -186,7 +184,7 @@ describe('ResourceGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should use default values when metadata is not defined', async () => {
+    it('should throw ForbiddenException when no allowed roles are defined', async () => {
       const mockUser = createMockUserPayload({
         organizations: [{ id: 'org-id-1', name: 'Org 1', role: 'ADMIN' }],
       });
@@ -203,9 +201,31 @@ describe('ResourceGuard', () => {
         authorId: 'other-user-id',
       });
 
-      const result = await guard.canActivate(executionContextMock);
+      await expect(guard.canActivate(executionContextMock)).rejects.toThrow(
+        'Nenhum nível de acesso organizacional foi definido',
+      );
+    });
 
-      expect(result).toBe(false);
+    it('should throw ForbiddenException when allowed roles is empty array', async () => {
+      const mockUser = createMockUserPayload({
+        organizations: [{ id: 'org-id-1', name: 'Org 1', role: 'ADMIN' }],
+      });
+      const mockRequest = {
+        user: mockUser,
+        params: { id: 'resource-id' },
+      };
+      executionContextMock.switchToHttp.mockReturnValue({
+        getRequest: () => mockRequest,
+      } as any);
+      reflectorMock.getAllAndOverride.mockReturnValueOnce([]).mockReturnValueOnce(false);
+      resourceResolverMock.findOrgAndAuthorId.mockResolvedValue({
+        organizationId: 'org-id-1',
+        authorId: 'other-user-id',
+      });
+
+      await expect(guard.canActivate(executionContextMock)).rejects.toThrow(
+        'Nenhum nível de acesso organizacional foi definido',
+      );
     });
   });
 });

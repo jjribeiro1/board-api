@@ -8,6 +8,7 @@ import { AllowedOrganizationRoles } from 'src/common/decorators/organization-rol
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { UserPayload } from 'src/common/types/user-payload';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { OrganizationGuard } from 'src/common/guards/organization.guard';
 
 @ApiTags('boards')
 @Controller('boards')
@@ -18,6 +19,8 @@ export class BoardsController {
    *
    * Create new board and returns the ID
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Post()
   async create(@Body() dto: CreateBoardDto, @LoggedUser() user: UserPayload) {

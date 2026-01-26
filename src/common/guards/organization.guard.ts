@@ -5,7 +5,7 @@ import { OrganizationRole } from 'src/common/types/user-organization-role';
 import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
-export class OrganizationInviteGuard implements CanActivate {
+export class OrganizationGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -14,7 +14,7 @@ export class OrganizationInviteGuard implements CanActivate {
       [];
 
     if (!allowedRoles || allowedRoles.length === 0) {
-      return true;
+      throw new ForbiddenException('Nenhum nível de acesso organizacional foi definido');
     }
 
     const request = context.switchToHttp().getRequest();
@@ -34,7 +34,7 @@ export class OrganizationInviteGuard implements CanActivate {
     const hasPermission = allowedRoles.includes(userOrg.role);
 
     if (!hasPermission) {
-      throw new ForbiddenException('Usuário não tem permissão para convidar membros');
+      throw new ForbiddenException('Usuário não tem permissão para realizar esta operação');
     }
 
     return true;

@@ -69,4 +69,9 @@ export class OrganizationsService {
   async verifyEmailInOrganization(organizationId: string, email: string) {
     return await this.organizationsRepository.emailIsMember(organizationId, email);
   }
+
+  async findInvitesFromOrganization(organizationId: string) {
+    await this.findOne(organizationId);
+    return this.organizationsRepository.findInvitesFromOrganization(organizationId);
+  }
 }

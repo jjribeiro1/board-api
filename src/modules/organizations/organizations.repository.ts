@@ -233,4 +233,33 @@ export class OrganizationsRepository {
 
     return count > 0;
   }
+
+  async findInvitesFromOrganization(organizationId: string) {
+    const results = await this.prisma.organizationInvite.findMany({
+      where: {
+        organizationId,
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+        expiresAt: true,
+        acceptedAt: true,
+        createdAt: true,
+        invitedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return results;
+  }
 }

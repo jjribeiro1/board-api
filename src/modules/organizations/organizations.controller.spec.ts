@@ -357,4 +357,73 @@ describe('OrganizationsController', () => {
       expect(result).toEqual({ data: mockStatus });
     });
   });
+
+  describe('findInvitesFromOrganization', () => {
+    it('should return all invites from an organization', async () => {
+      const orgId = 'org-id-1';
+      const mockInvites = [
+        {
+          id: 'invite-id-1',
+          email: 'invited1@example.com',
+          role: 'MEMBER' as const,
+          status: 'PENDING' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: null,
+          createdAt: new Date('2026-01-25'),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+        {
+          id: 'invite-id-2',
+          email: 'invited2@example.com',
+          role: 'ADMIN' as const,
+          status: 'ACCEPTED' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: new Date('2026-01-26'),
+          createdAt: new Date('2026-01-24'),
+          invitedBy: {
+            id: 'user-id-2',
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+          },
+        },
+        {
+          id: 'invite-id-3',
+          email: 'invited3@example.com',
+          role: 'MEMBER' as const,
+          status: 'EXPIRED' as const,
+          expiresAt: new Date('2026-01-01'),
+          acceptedAt: null,
+          createdAt: new Date('2026-01-20'),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+      ];
+
+      mockOrganizationsService.findInvitesFromOrganization.mockResolvedValue(mockInvites);
+
+      const result = await controller.findInvitesFromOrganization(orgId);
+
+      expect(mockOrganizationsService.findInvitesFromOrganization).toHaveBeenCalledWith(orgId);
+      expect(mockOrganizationsService.findInvitesFromOrganization).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ data: mockInvites });
+    });
+
+    it('should return empty array when organization has no invites', async () => {
+      const orgId = 'org-id-1';
+
+      mockOrganizationsService.findInvitesFromOrganization.mockResolvedValue([]);
+
+      const result = await controller.findInvitesFromOrganization(orgId);
+
+      expect(mockOrganizationsService.findInvitesFromOrganization).toHaveBeenCalledWith(orgId);
+      expect(result).toEqual({ data: [] });
+    });
+  });
 });

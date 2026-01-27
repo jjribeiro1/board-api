@@ -534,4 +534,138 @@ describe('OrganizationsRepository', () => {
       });
     });
   });
+
+  describe('findInvitesFromOrganization', () => {
+    it('should find and return invites with invited by user data ordered by creation date desc', async () => {
+      const organizationId = 'org-id-1';
+      const mockInvites = [
+        {
+          id: 'invite-id-1',
+          email: 'invited1@example.com',
+          role: 'MEMBER' as const,
+          status: 'PENDING' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: null,
+          createdAt: new Date('2026-01-25'),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+        {
+          id: 'invite-id-2',
+          email: 'invited2@example.com',
+          role: 'ADMIN' as const,
+          status: 'ACCEPTED' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: new Date('2026-01-26'),
+          createdAt: new Date('2026-01-24'),
+          invitedBy: {
+            id: 'user-id-2',
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+          },
+        },
+      ];
+
+      prismaServiceMock.organizationInvite.findMany.mockResolvedValue(mockInvites as any);
+
+      const result = await repository.findInvitesFromOrganization(organizationId);
+
+      expect(prismaServiceMock.organizationInvite.findMany).toHaveBeenCalledWith({
+        where: {
+          organizationId,
+        },
+        select: {
+          id: true,
+          email: true,
+          role: true,
+          status: true,
+          expiresAt: true,
+          acceptedAt: true,
+          createdAt: true,
+          invitedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      expect(result).toEqual(mockInvites);
+    });
+
+    it('should return an empty array if organization has no invites', async () => {
+      const organizationId = 'org-id-1';
+
+      prismaServiceMock.organizationInvite.findMany.mockResolvedValue([]);
+
+      const result = await repository.findInvitesFromOrganization(organizationId);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should return invites with different statuses', async () => {
+      const organizationId = 'org-id-1';
+      const mockInvites = [
+        {
+          id: 'invite-id-1',
+          email: 'pending@example.com',
+          role: 'MEMBER' as const,
+          status: 'PENDING' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: null,
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+        {
+          id: 'invite-id-2',
+          email: 'expired@example.com',
+          role: 'MEMBER' as const,
+          status: 'EXPIRED' as const,
+          expiresAt: new Date('2026-01-01'),
+          acceptedAt: null,
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+        {
+          id: 'invite-id-3',
+          email: 'revoked@example.com',
+          role: 'ADMIN' as const,
+          status: 'REVOKED' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: null,
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-2',
+            name: 'Jane Smith',
+            email: 'jane@example.com',
+          },
+        },
+      ];
+
+      prismaServiceMock.organizationInvite.findMany.mockResolvedValue(mockInvites as any);
+
+      const result = await repository.findInvitesFromOrganization(organizationId);
+
+      expect(result).toHaveLength(3);
+      expect(result[0].status).toBe('PENDING');
+      expect(result[1].status).toBe('EXPIRED');
+      expect(result[2].status).toBe('REVOKED');
+    });
+  });
 });

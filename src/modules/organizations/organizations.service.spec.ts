@@ -488,4 +488,104 @@ describe('OrganizationsService', () => {
       expect(organizationsRepositoryMock.setDefaultStatus).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('findInvitesFromOrganization', () => {
+    it('should return all invites from an organization', async () => {
+      const organizationId = 'org-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockInvites = [
+        {
+          id: 'invite-id-1',
+          email: 'invited1@example.com',
+          role: 'MEMBER' as const,
+          status: 'PENDING' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: null,
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+        {
+          id: 'invite-id-2',
+          email: 'invited2@example.com',
+          role: 'ADMIN' as const,
+          status: 'ACCEPTED' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: new Date(),
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+      ];
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization as any);
+      organizationsRepositoryMock.findInvitesFromOrganization.mockResolvedValue(mockInvites);
+
+      const result = await service.findInvitesFromOrganization(organizationId);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockInvites);
+    });
+
+    it('should return empty array when organization has no invites', async () => {
+      const organizationId = 'org-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization as any);
+      organizationsRepositoryMock.findInvitesFromOrganization.mockResolvedValue([]);
+
+      const result = await service.findInvitesFromOrganization(organizationId);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).toHaveBeenCalledWith(organizationId);
+      expect(result).toEqual([]);
+    });
+
+    it('should throw NotFoundException when organization does not exist', async () => {
+      const organizationId = 'non-existent-id';
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(null);
+
+      const errorMessage = `organização com id: ${organizationId} não encontrada`;
+
+      await expect(service.findInvitesFromOrganization(organizationId)).rejects.toThrow(
+        new NotFoundException(errorMessage),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).not.toHaveBeenCalled();
+    });
+  });
 });

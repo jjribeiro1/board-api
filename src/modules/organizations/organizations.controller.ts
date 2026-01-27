@@ -99,4 +99,17 @@ export class OrganizationsController {
       data: status,
     };
   }
+
+  /**
+   *
+   * Returns all invites from an organization
+   */
+  @ApiBearerAuth()
+  @Get(':id/invites')
+  async findInvitesFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
+    const invites = await this.organizationsService.findInvitesFromOrganization(orgId);
+    return {
+      data: invites,
+    };
+  }
 }

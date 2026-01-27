@@ -42,7 +42,7 @@ export class InvitesService {
       dto.email,
       'Convite para organização',
       `Você foi convidado para entrar na organização. 
-      Use o seguinte link para aceitar o convite: ${this.configService.get('APP_URL')}/accept-invite?token=${token}.
+      Use o seguinte link para aceitar o convite: ${this.configService.get('CLIENT_URL')}/accept-invite?token=${token}.
       O convite expira em 7 dias.`,
     );
 

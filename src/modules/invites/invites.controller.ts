@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Param, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { InvitesService } from './invites.service';
 import { CreateInviteDto } from './dto/create-invite.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
@@ -8,6 +8,7 @@ import { OrganizationGuard } from 'src/common/guards/organization.guard';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 
+@ApiTags('invites')
 @Controller('invites')
 export class InvitesController {
   constructor(private readonly invitesService: InvitesService) {}

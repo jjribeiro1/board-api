@@ -30,62 +30,6 @@ describe('StatusRepository', () => {
     jest.restoreAllMocks();
   });
 
-  describe('getAllStatus', () => {
-    it('should return all non-deleted status for an organization', async () => {
-      const organizationId = 'org-id-1';
-      const mockStatuses = [
-        {
-          id: 'status-id-1',
-          name: 'To Do',
-          color: '#FF5733',
-          organizationId: organizationId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-        },
-        {
-          id: 'status-id-2',
-          name: 'In Progress',
-          color: '#FFC300',
-          organizationId: organizationId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-        },
-      ];
-
-      prismaServiceMock.status.findMany.mockResolvedValue(mockStatuses);
-
-      const result = await repository.getAllStatus(organizationId);
-
-      expect(prismaServiceMock.status.findMany).toHaveBeenCalledWith({
-        where: {
-          organizationId,
-          deletedAt: null,
-        },
-      });
-
-      expect(result).toEqual(mockStatuses);
-    });
-
-    it('should return an empty array if organization has no status', async () => {
-      const organizationId = 'org-id-1';
-
-      prismaServiceMock.status.findMany.mockResolvedValue([]);
-
-      const result = await repository.getAllStatus(organizationId);
-
-      expect(prismaServiceMock.status.findMany).toHaveBeenCalledWith({
-        where: {
-          organizationId,
-          deletedAt: null,
-        },
-      });
-
-      expect(result).toEqual([]);
-    });
-  });
-
   describe('create', () => {
     it('should create a status and return the created status', async () => {
       const dto: CreateStatusDto = {

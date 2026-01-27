@@ -9,10 +9,6 @@ import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/int
 export class StatusService implements ResourceOwnershipResolver {
   constructor(private readonly statusRepository: StatusRepository) {}
 
-  async findAll(organizationId: string) {
-    return this.statusRepository.getAllStatus(organizationId);
-  }
-
   async findOne(statusId: string) {
     return await this.statusRepository.findOne(statusId);
   }

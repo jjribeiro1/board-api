@@ -7,16 +7,6 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 export class StatusRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllStatus(organizationId: string) {
-    const results = await this.prisma.status.findMany({
-      where: {
-        organizationId,
-        deletedAt: null,
-      },
-    });
-    return results;
-  }
-
   async create(dto: CreateStatusDto) {
     const result = await this.prisma.status.create({
       data: {

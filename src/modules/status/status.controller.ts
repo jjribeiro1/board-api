@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { StatusService } from './status.service';
@@ -13,20 +13,6 @@ import { ResourceGuard } from 'src/common/guards/resource.guard';
 @Controller('status')
 export class StatusController {
   constructor(private readonly statusService: StatusService) {}
-
-  /**
-   *
-   * Returns all status from an organization
-   */
-  @ApiBearerAuth()
-  @Get()
-  async findAll(@Req() req: Request) {
-    const orgId = req.cookies['org-id'];
-    const status = await this.statusService.findAll(orgId);
-    return {
-      data: status,
-    };
-  }
 
   /**
    * Creates a new status

@@ -25,30 +25,6 @@ describe('StatusService', () => {
     service = module.get<StatusService>(StatusService);
   });
 
-  describe('findAll', () => {
-    it('should return all status for the organization', async () => {
-      const orgId = 'org-id-1';
-      const mockStatus = [
-        {
-          id: 'status-id-1',
-          name: 'To Do',
-          color: '#ff0000',
-          organizationId: orgId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-        },
-      ];
-      statusRepositoryMock.getAllStatus.mockResolvedValueOnce(mockStatus);
-
-      const result = await service.findAll(orgId);
-
-      expect(result).toBe(mockStatus);
-      expect(statusRepositoryMock.getAllStatus).toHaveBeenCalledWith(orgId);
-      expect(statusRepositoryMock.getAllStatus).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('findOne', () => {
     it('should return a status when found', async () => {
       const statusId = 'status-id-1';

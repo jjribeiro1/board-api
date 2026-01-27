@@ -31,7 +31,10 @@ export class InvitesController {
   @Public()
   @Get(':token')
   async findOne(@Param('token') token: string) {
-    return await this.invitesService.findByToken(token);
+    const invite = await this.invitesService.findByToken(token);
+    return {
+      data: invite,
+    };
   }
 
   /**

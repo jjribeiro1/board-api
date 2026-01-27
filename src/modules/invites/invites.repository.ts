@@ -38,7 +38,7 @@ export class InvitesRepository {
   async findByToken(token: string) {
     const invite = await this.prisma.organizationInvite.findUnique({
       where: { token },
-      include: { organization: true },
+      include: { organization: true, invitedBy: true },
     });
     return invite;
   }

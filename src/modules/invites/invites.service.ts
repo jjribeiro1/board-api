@@ -75,6 +75,27 @@ export class InvitesService {
     });
   }
 
+  async findByToken(token: string) {
+    const invite = await this.invitesRepository.findByToken(token);
+    if (!invite) {
+      throw new NotFoundException('Convite inválido');
+    }
+    return {
+      id: invite.id,
+      email: invite.email,
+      createdAt: invite.createdAt,
+      expiresAt: invite.expiresAt,
+      status: invite.status,
+      role: invite.role,
+      invitedBy: {
+        name: invite.invitedBy.name,
+      },
+      organization: {
+        name: invite.organization.name,
+      },
+    };
+  }
+
   private generateToken(): string {
     return randomBytes(32).toString('hex');
   }

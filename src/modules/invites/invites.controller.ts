@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { InvitesService } from './invites.service';
 import { CreateInviteDto } from './dto/create-invite.dto';
@@ -7,6 +7,7 @@ import { UserPayload } from 'src/common/types/user-payload';
 import { OrganizationGuard } from 'src/common/guards/organization.guard';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
+import { Public } from 'src/common/decorators/is-public.decorator';
 
 @ApiTags('invites')
 @Controller('invites')
@@ -22,6 +23,15 @@ export class InvitesController {
   @Post()
   async create(@Body() dto: CreateInviteDto, @LoggedUser() user: UserPayload) {
     return await this.invitesService.create(dto, user);
+  }
+
+  /**
+   * List an invite by token
+   */
+  @Public()
+  @Get(':token')
+  async findOne(@Param('token') token: string) {
+    return await this.invitesService.findByToken(token);
   }
 
   /**

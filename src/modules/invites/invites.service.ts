@@ -80,6 +80,16 @@ export class InvitesService {
     if (!invite) {
       throw new NotFoundException('Convite inválido');
     }
+
+    if (dayjs().isAfter(dayjs(invite.expiresAt))) {
+      await this.invitesRepository.update(invite.id, { status: InviteStatus.EXPIRED });
+      throw new ConflictException('Convite expirado');
+    }
+
+    if (invite.status !== InviteStatus.PENDING) {
+      throw new ConflictException('Convite não está mais ativo');
+    }
+
     return {
       id: invite.id,
       email: invite.email,

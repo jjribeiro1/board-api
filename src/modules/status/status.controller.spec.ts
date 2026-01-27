@@ -32,20 +32,6 @@ describe('StatusController', () => {
   describe('create', () => {
     it('should create a new status and return it', async () => {
       const orgId = 'org-id-1';
-      const mockUser = {
-        id: 'user-id-1',
-        name: 'John Doe',
-        email: 'email@example.com',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        organizations: [
-          {
-            id: orgId,
-            name: 'Test Organization',
-            role: 'ADMIN' as const,
-          },
-        ],
-      };
       const dto: CreateStatusDto = {
         color: '#eacc09ff',
         name: 'In Progress',
@@ -60,16 +46,13 @@ describe('StatusController', () => {
         updatedAt: new Date('2024-01-01'),
         deletedAt: null,
       };
-      const mockRequest = {
-        cookies: { 'org-id': orgId },
-      } as any;
 
       statusServiceMock.create.mockResolvedValueOnce(mockCreatedStatus);
 
-      const result = await controller.create(dto, mockUser, mockRequest);
+      const result = await controller.create(dto);
 
       expect(result).toEqual(mockCreatedStatus);
-      expect(statusServiceMock.create).toHaveBeenCalledWith(dto, mockUser, orgId);
+      expect(statusServiceMock.create).toHaveBeenCalledWith(dto);
       expect(statusServiceMock.create).toHaveBeenCalledTimes(1);
     });
   });

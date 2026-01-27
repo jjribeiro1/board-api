@@ -1,8 +1,7 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { StatusRepository } from './status.repository';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { UserPayload } from 'src/common/types/user-payload';
 import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 
 @Injectable()
@@ -13,14 +12,7 @@ export class StatusService implements ResourceOwnershipResolver {
     return await this.statusRepository.findOne(statusId);
   }
 
-  async create(dto: CreateStatusDto, user: UserPayload, organizationId: string) {
-    const userIsOwnerOrAdminFromOrg = user.organizations.some(
-      (org) => org.id === organizationId && (org.role === 'OWNER' || org.role === 'ADMIN'),
-    );
-
-    if (!userIsOwnerOrAdminFromOrg) {
-      throw new ForbiddenException('Usuário não tem permissão para criar status nesta organização');
-    }
+  async create(dto: CreateStatusDto) {
     return await this.statusRepository.create(dto);
   }
 

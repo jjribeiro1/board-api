@@ -43,6 +43,12 @@ export class ResourceGuard implements CanActivate {
       .filter((org) => org.id === resourceInfo.organizationId)
       .map((org) => org.role);
 
-    return userRolesInOrg.some((role) => allowedRoles.includes(role));
+    const hasPermission = userRolesInOrg.some((role) => allowedRoles.includes(role));
+
+    if (!hasPermission) {
+      throw new ForbiddenException('Usuário não tem permissão para realizar esta operação');
+    }
+
+    return true;
   }
 }

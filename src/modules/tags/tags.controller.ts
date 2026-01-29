@@ -5,6 +5,8 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { OrganizationGuard } from 'src/common/guards/organization.guard';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 
 @ApiTags('tags')
 @Controller('tags')
@@ -14,6 +16,8 @@ export class TagsController {
   /**
    * Create a new tag
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Post()
   async create(@Body() createTagDto: CreateTagDto) {
@@ -35,7 +39,7 @@ export class TagsController {
   /**
    * Update a tag by ID
    */
-  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
@@ -49,7 +53,7 @@ export class TagsController {
   /**
    * Remove a tag by ID
    */
-  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
   @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 
 @Injectable()
 export class BoardsRepository {
@@ -37,12 +38,13 @@ export class BoardsRepository {
     return result;
   }
 
-  async findPostsFromBoard(boardId: string, userId: string) {
+  async findPostsFromBoard(boardId: string, userId: string, query: ListBoardPostsQueryDto) {
     const result = await this.prisma.post.findMany({
       orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         boardId,
         deletedAt: null,
+        ...(query?.status && { statusId: query.status }),
       },
       select: {
         id: true,

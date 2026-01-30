@@ -1,7 +1,20 @@
-import { Controller, Post, Body, Get, Param, HttpStatus, UseGuards, Delete, HttpCode, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Query,
+  HttpStatus,
+  UseGuards,
+  Delete,
+  HttpCode,
+  Patch,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
@@ -46,8 +59,12 @@ export class BoardsController {
    */
   @ApiBearerAuth()
   @Get(':id/posts')
-  async findPosts(@Param('id') boardId: string, @LoggedUser() user: UserPayload) {
-    const posts = await this.boardsService.findPostsFromBoard(boardId, user.id);
+  async findPosts(
+    @Param('id') boardId: string,
+    @LoggedUser() user: UserPayload,
+    @Query() query: ListBoardPostsQueryDto,
+  ) {
+    const posts = await this.boardsService.findPostsFromBoard(boardId, user.id, query);
     return {
       data: posts,
     };

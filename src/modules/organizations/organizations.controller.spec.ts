@@ -4,6 +4,7 @@ import { OrganizationsController } from './organizations.controller';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
 import { UserPayload } from 'src/common/types/user-payload';
 
 describe('OrganizationsController', () => {
@@ -424,6 +425,47 @@ describe('OrganizationsController', () => {
 
       expect(mockOrganizationsService.findInvitesFromOrganization).toHaveBeenCalledWith(orgId);
       expect(result).toEqual({ data: [] });
+    });
+  });
+
+  describe('updateMemberRole', () => {
+    it('should update member role and return void', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const dto: UpdateMemberRoleDto = { role: 'ADMIN' as const };
+
+      mockOrganizationsService.updateMemberRole.mockResolvedValue(undefined);
+
+      const result = await controller.updateMemberRole(organizationId, userId, dto);
+
+      expect(mockOrganizationsService.updateMemberRole).toHaveBeenCalledWith(organizationId, userId, dto);
+      expect(mockOrganizationsService.updateMemberRole).toHaveBeenCalledTimes(1);
+      expect(result).toBeUndefined();
+    });
+
+    it('should update member role to MEMBER', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const dto: UpdateMemberRoleDto = { role: 'MEMBER' as const };
+
+      mockOrganizationsService.updateMemberRole.mockResolvedValue(undefined);
+
+      const result = await controller.updateMemberRole(organizationId, userId, dto);
+
+      expect(mockOrganizationsService.updateMemberRole).toHaveBeenCalledWith(organizationId, userId, dto);
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('removeMember', () => {
+    it('should remove member', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+
+      await controller.removeMember(organizationId, userId);
+
+      expect(mockOrganizationsService.removeMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(mockOrganizationsService.removeMember).toHaveBeenCalledTimes(1);
     });
   });
 });

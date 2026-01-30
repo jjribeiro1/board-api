@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { OrganizationRole } from 'src/common/types/user-organization-role';
 
 @Injectable()
 export class OrganizationsRepository {
@@ -261,5 +262,62 @@ export class OrganizationsRepository {
     });
 
     return results;
+  }
+
+  async findMember(organizationId: string, userId: string) {
+    const result = await this.prisma.userOrganization.findUnique({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+        deletedAt: null,
+      },
+      select: {
+        role: true,
+      },
+    });
+
+    return result;
+  }
+
+  async countOwners(organizationId: string) {
+    const count = await this.prisma.userOrganization.count({
+      where: {
+        organizationId,
+        role: 'OWNER',
+        deletedAt: null,
+      },
+    });
+
+    return count;
+  }
+
+  async updateMemberRole(organizationId: string, userId: string, role: OrganizationRole) {
+    await this.prisma.userOrganization.update({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+      },
+      data: {
+        role,
+      },
+    });
+  }
+
+  async removeMember(organizationId: string, userId: string) {
+    await this.prisma.userOrganization.update({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
   }
 }

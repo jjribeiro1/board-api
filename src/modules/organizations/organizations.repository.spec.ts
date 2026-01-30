@@ -5,6 +5,7 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { PrismaClient } from 'src/generated/prisma/client';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { OrganizationRole } from 'src/common/types/user-organization-role';
 
 describe('OrganizationsRepository', () => {
   let repository: OrganizationsRepository;
@@ -666,6 +667,204 @@ describe('OrganizationsRepository', () => {
       expect(result[0].status).toBe('PENDING');
       expect(result[1].status).toBe('EXPIRED');
       expect(result[2].status).toBe('REVOKED');
+    });
+  });
+
+  describe('findMember', () => {
+    it('should find and return a member role', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const mockMember = {
+        role: 'ADMIN' as OrganizationRole,
+      };
+
+      (prismaServiceMock.userOrganization.findUnique as any).mockResolvedValue(mockMember);
+
+      const result = await repository.findMember(organizationId, userId);
+
+      expect(prismaServiceMock.userOrganization.findUnique).toHaveBeenCalledWith({
+        where: {
+          userId_organizationId: {
+            userId,
+            organizationId,
+          },
+          deletedAt: null,
+        },
+        select: {
+          role: true,
+        },
+      });
+
+      expect(result).toEqual(mockMember);
+    });
+
+    it('should return null if member is not found', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+
+      prismaServiceMock.userOrganization.findUnique.mockResolvedValue(null);
+
+      const result = await repository.findMember(organizationId, userId);
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('countOwners', () => {
+    it('should count owners in an organization', async () => {
+      const organizationId = 'org-id-1';
+      const expectedCount = 2;
+
+      (prismaServiceMock.userOrganization.count as any).mockResolvedValue(expectedCount);
+
+      const result = await repository.countOwners(organizationId);
+
+      expect(prismaServiceMock.userOrganization.count).toHaveBeenCalledWith({
+        where: {
+          organizationId,
+          role: 'OWNER',
+          deletedAt: null,
+        },
+      });
+
+      expect(result).toBe(expectedCount);
+    });
+
+    it('should return 0 when there are no owners', async () => {
+      const organizationId = 'org-id-1';
+
+      (prismaServiceMock.userOrganization.count as any).mockResolvedValue(0);
+
+      const result = await repository.countOwners(organizationId);
+
+      expect(result).toBe(0);
+    });
+  });
+
+  describe('updateMemberRole', () => {
+    it('should update member role successfully', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const newRole: OrganizationRole = 'ADMIN';
+      const mockUpdatedMember = {
+        id: 'member-id-1',
+        userId,
+        organizationId,
+        role: newRole,
+        name: 'Member Name',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+
+      (prismaServiceMock.userOrganization.update as any).mockResolvedValue(mockUpdatedMember);
+
+      await repository.updateMemberRole(organizationId, userId, newRole);
+
+      expect(prismaServiceMock.userOrganization.update).toHaveBeenCalledWith({
+        where: {
+          userId_organizationId: {
+            userId,
+            organizationId,
+          },
+        },
+        data: {
+          role: newRole,
+        },
+      });
+    });
+
+    it('should update role to MEMBER', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const newRole: OrganizationRole = 'MEMBER';
+
+      (prismaServiceMock.userOrganization.update as any).mockResolvedValue({});
+
+      await repository.updateMemberRole(organizationId, userId, newRole);
+
+      expect(prismaServiceMock.userOrganization.update).toHaveBeenCalledWith({
+        where: {
+          userId_organizationId: {
+            userId,
+            organizationId,
+          },
+        },
+        data: {
+          role: newRole,
+        },
+      });
+    });
+  });
+
+  describe('removeMember', () => {
+    it('should soft remove member successfully', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const mockUpdatedMember = {
+        id: 'member-id-1',
+        userId,
+        organizationId,
+        role: 'MEMBER' as OrganizationRole,
+        name: 'Member Name',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(),
+      };
+
+      (prismaServiceMock.userOrganization.update as any).mockResolvedValue(mockUpdatedMember);
+
+      await repository.removeMember(organizationId, userId);
+
+      expect(prismaServiceMock.userOrganization.update).toHaveBeenCalledWith({
+        where: {
+          userId_organizationId: {
+            userId,
+            organizationId,
+          },
+        },
+        data: {
+          deletedAt: expect.any(Date),
+        },
+      });
+    });
+
+    it('should set deletedAt to current date', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const beforeCall = new Date();
+
+      (prismaServiceMock.userOrganization.update as any).mockImplementation(async (params) => {
+        return {
+          id: 'member-id-1',
+          userId,
+          organizationId,
+          role: 'MEMBER' as OrganizationRole,
+          name: 'Member Name',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: params.data.deletedAt,
+        };
+      });
+
+      await repository.removeMember(organizationId, userId);
+      const afterCall = new Date();
+
+      expect(prismaServiceMock.userOrganization.update).toHaveBeenCalledWith({
+        where: {
+          userId_organizationId: {
+            userId,
+            organizationId,
+          },
+        },
+        data: {
+          deletedAt: expect.any(Date),
+        },
+      });
+
+      const deletedAt = (prismaServiceMock.userOrganization.update as any).mock.calls[0][0].data.deletedAt;
+      expect(deletedAt.getTime()).toBeGreaterThanOrEqual(beforeCall.getTime());
+      expect(deletedAt.getTime()).toBeLessThanOrEqual(afterCall.getTime());
     });
   });
 });

@@ -4,6 +4,7 @@ import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { PrismaClient } from 'src/generated/prisma/client';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 
 describe('BoardsRepository', () => {
@@ -125,6 +126,7 @@ describe('BoardsRepository', () => {
     it('should find and return posts from a board with userHasVoted flag', async () => {
       const boardId = 'board-id-1';
       const userId = 'user-id-1';
+      const query: ListBoardPostsQueryDto = {};
       const mockPosts = [
         {
           id: 'post-id-1',
@@ -186,7 +188,7 @@ describe('BoardsRepository', () => {
 
       prismaServiceMock.post.findMany.mockResolvedValue(mockPosts);
 
-      const result = await repository.findPostsFromBoard(boardId, userId);
+      const result = await repository.findPostsFromBoard(boardId, userId, query);
 
       expect(prismaServiceMock.post.findMany).toHaveBeenCalledWith({
         orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
@@ -249,10 +251,11 @@ describe('BoardsRepository', () => {
     it('should return empty array if no posts are found', async () => {
       const boardId = 'board-id-1';
       const userId = 'user-id-1';
+      const query: ListBoardPostsQueryDto = {};
 
       prismaServiceMock.post.findMany.mockResolvedValue([]);
 
-      const result = await repository.findPostsFromBoard(boardId, userId);
+      const result = await repository.findPostsFromBoard(boardId, userId, query);
 
       expect(prismaServiceMock.post.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -264,6 +267,98 @@ describe('BoardsRepository', () => {
       );
 
       expect(result).toEqual([]);
+    });
+
+    it('should filter posts by status when status is provided', async () => {
+      const boardId = 'board-id-1';
+      const userId = 'user-id-1';
+      const query: ListBoardPostsQueryDto = { status: 'status-id-1' };
+      const mockPosts = [
+        {
+          id: 'post-id-1',
+          title: 'Post 1',
+          isLocked: false,
+          isPinned: true,
+          isPrivate: false,
+          description: 'Description 1',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+          authorId: 'user-id-1',
+          boardId: boardId,
+          statusId: 'status-id-1',
+          author: {
+            id: 'user-id-1',
+            name: 'John Doe',
+          },
+          status: {
+            id: 'status-id-1',
+            name: 'Open',
+            color: '#00FF00',
+          },
+          _count: {
+            comments: 5,
+            votes: 10,
+          },
+          votes: [],
+        },
+      ];
+
+      prismaServiceMock.post.findMany.mockResolvedValue(mockPosts);
+
+      const result = await repository.findPostsFromBoard(boardId, userId, query);
+
+      expect(prismaServiceMock.post.findMany).toHaveBeenCalledWith({
+        orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+        where: {
+          boardId,
+          deletedAt: null,
+          statusId: 'status-id-1',
+        },
+        select: {
+          id: true,
+          title: true,
+          isLocked: true,
+          isPinned: true,
+          isPrivate: true,
+          description: true,
+          createdAt: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          status: {
+            select: {
+              id: true,
+              name: true,
+              color: true,
+            },
+          },
+          _count: {
+            select: {
+              comments: {
+                where: {
+                  deletedAt: null,
+                },
+              },
+              votes: true,
+            },
+          },
+          votes: {
+            where: {
+              userId,
+            },
+          },
+        },
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        id: 'post-id-1',
+        title: 'Post 1',
+      });
     });
   });
 

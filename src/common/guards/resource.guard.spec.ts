@@ -69,7 +69,7 @@ describe('ResourceGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should return false when user is the author but allowAuthor is false', async () => {
+    it('should throw ForbiddenException when user is the author but allowAuthor is false', async () => {
       const mockUser = createMockUserPayload({
         id: 'user-id-1',
         organizations: [{ id: 'org-id-2', name: 'Another Org', role: 'MEMBER' }],
@@ -87,9 +87,9 @@ describe('ResourceGuard', () => {
         authorId: 'user-id-1',
       });
 
-      const result = await guard.canActivate(executionContextMock);
-
-      expect(result).toBe(false);
+      await expect(guard.canActivate(executionContextMock)).rejects.toThrow(
+        'Usuário não tem permissão para realizar esta operação',
+      );
     });
 
     it('should return true when user has allowed role in resource organization', async () => {
@@ -117,7 +117,7 @@ describe('ResourceGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should return false when user does not have allowed role in resource organization', async () => {
+    it('should throw ForbiddenException when user does not have allowed role in resource organization', async () => {
       const mockUser = createMockUserPayload({
         organizations: [{ id: 'org-id-1', name: 'Org 1', role: 'MEMBER' }],
       });
@@ -134,12 +134,12 @@ describe('ResourceGuard', () => {
         authorId: 'other-user-id',
       });
 
-      const result = await guard.canActivate(executionContextMock);
-
-      expect(result).toBe(false);
+      await expect(guard.canActivate(executionContextMock)).rejects.toThrow(
+        'Usuário não tem permissão para realizar esta operação',
+      );
     });
 
-    it('should return false when user is not in resource organization', async () => {
+    it('should throw ForbiddenException when user is not in resource organization', async () => {
       const mockUser = createMockUserPayload({
         organizations: [{ id: 'org-id-2', name: 'Org 2', role: 'OWNER' }],
       });
@@ -156,9 +156,9 @@ describe('ResourceGuard', () => {
         authorId: 'other-user-id',
       });
 
-      const result = await guard.canActivate(executionContextMock);
-
-      expect(result).toBe(false);
+      await expect(guard.canActivate(executionContextMock)).rejects.toThrow(
+        'Usuário não tem permissão para realizar esta operação',
+      );
     });
 
     it('should prioritize author check over role check when allowAuthor is true', async () => {

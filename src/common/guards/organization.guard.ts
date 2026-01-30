@@ -19,13 +19,13 @@ export class OrganizationGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const user: UserPayload = request.user;
-    const dto = request.body;
+    const organizationId = request.body?.organizationId || request.params?.id;
 
-    if (!dto?.organizationId) {
+    if (!organizationId) {
       throw new ForbiddenException('ID da organização é obrigatório');
     }
 
-    const userOrg = user.organizations.find((org) => org.id === dto.organizationId);
+    const userOrg = user.organizations.find((org) => org.id === organizationId);
 
     if (!userOrg) {
       throw new ForbiddenException('Usuário não pertence a esta organização');

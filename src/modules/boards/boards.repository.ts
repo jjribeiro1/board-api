@@ -44,7 +44,7 @@ export class BoardsRepository {
       where: {
         boardId,
         deletedAt: null,
-        ...(query?.status && { statusId: query.status }),
+        ...(query?.status?.length && { statusId: { in: query.status } }),
       },
       select: {
         id: true,

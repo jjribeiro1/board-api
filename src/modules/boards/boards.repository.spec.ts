@@ -272,7 +272,7 @@ describe('BoardsRepository', () => {
     it('should filter posts by status when status is provided', async () => {
       const boardId = 'board-id-1';
       const userId = 'user-id-1';
-      const query: ListBoardPostsQueryDto = { status: 'status-id-1' };
+      const query: ListBoardPostsQueryDto = { status: ['status-id-1'] };
       const mockPosts = [
         {
           id: 'post-id-1',
@@ -313,7 +313,7 @@ describe('BoardsRepository', () => {
         where: {
           boardId,
           deletedAt: null,
-          statusId: 'status-id-1',
+          statusId: { in: query.status },
         },
         select: {
           id: true,

@@ -111,7 +111,7 @@ describe('BoardsService', () => {
     it('should return posts from a board with status filter', async () => {
       const boardId = 'board-id-1';
       const userId = 'user-id-1';
-      const query: ListBoardPostsQueryDto = { status: 'status-id-1' };
+      const query: ListBoardPostsQueryDto = { status: ['status-id-1'] };
       const mockBoard = {
         id: boardId,
         title: 'Feature Requests',

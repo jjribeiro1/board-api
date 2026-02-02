@@ -128,7 +128,7 @@ describe('BoardsController', () => {
         updatedAt: new Date(),
       };
       const query: ListBoardPostsQueryDto = {
-        status: 'status-id-1',
+        status: ['status-id-1'],
       };
       const mockPosts = [
         {

@@ -96,11 +96,22 @@ export class OrganizationsRepository {
       where: {
         deletedAt: null,
         ...(filters?.status?.length && { statusId: { in: filters.status } }),
-        board: {
-          id: filters.board,
-          organizationId: organizationId,
-          deletedAt: null,
-        },
+        ...(filters.board && {
+          board: {
+            id: filters.board,
+            organizationId: organizationId,
+            deletedAt: null,
+          },
+        }),
+        ...(filters?.tag?.length && {
+          tags: {
+            some: {
+              tagId: {
+                in: filters.tag,
+              },
+            },
+          },
+        }),
       },
       select: {
         id: true,

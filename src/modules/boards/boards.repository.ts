@@ -76,6 +76,22 @@ export class BoardsRepository {
             color: true,
           },
         },
+        tags: {
+          where: {
+            tag: {
+              deletedAt: null,
+            },
+          },
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                color: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             comments: {
@@ -96,6 +112,7 @@ export class BoardsRepository {
 
     return result.map((post) => ({
       ...post,
+      tags: post.tags.map((t) => t.tag),
       userHasVoted: post.votes.length > 0,
     }));
   }

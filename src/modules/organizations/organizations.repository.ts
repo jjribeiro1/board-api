@@ -95,7 +95,7 @@ export class OrganizationsRepository {
       orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         deletedAt: null,
-        statusId: filters.status,
+        ...(filters?.status?.length && { statusId: { in: filters.status } }),
         board: {
           id: filters.board,
           organizationId: organizationId,

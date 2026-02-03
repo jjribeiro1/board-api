@@ -125,7 +125,7 @@ describe('OrganizationsController', () => {
     it('should return posts from organization with filters', async () => {
       const orgId = 'org-id-1';
       const query: ListPostsQueryDto = {
-        status: 'status-id-1',
+        status: ['status-id-1'],
         board: 'board-id-1',
       };
       const mockPosts = [

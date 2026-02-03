@@ -170,7 +170,7 @@ describe('OrganizationsService', () => {
     it('should return posts from organization with filters', async () => {
       const organizationId = 'org-id-1';
       const filters: ListPostsQueryDto = {
-        status: 'status-id-1',
+        status: ['status-id-1'],
         board: 'board-id-1',
       };
       const mockPosts = [
@@ -251,7 +251,7 @@ describe('OrganizationsService', () => {
     it('should return empty array when no posts match filters', async () => {
       const organizationId = 'org-id-1';
       const filters: ListPostsQueryDto = {
-        status: 'non-existent-status',
+        status: ['non-existent-status'],
       };
 
       organizationsRepositoryMock.findPostsFromOrganization.mockResolvedValue([]);

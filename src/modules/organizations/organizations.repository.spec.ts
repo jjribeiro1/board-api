@@ -219,7 +219,7 @@ describe('OrganizationsRepository', () => {
     it('should find and return posts with transformed tags', async () => {
       const organizationId = 'org-id-1';
       const filters: ListPostsQueryDto = {
-        status: 'status-id-1',
+        status: ['status-id-1'],
         board: 'board-id-1',
       };
       const mockPosts = [
@@ -300,7 +300,9 @@ describe('OrganizationsRepository', () => {
         orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
         where: {
           deletedAt: null,
-          statusId: filters.status,
+          statusId: {
+            in: filters.status,
+          },
           board: {
             id: filters.board,
             organizationId: organizationId,
@@ -320,7 +322,7 @@ describe('OrganizationsRepository', () => {
     it('should return an empty array if no posts match filters', async () => {
       const organizationId = 'org-id-1';
       const filters: ListPostsQueryDto = {
-        status: 'status-id-1',
+        status: ['status-id-1'],
         board: 'board-id-1',
       };
 

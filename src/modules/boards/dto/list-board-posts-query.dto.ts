@@ -6,4 +6,9 @@ export class ListBoardPostsQueryDto {
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   @IsUUID('4', { each: true })
   status?: string[];
+
+  @IsOptional()
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
+  @IsUUID('4', { each: true })
+  tag?: string[];
 }

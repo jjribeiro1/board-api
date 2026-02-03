@@ -45,6 +45,15 @@ export class BoardsRepository {
         boardId,
         deletedAt: null,
         ...(query?.status?.length && { statusId: { in: query.status } }),
+        ...(query?.tag?.length && {
+          tags: {
+            some: {
+              tagId: {
+                in: query.tag,
+              },
+            },
+          },
+        }),
       },
       select: {
         id: true,

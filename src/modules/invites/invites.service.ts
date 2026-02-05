@@ -1,4 +1,10 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { CreateInviteDto } from './dto/create-invite.dto';
@@ -7,10 +13,11 @@ import { InvitesRepository } from './invites.repository';
 import { UserPayload } from 'src/common/types/user-payload';
 import { MailService } from 'src/shared/modules/mail/mail.service';
 import { InviteStatus } from 'src/generated/prisma/enums';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 import dayjs from 'src/utils/dayjs';
 
 @Injectable()
-export class InvitesService {
+export class InvitesService implements ResourceOwnershipResolver {
   constructor(
     private readonly organizationsService: OrganizationsService,
     private readonly mailService: MailService,
@@ -108,5 +115,29 @@ export class InvitesService {
 
   private generateToken(): string {
     return randomBytes(32).toString('hex');
+  }
+
+  async findOrgAndAuthorId(resourceId: string): Promise<ResourceOwnershipInfo | null> {
+    const invite = await this.invitesRepository.findById(resourceId);
+    if (!invite) {
+      return null;
+    }
+    return {
+      organizationId: invite.organizationId,
+      authorId: null,
+    };
+  }
+
+  async revoke(id: string) {
+    const invite = await this.invitesRepository.findById(id);
+    if (!invite) {
+      throw new NotFoundException('Convite não encontrado');
+    }
+
+    if (invite.status !== InviteStatus.PENDING) {
+      throw new BadRequestException('Convite já foi aceito ou expirado');
+    }
+
+    return await this.invitesRepository.revoke(id);
   }
 }

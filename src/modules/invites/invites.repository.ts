@@ -67,4 +67,19 @@ export class InvitesRepository {
       });
     });
   }
+
+  async findById(id: string) {
+    const invite = await this.prisma.organizationInvite.findUnique({
+      where: { id },
+      include: { organization: true },
+    });
+    return invite;
+  }
+
+  async revoke(id: string) {
+    await this.prisma.organizationInvite.update({
+      where: { id },
+      data: { status: InviteStatus.REVOKED },
+    });
+  }
 }

@@ -96,14 +96,12 @@ export class OrganizationsRepository {
       orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         deletedAt: null,
+        board: {
+          ...(filters?.board && { id: filters.board }),
+          organizationId: organizationId,
+          deletedAt: null,
+        },
         ...(filters?.status?.length && { statusId: { in: filters.status } }),
-        ...(filters.board && {
-          board: {
-            id: filters.board,
-            organizationId: organizationId,
-            deletedAt: null,
-          },
-        }),
         ...(filters?.tag?.length && {
           tags: {
             some: {

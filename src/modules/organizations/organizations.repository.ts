@@ -3,6 +3,7 @@ import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { OrganizationRole } from 'src/common/types/user-organization-role';
+import { InviteStatus } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class OrganizationsRepository {
@@ -250,6 +251,7 @@ export class OrganizationsRepository {
     const results = await this.prisma.organizationInvite.findMany({
       where: {
         organizationId,
+        status: InviteStatus.PENDING,
       },
       select: {
         id: true,

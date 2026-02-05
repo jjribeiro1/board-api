@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OrganizationsRepository } from './organizations.repository';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { PrismaClient } from 'src/generated/prisma/client';
+import { InviteStatus, PrismaClient } from 'src/generated/prisma/client';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { OrganizationRole } from 'src/common/types/user-organization-role';
@@ -579,6 +579,7 @@ describe('OrganizationsRepository', () => {
       expect(prismaServiceMock.organizationInvite.findMany).toHaveBeenCalledWith({
         where: {
           organizationId,
+          status: InviteStatus.PENDING,
         },
         select: {
           id: true,

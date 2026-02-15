@@ -79,6 +79,6 @@ export class InvitesController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Post(':id/retry')
   async retry(@Param('id', ParseUUIDPipe) id: string) {
-    return await this.invitesService.expireInvites([id]);
+    return await this.invitesService.retryInvite(id);
   }
 }

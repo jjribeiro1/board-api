@@ -69,6 +69,12 @@ export class OrganizationsController {
    *
    * Returns all members from an organization
    */
+  @AllowedOrganizationRoles([
+    OrganizationRolesOptions.OWNER,
+    OrganizationRolesOptions.ADMIN,
+    OrganizationRolesOptions.MEMBER,
+  ])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Get(':id/members')
   async findMembersFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
@@ -108,6 +114,12 @@ export class OrganizationsController {
    *
    * Returns all invites from an organization
    */
+  @AllowedOrganizationRoles([
+    OrganizationRolesOptions.OWNER,
+    OrganizationRolesOptions.ADMIN,
+    OrganizationRolesOptions.MEMBER,
+  ])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Get(':id/invites')
   async findInvitesFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {

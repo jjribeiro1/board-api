@@ -32,7 +32,7 @@ export class InvitesRepository {
       },
     });
 
-    return invite.id;
+    return invite;
   }
 
   async findByToken(token: string) {

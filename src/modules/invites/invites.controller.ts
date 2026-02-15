@@ -69,4 +69,16 @@ export class InvitesController {
   async revoke(@Param('id', ParseUUIDPipe) id: string) {
     return await this.invitesService.revoke(id);
   }
+
+  /**
+   * Retry sending an invite email
+   */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(ResourceGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post(':id/retry')
+  async retry(@Param('id', ParseUUIDPipe) id: string) {
+    return await this.invitesService.expireInvites([id]);
+  }
 }

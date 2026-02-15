@@ -15,6 +15,9 @@ import { MailService } from 'src/shared/modules/mail/mail.service';
 import { InviteStatus } from 'src/generated/prisma/enums';
 import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 import dayjs from 'src/utils/dayjs';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EVENTS } from 'src/constants/events';
+import { InviteCreatedEventDto, InviteRetryEventDto } from '../events/dto/invites-events.dto';
 
 @Injectable()
 export class InvitesService implements ResourceOwnershipResolver {
@@ -23,6 +26,7 @@ export class InvitesService implements ResourceOwnershipResolver {
     private readonly mailService: MailService,
     private readonly configService: ConfigService,
     private readonly invitesRepository: InvitesRepository,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(dto: CreateInviteDto, user: UserPayload) {
@@ -45,13 +49,7 @@ export class InvitesService implements ResourceOwnershipResolver {
       user.id,
     );
 
-    await this.mailService.sendText(
-      dto.email,
-      'Convite para organização',
-      `Você foi convidado para entrar na organização. 
-      Use o seguinte link para aceitar o convite: ${this.configService.get('CLIENT_URL')}/invite/${token}
-      O convite expira em 7 dias.`,
-    );
+    this.eventEmitter.emit(EVENTS.invite.created, new InviteCreatedEventDto(invite.email, token));
 
     return invite;
   }
@@ -143,5 +141,37 @@ export class InvitesService implements ResourceOwnershipResolver {
 
   async expireInvites(inviteIds: string[]) {
     await this.invitesRepository.bulkExpire(inviteIds);
+  }
+
+  async retryInvite(id: string) {
+    const invite = await this.invitesRepository.findById(id);
+    if (!invite) {
+      throw new NotFoundException('Convite não encontrado');
+    }
+
+    if (invite.status === InviteStatus.REVOKED) {
+      throw new BadRequestException('Não é possível reenviar um convite cancelado');
+    }
+
+    if (invite.status === InviteStatus.ACCEPTED) {
+      throw new BadRequestException('Convite já foi aceito');
+    }
+
+    if (invite.lastRetryAt && dayjs().diff(dayjs(invite.lastRetryAt), 'hour') < 1) {
+      throw new BadRequestException('Aguarde pelo menos 1 hora para reenviar o convite');
+    }
+
+    const token = this.generateToken();
+    const expiredAt = dayjs().add(7, 'day').toDate();
+
+    await this.invitesRepository.update(invite.id, {
+      token,
+      expiresAt: expiredAt,
+      lastRetryAt: new Date(),
+    });
+
+    this.eventEmitter.emit(EVENTS.invite.retry, new InviteRetryEventDto(invite.email, token));
+
+    return;
   }
 }

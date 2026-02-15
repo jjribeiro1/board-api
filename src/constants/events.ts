@@ -3,6 +3,8 @@ export const EVENTS = {
     created: 'organization.created',
   },
   invite: {
+    created: 'invite.created',
     expired: 'invite.expired',
+    retry: 'invite.retry',
   },
 };

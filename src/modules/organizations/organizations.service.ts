@@ -9,8 +9,8 @@ import { OrganizationsRepository } from './organizations.repository';
 import { slugify } from 'src/utils/slug';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import dayjs from 'src/utils/dayjs';
-import { InvitesExpiredEventDto } from '../events/dto/invites-expired-event.dto';
 import { InviteStatus } from 'src/generated/prisma/browser';
+import { InvitesExpiredEventDto } from '../events/dto/invites-events.dto';
 
 @Injectable()
 export class OrganizationsService {

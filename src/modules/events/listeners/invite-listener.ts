@@ -30,7 +30,7 @@ export class InviteEventsListener {
     await this.invitesService.expireInvites(payload.inviteIds);
   }
 
-  @OnEvent(EVENTS.invite.retry)
+  @OnEvent(EVENTS.invite.retried)
   async handleInviteRetry(payload: InviteRetryEventDto) {
     await this.mailService.sendText(
       payload.email,

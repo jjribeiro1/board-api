@@ -5,6 +5,6 @@ export const EVENTS = {
   invite: {
     created: 'invite.created',
     expired: 'invite.expired',
-    retry: 'invite.retry',
+    retried: 'invite.retried',
   },
 };

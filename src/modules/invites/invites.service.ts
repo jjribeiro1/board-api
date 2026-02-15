@@ -171,7 +171,7 @@ export class InvitesService implements ResourceOwnershipResolver {
       lastRetryAt: new Date(),
     });
 
-    this.eventEmitter.emit(EVENTS.invite.retry, new InviteRetryEventDto(invite.email, token));
+    this.eventEmitter.emit(EVENTS.invite.retried, new InviteRetryEventDto(invite.email, token));
 
     return;
   }

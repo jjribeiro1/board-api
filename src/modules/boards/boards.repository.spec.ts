@@ -155,6 +155,15 @@ describe('BoardsRepository', () => {
             votes: 10,
           },
           votes: [{ id: 'vote-id-1', userId, postId: 'post-id-1', createdAt: new Date() }],
+          tags: [
+            {
+              tag: {
+                id: 'tag-id-1',
+                name: 'Feature',
+                color: '#FF0000',
+              },
+            },
+          ],
         },
         {
           id: 'post-id-2',
@@ -183,6 +192,7 @@ describe('BoardsRepository', () => {
             votes: 7,
           },
           votes: [],
+          tags: [],
         },
       ];
 
@@ -215,6 +225,22 @@ describe('BoardsRepository', () => {
               id: true,
               name: true,
               color: true,
+            },
+          },
+          tags: {
+            where: {
+              tag: {
+                deletedAt: null,
+              },
+            },
+            select: {
+              tag: {
+                select: {
+                  id: true,
+                  name: true,
+                  color: true,
+                },
+              },
             },
           },
           _count: {
@@ -301,6 +327,15 @@ describe('BoardsRepository', () => {
             votes: 10,
           },
           votes: [],
+          tags: [
+            {
+              tag: {
+                id: 'tag-id-1',
+                name: 'Feature',
+                color: '#FF0000',
+              },
+            },
+          ],
         },
       ];
 
@@ -334,6 +369,22 @@ describe('BoardsRepository', () => {
               id: true,
               name: true,
               color: true,
+            },
+          },
+          tags: {
+            where: {
+              tag: {
+                deletedAt: null,
+              },
+            },
+            select: {
+              tag: {
+                select: {
+                  id: true,
+                  name: true,
+                  color: true,
+                },
+              },
             },
           },
           _count: {

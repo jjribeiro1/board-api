@@ -579,7 +579,7 @@ describe('OrganizationsRepository', () => {
       expect(prismaServiceMock.organizationInvite.findMany).toHaveBeenCalledWith({
         where: {
           organizationId,
-          status: InviteStatus.PENDING,
+          status: { in: [InviteStatus.PENDING, InviteStatus.EXPIRED] },
         },
         select: {
           id: true,

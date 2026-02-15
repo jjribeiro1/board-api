@@ -167,6 +167,7 @@ export class InvitesService implements ResourceOwnershipResolver {
     await this.invitesRepository.update(invite.id, {
       token,
       expiresAt: expiredAt,
+      status: InviteStatus.PENDING,
       lastRetryAt: new Date(),
     });
 

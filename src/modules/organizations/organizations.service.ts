@@ -8,6 +8,9 @@ import { OrganizationCreatedEventDto } from '../events/dto/organization-created-
 import { OrganizationsRepository } from './organizations.repository';
 import { slugify } from 'src/utils/slug';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
+import dayjs from 'src/utils/dayjs';
+import { InvitesExpiredEventDto } from '../events/dto/invites-expired-event.dto';
+import { InviteStatus } from 'src/generated/prisma/browser';
 
 @Injectable()
 export class OrganizationsService {
@@ -74,7 +77,21 @@ export class OrganizationsService {
 
   async findInvitesFromOrganization(organizationId: string) {
     await this.findOne(organizationId);
-    return this.organizationsRepository.findInvitesFromOrganization(organizationId);
+    const invites = await this.organizationsRepository.findInvitesFromOrganization(organizationId);
+    const expiredInvitesId: string[] = [];
+
+    for (const invite of invites) {
+      const isExpired = dayjs().isAfter(invite.expiresAt);
+      if (isExpired && invite.status === InviteStatus.PENDING) {
+        expiredInvitesId.push(invite.id);
+      }
+    }
+
+    if (expiredInvitesId.length > 0) {
+      this.eventEmitter.emit(EVENTS.invite.expired, new InvitesExpiredEventDto(expiredInvitesId));
+    }
+
+    return invites;
   }
 
   async updateMemberRole(organizationId: string, userId: string, dto: UpdateMemberRoleDto) {

@@ -140,4 +140,8 @@ export class InvitesService implements ResourceOwnershipResolver {
 
     return await this.invitesRepository.revoke(id);
   }
+
+  async expireInvites(inviteIds: string[]) {
+    await this.invitesRepository.bulkExpire(inviteIds);
+  }
 }

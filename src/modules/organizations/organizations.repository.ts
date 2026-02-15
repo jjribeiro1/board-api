@@ -249,7 +249,7 @@ export class OrganizationsRepository {
     const results = await this.prisma.organizationInvite.findMany({
       where: {
         organizationId,
-        status: InviteStatus.PENDING,
+        status: { in: [InviteStatus.PENDING, InviteStatus.EXPIRED] },
       },
       select: {
         id: true,

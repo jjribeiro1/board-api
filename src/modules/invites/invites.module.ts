@@ -8,6 +8,7 @@ import { RESOURCE_RESOLVER } from 'src/constants';
 @Module({
   imports: [OrganizationsModule],
   controllers: [InvitesController],
+  exports: [InvitesService],
   providers: [InvitesService, { provide: RESOURCE_RESOLVER, useExisting: InvitesService }, InvitesRepository],
 })
 export class InvitesModule {}

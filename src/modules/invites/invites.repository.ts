@@ -82,4 +82,11 @@ export class InvitesRepository {
       data: { status: InviteStatus.REVOKED },
     });
   }
+
+  async bulkExpire(inviteIds: string[]) {
+    await this.prisma.organizationInvite.updateMany({
+      where: { id: { in: inviteIds } },
+      data: { status: InviteStatus.EXPIRED },
+    });
+  }
 }

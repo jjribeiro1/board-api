@@ -86,6 +86,7 @@ model OrganizationInvite {
   status         InviteStatus @default(PENDING)
   expiresAt      DateTime     @map("expires_at") @db.Timestamptz
   acceptedAt     DateTime?    @map("accepted_at") @db.Timestamptz
+  lastRetryAt    DateTime?    @map("last_retry_at") @db.Timestamptz
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)

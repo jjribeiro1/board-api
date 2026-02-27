@@ -7,4 +7,8 @@ export const EVENTS = {
     expired: 'invite.expired',
     retried: 'invite.retried',
   },
+  post: {
+    commented: 'post.commented',
+    statusChanged: 'post.status_changed',
+  },
 };

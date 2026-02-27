@@ -23,6 +23,8 @@ model User {
   session             Session[]
   votes               PostVote[]
   organizationInvites OrganizationInvite[]
+  notifications       UserNotification[]
+  actedNotifications  Notification[]       @relation("NotificationActor")
 
   @@map("user")
 }
@@ -74,6 +76,7 @@ model Organization {
   organizationCustomStatus Status[]
   organizationCustomTags   Tag[]
   organizationInvites      OrganizationInvite[]
+  notifications            Notification[]
 
   @@map("organization")
 }
@@ -218,4 +221,40 @@ enum InviteStatus {
   ACCEPTED
   EXPIRED
   REVOKED
+}
+
+enum NotificationType {
+  POST_COMMENTED
+  POST_STATUS_CHANGED
+}
+
+model Notification {
+  id             String             @id @default(uuid()) @db.Uuid
+  type           NotificationType
+  actorId        String?            @map("actor_id") @db.Uuid
+  organizationId String?            @map("organization_id") @db.Uuid
+  resourceId     String?            @map("resource_id") @db.Uuid
+  payload        Json               @default("{}")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  actor          User?              @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  organization   Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  recipients     UserNotification[]
+
+  @@index([organizationId])
+  @@map("notification")
+}
+
+model UserNotification {
+  id             String       @id @default(uuid()) @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  notificationId String       @map("notification_id") @db.Uuid
+  readAt         DateTime?    @map("read_at") @db.Timestamptz
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificationId])
+  @@index([userId])
+  @@index([notificationId])
+  @@map("user_notification")
 }

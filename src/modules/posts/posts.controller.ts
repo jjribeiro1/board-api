@@ -61,8 +61,8 @@ export class PostsController {
   @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
-    const updatedPost = await this.postsService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdatePostDto, @LoggedUser() user: UserPayload) {
+    const updatedPost = await this.postsService.update(id, dto, user);
     return {
       data: {
         post: updatedPost,
@@ -77,8 +77,8 @@ export class PostsController {
   @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/settings')
-  async managePost(@Param('id') id: string, @Body() dto: ManagePostDto) {
-    const post = await this.postsService.update(id, dto);
+  async managePost(@Param('id') id: string, @Body() dto: ManagePostDto, @LoggedUser() user: UserPayload) {
+    const post = await this.postsService.update(id, dto, user);
     return {
       data: {
         post,

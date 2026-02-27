@@ -170,6 +170,14 @@ describe('PostsController', () => {
         title: 'Updated title',
         description: 'Updated description',
       };
+      const user: UserPayload = {
+        id: 'user-id-1',
+        email: 'email@example.com',
+        name: 'John Doe',
+        organizations: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
       const updatedPost = {
         id: postId,
         title: 'Updated title',
@@ -188,9 +196,9 @@ describe('PostsController', () => {
 
       mockPostsService.update.mockResolvedValue(updatedPost);
 
-      const result = await controller.update(postId, dto);
+      const result = await controller.update(postId, dto, user);
 
-      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto);
+      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto, user);
       expect(mockPostsService.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ data: { post: updatedPost } });
     });
@@ -199,6 +207,14 @@ describe('PostsController', () => {
       const postId = 'post-id-2';
       const dto: UpdatePostDto = {
         title: 'Only title updated',
+      };
+      const user: UserPayload = {
+        id: 'user-id-1',
+        email: 'email@example.com',
+        name: 'John Doe',
+        organizations: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
       const updatedPost = {
         id: postId,
@@ -218,9 +234,9 @@ describe('PostsController', () => {
 
       mockPostsService.update.mockResolvedValue(updatedPost);
 
-      const result = await controller.update(postId, dto);
+      const result = await controller.update(postId, dto, user);
 
-      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto);
+      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto, user);
       expect(result).toEqual({ data: { post: updatedPost } });
     });
   });
@@ -232,6 +248,14 @@ describe('PostsController', () => {
         isLocked: true,
         isPinned: true,
         isPrivate: true,
+      };
+      const user: UserPayload = {
+        id: 'user-id-1',
+        email: 'email@example.com',
+        name: 'John Doe',
+        organizations: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
       const updatedPost = {
         id: postId,
@@ -251,9 +275,9 @@ describe('PostsController', () => {
 
       mockPostsService.update.mockResolvedValue(updatedPost);
 
-      const result = await controller.managePost(postId, dto);
+      const result = await controller.managePost(postId, dto, user);
 
-      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto);
+      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto, user);
       expect(mockPostsService.update).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ data: { post: updatedPost } });
     });
@@ -263,6 +287,14 @@ describe('PostsController', () => {
       const dto: ManagePostDto = {
         statusId: 'new-status-id',
         tagIds: ['tag-id-1', 'tag-id-2'],
+      };
+      const user: UserPayload = {
+        id: 'user-id-1',
+        email: 'email@example.com',
+        name: 'John Doe',
+        organizations: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
       const updatedPost = {
         id: postId,
@@ -282,9 +314,9 @@ describe('PostsController', () => {
 
       mockPostsService.update.mockResolvedValue(updatedPost);
 
-      const result = await controller.managePost(postId, dto);
+      const result = await controller.managePost(postId, dto, user);
 
-      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto);
+      expect(mockPostsService.update).toHaveBeenCalledWith(postId, dto, user);
       expect(result).toEqual({ data: { post: updatedPost } });
     });
   });

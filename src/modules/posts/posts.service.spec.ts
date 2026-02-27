@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PostsService } from './posts.service';
 import { PostsRepository } from './posts.repository';
 import { BoardsService } from '../boards/boards.service';
@@ -17,12 +18,14 @@ describe('PostsService', () => {
   let boardsServiceMock: DeepMockProxy<BoardsService>;
   let organizationsServiceMock: DeepMockProxy<OrganizationsService>;
   let votesServiceMock: DeepMockProxy<VotesService>;
+  let eventEmitterMock: DeepMockProxy<EventEmitter2>;
 
   beforeEach(async () => {
     postsRepositoryMock = mockDeep<PostsRepository>();
     boardsServiceMock = mockDeep<BoardsService>();
     organizationsServiceMock = mockDeep<OrganizationsService>();
     votesServiceMock = mockDeep<VotesService>();
+    eventEmitterMock = mockDeep<EventEmitter2>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -42,6 +45,10 @@ describe('PostsService', () => {
         {
           provide: VotesService,
           useValue: votesServiceMock,
+        },
+        {
+          provide: EventEmitter2,
+          useValue: eventEmitterMock,
         },
       ],
     }).compile();

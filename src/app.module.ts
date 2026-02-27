@@ -15,6 +15,7 @@ import { StatusModule } from './modules/status/status.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { VotesModule } from './modules/votes/votes.module';
 import { InvitesModule } from './modules/invites/invites.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { InvitesModule } from './modules/invites/invites.module';
     TagsModule,
     VotesModule,
     InvitesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
 })

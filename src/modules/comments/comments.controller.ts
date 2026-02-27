@@ -23,7 +23,7 @@ export class CommentsController {
   @ApiBearerAuth()
   @Post()
   async create(@Body() dto: CreateCommentDto, @LoggedUser() user: UserPayload) {
-    return this.commentsService.create(dto, user.id);
+    return this.commentsService.create(dto, user);
   }
 
   /**

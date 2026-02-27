@@ -1,24 +1,45 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentsRepository } from './comments.repository';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PostsService } from '../posts/posts.service';
 import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
+import { EVENTS } from 'src/constants/events';
+import { PostCommentedEventDto } from '../events/dto/post-events.dto';
+import { UserPayload } from 'src/common/types/user-payload';
 
 @Injectable()
 export class CommentsService implements ResourceOwnershipResolver {
   constructor(
     private readonly postsService: PostsService,
     private readonly commentsRepository: CommentsRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async create(dto: CreateCommentDto, userId: string) {
+  async create(dto: CreateCommentDto, user: UserPayload) {
     const post = await this.postsService.findOne(dto.postId);
     if (post.isLocked) {
       throw new ForbiddenException('Não é possível comentar em um post bloqueado');
     }
 
-    return this.commentsRepository.create(dto, userId);
+    const commentId = await this.commentsRepository.create(dto, user.id);
+
+    this.eventEmitter.emit(
+      EVENTS.post.commented,
+      new PostCommentedEventDto(
+        post.id,
+        post.title,
+        post.author.id,
+        commentId,
+        dto.content,
+        user.id,
+        user.name,
+        post.organizationId,
+      ),
+    );
+
+    return commentId;
   }
 
   async findOne(commentId: string) {

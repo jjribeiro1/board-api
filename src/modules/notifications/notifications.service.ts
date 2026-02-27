@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { NotificationType, Prisma } from 'src/generated/prisma/client';
 import { NotificationsRepository } from './notifications.repository';
+import { NotificationMapperService } from './notification-mapper.service';
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly notificationsRepository: NotificationsRepository) {}
+  constructor(
+    private readonly notificationsRepository: NotificationsRepository,
+    private readonly notificationMapper: NotificationMapperService,
+  ) {}
 
   async notify(
     type: NotificationType,
@@ -25,7 +29,11 @@ export class NotificationsService {
   }
 
   async getUserNotifications(userId: string, page: number, limit: number) {
-    return this.notificationsRepository.findByUserId(userId, page, limit);
+    const result = await this.notificationsRepository.findByUserId(userId, page, limit);
+
+    const mappedItems = result.items.map((item) => this.notificationMapper.mapNotification(item));
+
+    return { items: mappedItems, total: result.total };
   }
 
   async getUnreadCount(userId: string) {

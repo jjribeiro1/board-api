@@ -38,17 +38,11 @@ describe('NotificationsController', () => {
       const mockItems = [
         {
           id: 'un-id-1',
-          readAt: null,
+          title: 'Novo comentário',
+          content: 'John Doe comentou no post "Test Post": This is a test comment',
+          type: NotificationType.POST_COMMENTED,
+          isRead: false,
           createdAt: new Date(),
-          notification: {
-            id: 'n-id-1',
-            type: NotificationType.POST_COMMENTED,
-            resourceId: 'post-id-1',
-            payload: { postTitle: 'Test' },
-            createdAt: new Date(),
-            actor: { id: 'actor-id-1', name: 'John' },
-            organization: { id: 'org-id-1', name: 'Org' },
-          },
         },
       ];
 

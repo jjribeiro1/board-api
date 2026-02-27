@@ -3,14 +3,17 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { NotFoundException } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { NotificationsRepository } from './notifications.repository';
+import { NotificationMapperService } from './notification-mapper.service';
 import { NotificationType } from 'src/generated/prisma/client';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
   let repositoryMock: DeepMockProxy<NotificationsRepository>;
+  let mapperMock: DeepMockProxy<NotificationMapperService>;
 
   beforeEach(async () => {
     repositoryMock = mockDeep<NotificationsRepository>();
+    mapperMock = mockDeep<NotificationMapperService>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -18,6 +21,10 @@ describe('NotificationsService', () => {
         {
           provide: NotificationsRepository,
           useValue: repositoryMock,
+        },
+        {
+          provide: NotificationMapperService,
+          useValue: mapperMock,
         },
       ],
     }).compile();
@@ -62,19 +69,24 @@ describe('NotificationsService', () => {
   });
 
   describe('getUserNotifications', () => {
-    it('should return paginated notifications', async () => {
+    it('should return paginated notifications with mapped format for POST_COMMENTED', async () => {
       const userId = 'user-id-1';
+      const createdAt = new Date();
       const mockResult = {
         items: [
           {
             id: 'un-id-1',
             readAt: null,
-            createdAt: new Date(),
+            createdAt,
             notification: {
               id: 'n-id-1',
               type: NotificationType.POST_COMMENTED,
               resourceId: 'post-id-1',
-              payload: { postTitle: 'Test' },
+              payload: {
+                postTitle: 'Test Post',
+                actorName: 'John Doe',
+                commentPreview: 'This is a test comment',
+              },
               createdAt: new Date(),
               actor: { id: 'actor-id-1', name: 'John' },
               organization: { id: 'org-id-1', name: 'Org' },
@@ -84,12 +96,26 @@ describe('NotificationsService', () => {
         total: 1,
       };
 
+      const mappedItem = {
+        id: 'un-id-1',
+        title: 'Novo comentário',
+        content: 'John Doe comentou no post "Test Post": This is a test comment',
+        type: NotificationType.POST_COMMENTED,
+        isRead: false,
+        createdAt,
+      };
+
       repositoryMock.findByUserId.mockResolvedValue(mockResult as any);
+      mapperMock.mapNotification.mockReturnValue(mappedItem);
 
       const result = await service.getUserNotifications(userId, 1, 20);
 
       expect(repositoryMock.findByUserId).toHaveBeenCalledWith(userId, 1, 20);
-      expect(result).toEqual(mockResult);
+      expect(mapperMock.mapNotification).toHaveBeenCalledWith(mockResult.items[0]);
+      expect(result).toEqual({
+        items: [mappedItem],
+        total: 1,
+      });
     });
   });
 

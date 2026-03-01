@@ -50,4 +50,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/app
-            ./deploy.sh $IMAGE
+            ./deploy.sh ${{ env.IMAGE }}
+            

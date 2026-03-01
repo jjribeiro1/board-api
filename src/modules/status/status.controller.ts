@@ -1,13 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
-import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { UserPayload } from 'src/common/types/user-payload';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { ManageStatusGuard } from './guards/manage-status.guard';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { OrganizationGuard } from 'src/common/guards/organization.guard';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 
 @ApiTags('status')
 @Controller('status')
@@ -15,35 +14,22 @@ export class StatusController {
   constructor(private readonly statusService: StatusService) {}
 
   /**
-   *
-   * Returns all status from an organization
-   */
-  @ApiBearerAuth()
-  @Get()
-  async findAll(@Req() req: Request) {
-    const orgId = req.cookies['org-id'];
-    const status = await this.statusService.findAll(orgId);
-    return {
-      data: status,
-    };
-  }
-
-  /**
    * Creates a new status
    *
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Post()
-  async create(@Body() dto: CreateStatusDto, @LoggedUser() user: UserPayload, @Req() req: Request) {
-    const orgId = req.cookies['org-id'];
-    return await this.statusService.create(dto, user, orgId);
+  async create(@Body() dto: CreateStatusDto) {
+    return await this.statusService.create(dto);
   }
 
   /**
    * Update an existing status
    */
-  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
-  @UseGuards(ManageStatusGuard)
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateStatusDto) {
@@ -56,8 +42,8 @@ export class StatusController {
   /**
    * Delete an existing status
    */
-  @AllowedOrganizationRoles(['OWNER', 'ADMIN'])
-  @UseGuards(ManageStatusGuard)
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {

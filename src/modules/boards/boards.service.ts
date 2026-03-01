@@ -2,9 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 import { BoardsRepository } from './boards.repository';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 
 @Injectable()
-export class BoardsService {
+export class BoardsService implements ResourceOwnershipResolver {
   constructor(private readonly boardsRepository: BoardsRepository) {}
 
   async create(dto: CreateBoardDto, userId: string) {
@@ -20,9 +22,9 @@ export class BoardsService {
     return board;
   }
 
-  async findPostsFromBoard(boardId: string, userId: string) {
+  async findPostsFromBoard(boardId: string, userId: string, filters: ListBoardPostsQueryDto) {
     await this.findOne(boardId);
-    return this.boardsRepository.findPostsFromBoard(boardId, userId);
+    return this.boardsRepository.findPostsFromBoard(boardId, userId, filters);
   }
 
   async manageBoard(boardId: string, dto: ManageBoardDto) {
@@ -33,5 +35,9 @@ export class BoardsService {
   async remove(boardId: string): Promise<void> {
     await this.findOne(boardId);
     await this.boardsRepository.delete(boardId);
+  }
+
+  async findOrgAndAuthorId(boardId: string): Promise<ResourceOwnershipInfo | null> {
+    return await this.boardsRepository.findOrgAndAuthorId(boardId);
   }
 }

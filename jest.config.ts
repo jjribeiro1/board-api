@@ -19,10 +19,13 @@ const config: Config = {
     '!src/main.ts',
     '!src/**/*.module.ts',
     '!src/**/*.dto.ts',
-    '!src/**/constants/**/*.ts',
+    '!src/constants/**/*.ts',
+    '!src/**/*.interface.ts',
     '!src/config/**/*.ts',
     '!src/shared/modules/database/prisma/**/*.ts',
-    '!generated/**',
+    '!src/common/interceptors/**/*.ts',
+    '!src/common/types/**/*.ts',
+    '!**/generated/**',
   ],
   coverageThreshold: {
     global: {

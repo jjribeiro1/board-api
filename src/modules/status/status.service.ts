@@ -1,29 +1,18 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { StatusRepository } from './status.repository';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
-import { UserPayload } from 'src/common/types/user-payload';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
 
 @Injectable()
-export class StatusService {
+export class StatusService implements ResourceOwnershipResolver {
   constructor(private readonly statusRepository: StatusRepository) {}
-
-  async findAll(organizationId: string) {
-    return this.statusRepository.getAllStatus(organizationId);
-  }
 
   async findOne(statusId: string) {
     return await this.statusRepository.findOne(statusId);
   }
 
-  async create(dto: CreateStatusDto, user: UserPayload, organizationId: string) {
-    const userIsOwnerOrAdminFromOrg = user.organizations.some(
-      (org) => org.id === organizationId && (org.role === 'OWNER' || org.role === 'ADMIN'),
-    );
-
-    if (!userIsOwnerOrAdminFromOrg) {
-      throw new ForbiddenException('Usuário não tem permissão para criar status nesta organização');
-    }
+  async create(dto: CreateStatusDto) {
     return await this.statusRepository.create(dto);
   }
 
@@ -52,5 +41,9 @@ export class StatusService {
     });
 
     return { defaultStatusId: defaultStatusFromOrg.id };
+  }
+
+  async findOrgAndAuthorId(statusId: string): Promise<ResourceOwnershipInfo | null> {
+    return await this.statusRepository.findOrgAndAuthorId(statusId);
   }
 }

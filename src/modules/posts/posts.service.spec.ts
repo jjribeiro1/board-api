@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PostsService } from './posts.service';
 import { PostsRepository } from './posts.repository';
 import { BoardsService } from '../boards/boards.service';
@@ -17,12 +18,14 @@ describe('PostsService', () => {
   let boardsServiceMock: DeepMockProxy<BoardsService>;
   let organizationsServiceMock: DeepMockProxy<OrganizationsService>;
   let votesServiceMock: DeepMockProxy<VotesService>;
+  let eventEmitterMock: DeepMockProxy<EventEmitter2>;
 
   beforeEach(async () => {
     postsRepositoryMock = mockDeep<PostsRepository>();
     boardsServiceMock = mockDeep<BoardsService>();
     organizationsServiceMock = mockDeep<OrganizationsService>();
     votesServiceMock = mockDeep<VotesService>();
+    eventEmitterMock = mockDeep<EventEmitter2>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -42,6 +45,10 @@ describe('PostsService', () => {
         {
           provide: VotesService,
           useValue: votesServiceMock,
+        },
+        {
+          provide: EventEmitter2,
+          useValue: eventEmitterMock,
         },
       ],
     }).compile();
@@ -473,14 +480,14 @@ describe('PostsService', () => {
       ];
 
       postsRepositoryMock.findOne.mockResolvedValue(post as any);
-      postsRepositoryMock.findAuthorAndOrgIdFromPost.mockResolvedValue(authorAndOrgId);
+      postsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(authorAndOrgId);
       organizationsServiceMock.findTagsFromOrganization.mockResolvedValue(tags as any);
       postsRepositoryMock.updateTags.mockResolvedValue(undefined);
 
       await service.updateTags(postId, dto);
 
       expect(postsRepositoryMock.findOne).toHaveBeenCalledWith(postId);
-      expect(postsRepositoryMock.findAuthorAndOrgIdFromPost).toHaveBeenCalledWith(postId);
+      expect(postsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledWith(postId);
       expect(organizationsServiceMock.findTagsFromOrganization).toHaveBeenCalledWith(authorAndOrgId.organizationId);
       expect(postsRepositoryMock.updateTags).toHaveBeenCalledWith(postId, dto.tagIds);
     });
@@ -508,7 +515,7 @@ describe('PostsService', () => {
       };
 
       postsRepositoryMock.findOne.mockResolvedValue(post as any);
-      postsRepositoryMock.findAuthorAndOrgIdFromPost.mockResolvedValue(null);
+      postsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(null);
 
       await expect(service.updateTags(postId, dto)).rejects.toThrow(BadRequestException);
 
@@ -544,7 +551,7 @@ describe('PostsService', () => {
       const tags = [{ id: 'tag-id-1', name: 'Bug', color: '#FF0000', organizationId: 'org-id-1' }];
 
       postsRepositoryMock.findOne.mockResolvedValue(post as any);
-      postsRepositoryMock.findAuthorAndOrgIdFromPost.mockResolvedValue(authorAndOrgId);
+      postsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(authorAndOrgId);
       organizationsServiceMock.findTagsFromOrganization.mockResolvedValue(tags as any);
 
       const errorMessage = 'uma ou mais tags não pertencem à organização do post';
@@ -566,7 +573,7 @@ describe('PostsService', () => {
 
       await expect(service.updateTags(postId, dto)).rejects.toThrow(new NotFoundException(errorMessage));
 
-      expect(postsRepositoryMock.findAuthorAndOrgIdFromPost).not.toHaveBeenCalled();
+      expect(postsRepositoryMock.findOrgAndAuthorId).not.toHaveBeenCalled();
       expect(postsRepositoryMock.updateTags).not.toHaveBeenCalled();
     });
   });
@@ -651,20 +658,20 @@ describe('PostsService', () => {
         organizationId: 'org-id-1',
       };
 
-      postsRepositoryMock.findAuthorAndOrgIdFromPost.mockResolvedValue(authorAndOrgId);
+      postsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(authorAndOrgId);
 
-      const result = await service.findAuthorAndOrgIdFromPost(postId);
+      const result = await service.findOrgAndAuthorId(postId);
 
-      expect(postsRepositoryMock.findAuthorAndOrgIdFromPost).toHaveBeenCalledWith(postId);
+      expect(postsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledWith(postId);
       expect(result).toEqual(authorAndOrgId);
     });
 
     it('should return null when post does not exist', async () => {
       const postId = 'non-existent-id';
 
-      postsRepositoryMock.findAuthorAndOrgIdFromPost.mockResolvedValue(null);
+      postsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(null);
 
-      const result = await service.findAuthorAndOrgIdFromPost(postId);
+      const result = await service.findOrgAndAuthorId(postId);
 
       expect(result).toBeNull();
     });

@@ -1,10 +1,14 @@
-import { Controller, Post, Body, Get, Param, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Query, ParseUUIDPipe, Patch, Delete, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { OrganizationsService } from './organizations.service';
-import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { UserPayload } from 'src/common/types/user-payload';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
+import { OrganizationsService } from './organizations.service';
+import { OrganizationGuard } from 'src/common/guards/organization.guard';
+import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
+import { UserPayload } from 'src/common/types/user-payload';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 
 @ApiBearerAuth()
 @ApiTags('organizations')
@@ -65,6 +69,12 @@ export class OrganizationsController {
    *
    * Returns all members from an organization
    */
+  @AllowedOrganizationRoles([
+    OrganizationRolesOptions.OWNER,
+    OrganizationRolesOptions.ADMIN,
+    OrganizationRolesOptions.MEMBER,
+  ])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Get(':id/members')
   async findMembersFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
@@ -98,5 +108,55 @@ export class OrganizationsController {
     return {
       data: status,
     };
+  }
+
+  /**
+   *
+   * Returns all invites from an organization
+   */
+  @AllowedOrganizationRoles([
+    OrganizationRolesOptions.OWNER,
+    OrganizationRolesOptions.ADMIN,
+    OrganizationRolesOptions.MEMBER,
+  ])
+  @UseGuards(OrganizationGuard)
+  @ApiBearerAuth()
+  @Get(':id/invites')
+  async findInvitesFromOrganization(@Param('id', ParseUUIDPipe) orgId: string) {
+    const invites = await this.organizationsService.findInvitesFromOrganization(orgId);
+    return {
+      data: invites,
+    };
+  }
+
+  /**
+   *
+   * Update member role
+   */
+  @ApiBearerAuth()
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER])
+  @UseGuards(OrganizationGuard)
+  @Patch(':id/members/:userId/role')
+  async updateMemberRole(
+    @Param('id', ParseUUIDPipe) organizationId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Body() dto: UpdateMemberRoleDto,
+  ) {
+    return await this.organizationsService.updateMemberRole(organizationId, userId, dto);
+  }
+
+  /**
+   *
+   * Remove member from organization
+   */
+  @ApiBearerAuth()
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER])
+  @UseGuards(OrganizationGuard)
+  @Delete(':id/members/:userId')
+  async removeMember(
+    @Param('id', ParseUUIDPipe) organizationId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ) {
+    return await this.organizationsService.removeMember(organizationId, userId);
   }
 }

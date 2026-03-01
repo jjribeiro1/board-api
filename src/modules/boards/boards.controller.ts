@@ -1,13 +1,27 @@
-import { Controller, Post, Body, Get, Param, HttpStatus, UseGuards, Delete, HttpCode, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Query,
+  HttpStatus,
+  UseGuards,
+  Delete,
+  HttpCode,
+  Patch,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
-import { ManageBoardGuard } from './guards/manage-board.guard';
 import { UserPayload } from 'src/common/types/user-payload';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { OrganizationGuard } from 'src/common/guards/organization.guard';
 
 @ApiTags('boards')
 @Controller('boards')
@@ -18,6 +32,8 @@ export class BoardsController {
    *
    * Create new board and returns the ID
    */
+  @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
+  @UseGuards(OrganizationGuard)
   @ApiBearerAuth()
   @Post()
   async create(@Body() dto: CreateBoardDto, @LoggedUser() user: UserPayload) {
@@ -43,8 +59,12 @@ export class BoardsController {
    */
   @ApiBearerAuth()
   @Get(':id/posts')
-  async findPosts(@Param('id') boardId: string, @LoggedUser() user: UserPayload) {
-    const posts = await this.boardsService.findPostsFromBoard(boardId, user.id);
+  async findPosts(
+    @Param('id') boardId: string,
+    @LoggedUser() user: UserPayload,
+    @Query() query: ListBoardPostsQueryDto,
+  ) {
+    const posts = await this.boardsService.findPostsFromBoard(boardId, user.id, query);
     return {
       data: posts,
     };
@@ -54,7 +74,7 @@ export class BoardsController {
    * Manage Board settings
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(ManageBoardGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/settings')
   async manageBoard(@Param('id') boardId: string, @Body() dto: ManageBoardDto) {
@@ -66,7 +86,7 @@ export class BoardsController {
    * Removes a board by ID
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER])
-  @UseGuards(ManageBoardGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')

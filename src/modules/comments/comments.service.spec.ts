@@ -1,20 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommentsService } from './comments.service';
 import { CommentsRepository } from './comments.repository';
 import { PostsService } from '../posts/posts.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { createMockUserPayload } from 'test/factories/user-payload-factory';
 
 describe('CommentsService', () => {
   let service: CommentsService;
   let commentsRepositoryMock: DeepMockProxy<CommentsRepository>;
   let postsServiceMock: DeepMockProxy<PostsService>;
+  let eventEmitterMock: DeepMockProxy<EventEmitter2>;
 
   beforeEach(async () => {
     commentsRepositoryMock = mockDeep<CommentsRepository>();
     postsServiceMock = mockDeep<PostsService>();
+    eventEmitterMock = mockDeep<EventEmitter2>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -26,6 +30,10 @@ describe('CommentsService', () => {
         {
           provide: PostsService,
           useValue: postsServiceMock,
+        },
+        {
+          provide: EventEmitter2,
+          useValue: eventEmitterMock,
         },
       ],
     }).compile();
@@ -40,10 +48,11 @@ describe('CommentsService', () => {
       content: 'This is a great suggestion!',
       postId: 'post-id-1',
     };
-    const userId = 'user-id-1';
     const expectedId = 'comment-id-1';
 
     it('should create a comment when post is not locked', async () => {
+      const mockUser = createMockUserPayload();
+
       const post = {
         id: 'post-id-1',
         title: 'Test Post',
@@ -64,16 +73,18 @@ describe('CommentsService', () => {
       postsServiceMock.findOne.mockResolvedValue(post as any);
       commentsRepositoryMock.create.mockResolvedValue(expectedId);
 
-      const result = await service.create(dto, userId);
+      const result = await service.create(dto, mockUser);
 
       expect(postsServiceMock.findOne).toHaveBeenCalledWith(dto.postId);
       expect(postsServiceMock.findOne).toHaveBeenCalledTimes(1);
-      expect(commentsRepositoryMock.create).toHaveBeenCalledWith(dto, userId);
+      expect(commentsRepositoryMock.create).toHaveBeenCalledWith(dto, mockUser.id);
       expect(commentsRepositoryMock.create).toHaveBeenCalledTimes(1);
+      expect(eventEmitterMock.emit).toHaveBeenCalledTimes(1);
       expect(result).toBe(expectedId);
     });
 
     it('should throw ForbiddenException when post is locked', async () => {
+      const mockUser = createMockUserPayload();
       const lockedPost = {
         id: 'post-id-1',
         title: 'Test Post',
@@ -95,18 +106,19 @@ describe('CommentsService', () => {
 
       const errorMessage = 'Não é possível comentar em um post bloqueado';
 
-      await expect(service.create(dto, userId)).rejects.toThrow(new ForbiddenException(errorMessage));
+      await expect(service.create(dto, mockUser)).rejects.toThrow(new ForbiddenException(errorMessage));
 
       expect(postsServiceMock.findOne).toHaveBeenCalledWith(dto.postId);
       expect(commentsRepositoryMock.create).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException when post does not exist', async () => {
+      const mockUser = createMockUserPayload();
       const errorMessage = `post com id: ${dto.postId} não encontrado`;
 
       postsServiceMock.findOne.mockRejectedValue(new NotFoundException(errorMessage));
 
-      await expect(service.create(dto, userId)).rejects.toThrow(new NotFoundException(errorMessage));
+      await expect(service.create(dto, mockUser)).rejects.toThrow(new NotFoundException(errorMessage));
 
       expect(postsServiceMock.findOne).toHaveBeenCalledWith(dto.postId);
       expect(commentsRepositoryMock.create).not.toHaveBeenCalled();
@@ -237,23 +249,23 @@ describe('CommentsService', () => {
         organizationId: 'org-id-1',
       };
 
-      commentsRepositoryMock.findAuthorAndOrgIdFromComment.mockResolvedValue(mockResult);
+      commentsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(mockResult);
 
-      const result = await service.findAuthorAndOrgIdFromComment(commentId);
+      const result = await service.findOrgAndAuthorId(commentId);
 
-      expect(commentsRepositoryMock.findAuthorAndOrgIdFromComment).toHaveBeenCalledWith(commentId);
-      expect(commentsRepositoryMock.findAuthorAndOrgIdFromComment).toHaveBeenCalledTimes(1);
+      expect(commentsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledWith(commentId);
+      expect(commentsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockResult);
     });
 
     it('should return null when comment does not exist', async () => {
       const commentId = 'non-existent-id';
 
-      commentsRepositoryMock.findAuthorAndOrgIdFromComment.mockResolvedValue(null);
+      commentsRepositoryMock.findOrgAndAuthorId.mockResolvedValue(null);
 
-      const result = await service.findAuthorAndOrgIdFromComment(commentId);
+      const result = await service.findOrgAndAuthorId(commentId);
 
-      expect(commentsRepositoryMock.findAuthorAndOrgIdFromComment).toHaveBeenCalledWith(commentId);
+      expect(commentsRepositoryMock.findOrgAndAuthorId).toHaveBeenCalledWith(commentId);
       expect(result).toBeNull();
     });
   });

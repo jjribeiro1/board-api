@@ -189,7 +189,7 @@ describe('CommentsRepository', () => {
 
       prismaServiceMock.comment.findUnique.mockResolvedValue(mockComment);
 
-      const result = await repository.findAuthorAndOrgIdFromComment(commentId);
+      const result = await repository.findOrgAndAuthorId(commentId);
 
       expect(prismaServiceMock.comment.findUnique).toHaveBeenCalledWith({
         where: { id: commentId, deletedAt: null },
@@ -218,7 +218,7 @@ describe('CommentsRepository', () => {
 
       prismaServiceMock.comment.findUnique.mockResolvedValue(null);
 
-      const result = await repository.findAuthorAndOrgIdFromComment(commentId);
+      const result = await repository.findOrgAndAuthorId(commentId);
 
       expect(prismaServiceMock.comment.findUnique).toHaveBeenCalledWith({
         where: { id: commentId, deletedAt: null },

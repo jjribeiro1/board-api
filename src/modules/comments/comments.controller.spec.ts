@@ -4,7 +4,8 @@ import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { UserPayload } from 'src/common/types/user-payload';
+import { RESOURCE_RESOLVER } from 'src/constants';
+import { createMockUserPayload } from 'test/factories/user-payload-factory';
 
 describe('CommentsController', () => {
   let controller: CommentsController;
@@ -19,6 +20,10 @@ describe('CommentsController', () => {
           provide: CommentsService,
           useValue: mockCommentsService,
         },
+        {
+          provide: RESOURCE_RESOLVER,
+          useValue: mockCommentsService,
+        },
       ],
     }).compile();
 
@@ -31,21 +36,14 @@ describe('CommentsController', () => {
         content: 'This is a great suggestion!',
         postId: 'post-id-1',
       };
-      const user: UserPayload = {
-        id: 'user-id-1',
-        email: 'email@example.com',
-        name: 'John Doe',
-        organizations: [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+      const user = createMockUserPayload();
       const expectedId = 'comment-id-1';
 
       mockCommentsService.create.mockResolvedValue(expectedId);
 
       const result = await controller.create(dto, user);
 
-      expect(mockCommentsService.create).toHaveBeenCalledWith(dto, user.id);
+      expect(mockCommentsService.create).toHaveBeenCalledWith(dto, user);
       expect(mockCommentsService.create).toHaveBeenCalledTimes(1);
       expect(result).toBe(expectedId);
     });

@@ -1,13 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { OrganizationsService } from './organizations.service';
 import { OrganizationsRepository } from './organizations.repository';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
 import { EVENTS } from 'src/constants/events';
 import { OrganizationCreatedEventDto } from '../events/dto/organization-created-event.dto';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 
 describe('OrganizationsService', () => {
   let service: OrganizationsService;
@@ -168,7 +170,7 @@ describe('OrganizationsService', () => {
     it('should return posts from organization with filters', async () => {
       const organizationId = 'org-id-1';
       const filters: ListPostsQueryDto = {
-        status: 'status-id-1',
+        status: ['status-id-1'],
         board: 'board-id-1',
       };
       const mockPosts = [
@@ -249,7 +251,7 @@ describe('OrganizationsService', () => {
     it('should return empty array when no posts match filters', async () => {
       const organizationId = 'org-id-1';
       const filters: ListPostsQueryDto = {
-        status: 'non-existent-status',
+        status: ['non-existent-status'],
       };
 
       organizationsRepositoryMock.findPostsFromOrganization.mockResolvedValue([]);
@@ -486,6 +488,365 @@ describe('OrganizationsService', () => {
 
       expect(organizationsRepositoryMock.setDefaultStatus).toHaveBeenCalledWith(organizationId, statusId);
       expect(organizationsRepositoryMock.setDefaultStatus).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('findInvitesFromOrganization', () => {
+    it('should return all invites from an organization', async () => {
+      const organizationId = 'org-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockInvites = [
+        {
+          id: 'invite-id-1',
+          email: 'invited1@example.com',
+          role: 'MEMBER' as const,
+          status: 'PENDING' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: null,
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+        {
+          id: 'invite-id-2',
+          email: 'invited2@example.com',
+          role: 'ADMIN' as const,
+          status: 'ACCEPTED' as const,
+          expiresAt: new Date('2026-02-27'),
+          acceptedAt: new Date(),
+          createdAt: new Date(),
+          invitedBy: {
+            id: 'user-id-1',
+            name: 'John Doe',
+            email: 'john@example.com',
+          },
+        },
+      ];
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization as any);
+      organizationsRepositoryMock.findInvitesFromOrganization.mockResolvedValue(mockInvites);
+
+      const result = await service.findInvitesFromOrganization(organizationId);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockInvites);
+    });
+
+    it('should return empty array when organization has no invites', async () => {
+      const organizationId = 'org-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization as any);
+      organizationsRepositoryMock.findInvitesFromOrganization.mockResolvedValue([]);
+
+      const result = await service.findInvitesFromOrganization(organizationId);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).toHaveBeenCalledWith(organizationId);
+      expect(result).toEqual([]);
+    });
+
+    it('should throw NotFoundException when organization does not exist', async () => {
+      const organizationId = 'non-existent-id';
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(null);
+
+      const errorMessage = `organização com id: ${organizationId} não encontrada`;
+
+      await expect(service.findInvitesFromOrganization(organizationId)).rejects.toThrow(
+        new NotFoundException(errorMessage),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findInvitesFromOrganization).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('updateMemberRole', () => {
+    it('should update member role successfully', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const dto: UpdateMemberRoleDto = { role: OrganizationRolesOptions.ADMIN };
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockMember = {
+        role: OrganizationRolesOptions.MEMBER,
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(mockMember);
+      organizationsRepositoryMock.updateMemberRole.mockResolvedValue(undefined);
+
+      await service.updateMemberRole(organizationId, userId, dto);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.updateMemberRole).toHaveBeenCalledWith(organizationId, userId, dto.role);
+    });
+
+    it('should throw NotFoundException when organization does not exist', async () => {
+      const organizationId = 'non-existent-id';
+      const userId = 'user-id-1';
+      const dto: UpdateMemberRoleDto = { role: OrganizationRolesOptions.ADMIN };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(null);
+
+      const errorMessage = `organização com id: ${organizationId} não encontrada`;
+
+      await expect(service.updateMemberRole(organizationId, userId, dto)).rejects.toThrow(
+        new NotFoundException(errorMessage),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).not.toHaveBeenCalled();
+      expect(organizationsRepositoryMock.updateMemberRole).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when member does not exist', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const dto: UpdateMemberRoleDto = { role: OrganizationRolesOptions.ADMIN };
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(null);
+
+      await expect(service.updateMemberRole(organizationId, userId, dto)).rejects.toThrow(
+        new NotFoundException('membro não encontrado'),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.updateMemberRole).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException when trying to update owner role', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const dto: UpdateMemberRoleDto = { role: OrganizationRolesOptions.ADMIN };
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockMember = {
+        role: OrganizationRolesOptions.OWNER,
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(mockMember);
+
+      await expect(service.updateMemberRole(organizationId, userId, dto)).rejects.toThrow(
+        new BadRequestException('não é possível alterar o papel do proprietário'),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.updateMemberRole).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('removeMember', () => {
+    it('should remove member successfully', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockMember = {
+        role: OrganizationRolesOptions.MEMBER,
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(mockMember);
+      organizationsRepositoryMock.removeMember.mockResolvedValue(undefined);
+
+      await service.removeMember(organizationId, userId);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.removeMember).toHaveBeenCalledWith(organizationId, userId);
+    });
+
+    it('should throw NotFoundException when organization does not exist', async () => {
+      const organizationId = 'non-existent-id';
+      const userId = 'user-id-1';
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(null);
+
+      const errorMessage = `organização com id: ${organizationId} não encontrada`;
+
+      await expect(service.removeMember(organizationId, userId)).rejects.toThrow(new NotFoundException(errorMessage));
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).not.toHaveBeenCalled();
+      expect(organizationsRepositoryMock.removeMember).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when member does not exist', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(null);
+
+      await expect(service.removeMember(organizationId, userId)).rejects.toThrow(
+        new NotFoundException('membro não encontrado'),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.removeMember).not.toHaveBeenCalled();
+    });
+
+    it('should remove owner member when there are multiple owners', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockMember = {
+        role: OrganizationRolesOptions.OWNER,
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(mockMember);
+      organizationsRepositoryMock.countOwners.mockResolvedValue(2);
+      organizationsRepositoryMock.removeMember.mockResolvedValue(undefined);
+
+      await service.removeMember(organizationId, userId);
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.countOwners).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.removeMember).toHaveBeenCalledWith(organizationId, userId);
+    });
+
+    it('should throw BadRequestException when trying to remove the last owner', async () => {
+      const organizationId = 'org-id-1';
+      const userId = 'user-id-1';
+      const mockOrganization = {
+        id: organizationId,
+        name: 'Test Organization',
+        slug: 'test-organization',
+        defaultStatusId: 'default-status-id',
+        logoUrl: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        members: [],
+        organizationCustomStatus: [],
+        organizationCustomTags: [],
+      };
+      const mockMember = {
+        role: OrganizationRolesOptions.OWNER,
+      };
+
+      organizationsRepositoryMock.findOne.mockResolvedValue(mockOrganization);
+      organizationsRepositoryMock.findMember.mockResolvedValue(mockMember);
+      organizationsRepositoryMock.countOwners.mockResolvedValue(1);
+
+      await expect(service.removeMember(organizationId, userId)).rejects.toThrow(
+        new BadRequestException('a organização deve ter pelo menos um proprietário'),
+      );
+
+      expect(organizationsRepositoryMock.findOne).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.findMember).toHaveBeenCalledWith(organizationId, userId);
+      expect(organizationsRepositoryMock.countOwners).toHaveBeenCalledWith(organizationId);
+      expect(organizationsRepositoryMock.removeMember).not.toHaveBeenCalled();
     });
   });
 });

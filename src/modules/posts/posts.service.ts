@@ -1,20 +1,26 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PostsRepository } from './posts.repository';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
+import { ManagePostDto } from './dto/manage-post.dto';
 import { BoardsService } from '../boards/boards.service';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { VotesService } from '../votes/votes.service';
 import { UserPayload } from 'src/common/types/user-payload';
+import { ResourceOwnershipInfo, ResourceOwnershipResolver } from 'src/common/interfaces/resource-info.interface';
+import { EVENTS } from 'src/constants/events';
+import { PostStatusChangedEventDto } from '../events/dto/post-events.dto';
 
 @Injectable()
-export class PostsService {
+export class PostsService implements ResourceOwnershipResolver {
   constructor(
     private readonly postsRepository: PostsRepository,
     private readonly boardsService: BoardsService,
     private readonly organizationsService: OrganizationsService,
     private readonly votesService: VotesService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async create(dto: CreatePostDto, user: UserPayload) {
@@ -58,9 +64,28 @@ export class PostsService {
     return this.postsRepository.findCommentsFromPost(postId);
   }
 
-  async update(postId: string, dto: UpdatePostDto) {
-    await this.findOne(postId);
-    return this.postsRepository.update(postId, dto);
+  async update(postId: string, dto: UpdatePostDto | ManagePostDto, user?: UserPayload) {
+    const existingPost = await this.findOne(postId);
+    const updatedPost = await this.postsRepository.update(postId, dto);
+
+    const statusId = 'statusId' in dto ? dto.statusId : undefined;
+    if (statusId && statusId !== existingPost.status?.id && user) {
+      this.eventEmitter.emit(
+        EVENTS.post.statusChanged,
+        new PostStatusChangedEventDto(
+          existingPost.id,
+          existingPost.title,
+          existingPost.author.id,
+          existingPost.status?.name ?? null,
+          updatedPost.status?.name ?? '',
+          user.id,
+          user.name,
+          existingPost.organizationId,
+        ),
+      );
+    }
+
+    return updatedPost;
   }
 
   async remove(postId: string) {
@@ -70,7 +95,7 @@ export class PostsService {
 
   async updateTags(postId: string, dto: UpdatePostTagsDto) {
     await this.findOne(postId);
-    const authorAndOrgIdFromPost = await this.findAuthorAndOrgIdFromPost(postId);
+    const authorAndOrgIdFromPost = await this.findOrgAndAuthorId(postId);
 
     if (!authorAndOrgIdFromPost) {
       throw new BadRequestException();
@@ -94,7 +119,7 @@ export class PostsService {
     return await this.votesService.togglePostVote(postId, userId);
   }
 
-  async findAuthorAndOrgIdFromPost(postId: string) {
-    return await this.postsRepository.findAuthorAndOrgIdFromPost(postId);
+  async findOrgAndAuthorId(postId: string): Promise<ResourceOwnershipInfo | null> {
+    return await this.postsRepository.findOrgAndAuthorId(postId);
   }
 }

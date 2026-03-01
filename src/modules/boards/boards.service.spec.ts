@@ -4,6 +4,7 @@ import { NotFoundException } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { BoardsRepository } from './boards.repository';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 
 describe('BoardsService', () => {
@@ -107,9 +108,10 @@ describe('BoardsService', () => {
   });
 
   describe('findPostsFromBoard', () => {
-    it('should return posts from a board', async () => {
+    it('should return posts from a board with status filter', async () => {
       const boardId = 'board-id-1';
       const userId = 'user-id-1';
+      const query: ListBoardPostsQueryDto = { status: ['status-id-1'] };
       const mockBoard = {
         id: boardId,
         title: 'Feature Requests',
@@ -140,10 +142,52 @@ describe('BoardsService', () => {
       boardsRepositoryMock.findOne.mockResolvedValue(mockBoard);
       boardsRepositoryMock.findPostsFromBoard.mockResolvedValue(mockPosts as any);
 
-      const result = await service.findPostsFromBoard(boardId, userId);
+      const result = await service.findPostsFromBoard(boardId, userId, query);
 
       expect(boardsRepositoryMock.findOne).toHaveBeenCalledWith(boardId);
-      expect(boardsRepositoryMock.findPostsFromBoard).toHaveBeenCalledWith(boardId, userId);
+      expect(boardsRepositoryMock.findPostsFromBoard).toHaveBeenCalledWith(boardId, userId, query);
+      expect(boardsRepositoryMock.findPostsFromBoard).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(mockPosts);
+    });
+
+    it('should return posts from a board without filters', async () => {
+      const boardId = 'board-id-1';
+      const userId = 'user-id-1';
+      const query: ListBoardPostsQueryDto = {};
+      const mockBoard = {
+        id: boardId,
+        title: 'Feature Requests',
+        description: 'Submit your ideas',
+        isPrivate: false,
+        isLocked: false,
+        organizationId: 'org-id-1',
+        authorId: 'user-id-1',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      };
+      const mockPosts = [
+        {
+          id: 'post-id-1',
+          title: 'First Post',
+          description: 'Post description',
+          isPinned: false,
+          createdAt: new Date(),
+          board: { id: boardId, title: 'Feature Requests' },
+          status: { id: 'status-id-1', name: 'Open', color: '#ff0000' },
+          tags: [],
+          author: { id: userId, name: 'John Doe' },
+          _count: { comments: 2, votes: 5 },
+        },
+      ];
+
+      boardsRepositoryMock.findOne.mockResolvedValue(mockBoard);
+      boardsRepositoryMock.findPostsFromBoard.mockResolvedValue(mockPosts as any);
+
+      const result = await service.findPostsFromBoard(boardId, userId, query);
+
+      expect(boardsRepositoryMock.findOne).toHaveBeenCalledWith(boardId);
+      expect(boardsRepositoryMock.findPostsFromBoard).toHaveBeenCalledWith(boardId, userId, query);
       expect(boardsRepositoryMock.findPostsFromBoard).toHaveBeenCalledTimes(1);
       expect(result).toEqual(mockPosts);
     });
@@ -151,12 +195,15 @@ describe('BoardsService', () => {
     it('should throw NotFoundException when board does not exist', async () => {
       const boardId = 'non-existent-id';
       const userId = 'user-id-1';
+      const query: ListBoardPostsQueryDto = {};
 
       boardsRepositoryMock.findOne.mockResolvedValue(null);
 
       const errorMessage = `board com id: ${boardId} não encontrado`;
 
-      await expect(service.findPostsFromBoard(boardId, userId)).rejects.toThrow(new NotFoundException(errorMessage));
+      await expect(service.findPostsFromBoard(boardId, userId, query)).rejects.toThrow(
+        new NotFoundException(errorMessage),
+      );
 
       expect(boardsRepositoryMock.findOne).toHaveBeenCalledWith(boardId);
       expect(boardsRepositoryMock.findPostsFromBoard).not.toHaveBeenCalled();

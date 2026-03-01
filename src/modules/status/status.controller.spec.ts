@@ -4,6 +4,7 @@ import { StatusController } from './status.controller';
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('StatusController', () => {
   let controller: StatusController;
@@ -18,66 +19,19 @@ describe('StatusController', () => {
           provide: StatusService,
           useValue: statusServiceMock,
         },
+        {
+          provide: RESOURCE_RESOLVER,
+          useValue: statusServiceMock,
+        },
       ],
     }).compile();
 
     controller = module.get<StatusController>(StatusController);
   });
 
-  describe('findAll', () => {
-    it('should return all status for the organization', async () => {
-      const orgId = 'org-id-1';
-      const mockRequest = {
-        cookies: { 'org-id': orgId },
-      } as any;
-      const mockStatuses = [
-        {
-          id: 'status-id-1',
-          name: 'To Do',
-          color: '#ff0000',
-          organizationId: orgId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-        },
-        {
-          id: 'status-id-2',
-          name: 'In Progress',
-          color: '#00ff00',
-          organizationId: orgId,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-        },
-      ];
-
-      statusServiceMock.findAll.mockResolvedValueOnce(mockStatuses);
-
-      const result = await controller.findAll(mockRequest);
-
-      expect(result).toEqual({ data: mockStatuses });
-      expect(statusServiceMock.findAll).toHaveBeenCalledWith(orgId);
-      expect(statusServiceMock.findAll).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('create', () => {
     it('should create a new status and return it', async () => {
       const orgId = 'org-id-1';
-      const mockUser = {
-        id: 'user-id-1',
-        name: 'John Doe',
-        email: 'email@example.com',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        organizations: [
-          {
-            id: orgId,
-            name: 'Test Organization',
-            role: 'ADMIN' as const,
-          },
-        ],
-      };
       const dto: CreateStatusDto = {
         color: '#eacc09ff',
         name: 'In Progress',
@@ -92,16 +46,13 @@ describe('StatusController', () => {
         updatedAt: new Date('2024-01-01'),
         deletedAt: null,
       };
-      const mockRequest = {
-        cookies: { 'org-id': orgId },
-      } as any;
 
       statusServiceMock.create.mockResolvedValueOnce(mockCreatedStatus);
 
-      const result = await controller.create(dto, mockUser, mockRequest);
+      const result = await controller.create(dto);
 
       expect(result).toEqual(mockCreatedStatus);
-      expect(statusServiceMock.create).toHaveBeenCalledWith(dto, mockUser, orgId);
+      expect(statusServiceMock.create).toHaveBeenCalledWith(dto);
       expect(statusServiceMock.create).toHaveBeenCalledTimes(1);
     });
   });

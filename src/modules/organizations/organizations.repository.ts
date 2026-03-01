@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { OrganizationRole } from 'src/common/types/user-organization-role';
+import { InviteStatus } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class OrganizationsRepository {
@@ -94,12 +96,21 @@ export class OrganizationsRepository {
       orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         deletedAt: null,
-        statusId: filters.status,
         board: {
-          id: filters.board,
+          ...(filters?.board && { id: filters.board }),
           organizationId: organizationId,
           deletedAt: null,
         },
+        ...(filters?.status?.length && { statusId: { in: filters.status } }),
+        ...(filters?.tag?.length && {
+          tags: {
+            some: {
+              tagId: {
+                in: filters.tag,
+              },
+            },
+          },
+        }),
       },
       select: {
         id: true,
@@ -217,6 +228,107 @@ export class OrganizationsRepository {
     await this.prisma.organization.update({
       where: { id: organizationId },
       data: { defaultStatusId: statusId },
+    });
+  }
+
+  async emailIsMember(organizationId: string, email: string) {
+    const count = await this.prisma.userOrganization.count({
+      where: {
+        organizationId,
+        user: {
+          email,
+        },
+        deletedAt: null,
+      },
+    });
+
+    return count > 0;
+  }
+
+  async findInvitesFromOrganization(organizationId: string) {
+    const results = await this.prisma.organizationInvite.findMany({
+      where: {
+        organizationId,
+        status: { in: [InviteStatus.PENDING, InviteStatus.EXPIRED] },
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        status: true,
+        expiresAt: true,
+        acceptedAt: true,
+        createdAt: true,
+        invitedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return results;
+  }
+
+  async findMember(organizationId: string, userId: string) {
+    const result = await this.prisma.userOrganization.findUnique({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+        deletedAt: null,
+      },
+      select: {
+        role: true,
+      },
+    });
+
+    return result;
+  }
+
+  async countOwners(organizationId: string) {
+    const count = await this.prisma.userOrganization.count({
+      where: {
+        organizationId,
+        role: 'OWNER',
+        deletedAt: null,
+      },
+    });
+
+    return count;
+  }
+
+  async updateMemberRole(organizationId: string, userId: string, role: OrganizationRole) {
+    await this.prisma.userOrganization.update({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+      },
+      data: {
+        role,
+      },
+    });
+  }
+
+  async removeMember(organizationId: string, userId: string) {
+    await this.prisma.userOrganization.update({
+      where: {
+        userId_organizationId: {
+          userId,
+          organizationId,
+        },
+      },
+      data: {
+        deletedAt: new Date(),
+      },
     });
   }
 }

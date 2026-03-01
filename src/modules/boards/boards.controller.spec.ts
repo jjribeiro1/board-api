@@ -3,8 +3,10 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { BoardsController } from './boards.controller';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
 import { UserPayload } from 'src/common/types/user-payload';
+import { RESOURCE_RESOLVER } from 'src/constants';
 
 describe('BoardsController', () => {
   let controller: BoardsController;
@@ -17,6 +19,10 @@ describe('BoardsController', () => {
       providers: [
         {
           provide: BoardsService,
+          useValue: mockBoardsService,
+        },
+        {
+          provide: RESOURCE_RESOLVER,
           useValue: mockBoardsService,
         },
       ],
@@ -121,6 +127,9 @@ describe('BoardsController', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
+      const query: ListBoardPostsQueryDto = {
+        status: ['status-id-1'],
+      };
       const mockPosts = [
         {
           id: 'post-id-1',
@@ -182,9 +191,57 @@ describe('BoardsController', () => {
 
       mockBoardsService.findPostsFromBoard.mockResolvedValue(mockPosts as any);
 
-      const result = await controller.findPosts(boardId, user);
+      const result = await controller.findPosts(boardId, user, query);
 
-      expect(mockBoardsService.findPostsFromBoard).toHaveBeenCalledWith(boardId, user.id);
+      expect(mockBoardsService.findPostsFromBoard).toHaveBeenCalledWith(boardId, user.id, query);
+      expect(mockBoardsService.findPostsFromBoard).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ data: mockPosts });
+    });
+
+    it('should return all posts without status filter when query is empty', async () => {
+      const boardId = 'board-id-1';
+      const user: UserPayload = {
+        id: 'user-id-1',
+        email: 'email@example.com',
+        name: 'John Doe',
+        organizations: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+      const query: ListBoardPostsQueryDto = {};
+      const mockPosts = [
+        {
+          id: 'post-id-1',
+          title: 'First Post',
+          description: 'Post description',
+          isPinned: false,
+          createdAt: new Date(),
+          board: {
+            id: boardId,
+            title: 'Feature Requests',
+          },
+          status: {
+            id: 'status-id-1',
+            name: 'Open',
+            color: '#ff0000',
+          },
+          tags: [],
+          author: {
+            id: 'user-id-1',
+            name: 'John Doe',
+          },
+          _count: {
+            comments: 3,
+            votes: 10,
+          },
+        },
+      ];
+
+      mockBoardsService.findPostsFromBoard.mockResolvedValue(mockPosts as any);
+
+      const result = await controller.findPosts(boardId, user, query);
+
+      expect(mockBoardsService.findPostsFromBoard).toHaveBeenCalledWith(boardId, user.id, query);
       expect(mockBoardsService.findPostsFromBoard).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ data: mockPosts });
     });

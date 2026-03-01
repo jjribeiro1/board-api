@@ -144,7 +144,7 @@ export class PostsRepository {
     await this.prisma.post.update({ where: { id: postId }, data: { deletedAt: new Date() } });
   }
 
-  async findAuthorAndOrgIdFromPost(postId: string) {
+  async findOrgAndAuthorId(postId: string) {
     const result = await this.prisma.post.findUnique({
       where: { id: postId, deletedAt: null },
       select: {

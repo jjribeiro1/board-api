@@ -29,7 +29,7 @@ export class AuthController {
     res.cookie('access-token', accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'none',
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -37,7 +37,7 @@ export class AuthController {
     res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'none',
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -60,7 +60,7 @@ export class AuthController {
     res.cookie('access-token', accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'none',
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -68,7 +68,7 @@ export class AuthController {
     res.cookie('refresh-token', refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: 'none',
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
       domain: clientDomain,
     });
@@ -101,9 +101,11 @@ export class AuthController {
       domain: process.env.CLIENT_DOMAIN,
     };
 
-    res.clearCookie('access-token', { ...cookieOptions, sameSite: 'none' });
-    res.clearCookie('refresh-token', { ...cookieOptions, sameSite: 'none' });
-    res.clearCookie('org-id', { ...cookieOptions, sameSite: 'none' });
+    const sameSite = process.env.NODE_ENV === 'production' ? 'none' : 'lax';
+
+    res.clearCookie('access-token', { ...cookieOptions, sameSite });
+    res.clearCookie('refresh-token', { ...cookieOptions, sameSite });
+    res.clearCookie('org-id', { ...cookieOptions, sameSite });
     return this.authService.logout(user.id);
   }
 }

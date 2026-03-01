@@ -23,7 +23,6 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
-      forbidNonWhitelisted: true,
     }),
   );
   app.use(cookieParser());
@@ -41,6 +40,7 @@ async function bootstrap() {
     .addTag('posts')
     .addTag('comments')
     .addTag('status')
+    .addTag('invites')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

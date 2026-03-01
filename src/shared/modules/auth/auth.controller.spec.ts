@@ -5,7 +5,7 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { SignInDto } from './dto/sign-in.dto';
 import { Response, Request } from 'express';
 import { COOKIE_ACCESS_TOKEN_EXPIRES_IN, COOKIE_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
-import { createMockUser } from 'test/factories/user-payload-factory';
+import { createMockUserPayload } from 'test/factories/user-payload-factory';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -56,15 +56,17 @@ describe('AuthController', () => {
       expect(mockResponse.cookie).toHaveBeenCalledWith('access-token', expectedAccessToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', expectedRefreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
     });
 
@@ -91,6 +93,7 @@ describe('AuthController', () => {
         secure: true,
         sameSite: 'none',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', expectedRefreshToken, {
@@ -98,6 +101,7 @@ describe('AuthController', () => {
         secure: true,
         sameSite: 'none',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       process.env.NODE_ENV = originalEnv;
@@ -140,15 +144,17 @@ describe('AuthController', () => {
       expect(mockResponse.cookie).toHaveBeenCalledWith('access-token', newAccessToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', newRefreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       expect(result).toEqual({
@@ -181,6 +187,7 @@ describe('AuthController', () => {
         secure: true,
         sameSite: 'none',
         maxAge: COOKIE_ACCESS_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       expect(mockResponse.cookie).toHaveBeenCalledWith('refresh-token', newRefreshToken, {
@@ -188,6 +195,7 @@ describe('AuthController', () => {
         secure: true,
         sameSite: 'none',
         maxAge: COOKIE_REFRESH_TOKEN_EXPIRES_IN,
+        domain: undefined,
       });
 
       process.env.NODE_ENV = originalEnv;
@@ -208,7 +216,7 @@ describe('AuthController', () => {
 
   describe('getProfile', () => {
     it('should return the logged user profile from request', () => {
-      const mockUser = createMockUser();
+      const mockUser = createMockUserPayload();
       mockRequest.user = mockUser;
 
       const result = controller.getProfile(mockRequest);
@@ -218,40 +226,75 @@ describe('AuthController', () => {
   });
 
   describe('signOut', () => {
-    it('should clear cookies and call authService.logout', async () => {
-      const mockUser = createMockUser();
-      const cookieOptions = {
+    it('should clear cookies and call authService.logout in development', async () => {
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
+
+      const mockUser = createMockUserPayload();
+      const expectedCookieOptions = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        domain: process.env.CLIENT_DOMAIN,
+        secure: false,
+        sameSite: 'lax',
+        domain: undefined,
       };
 
       authServiceMock.logout.mockResolvedValue(undefined);
 
       await controller.signOut(mockResponse, mockUser);
 
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', { ...cookieOptions, sameSite: 'none' });
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', { ...cookieOptions, sameSite: 'none' });
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', { ...cookieOptions, sameSite: 'none' });
-
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', expectedCookieOptions);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', expectedCookieOptions);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', expectedCookieOptions);
       expect(authServiceMock.logout).toHaveBeenCalledWith(mockUser.id);
+
+      process.env.NODE_ENV = originalEnv;
+    });
+
+    it('should clear cookies with secure options in production', async () => {
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+
+      const mockUser = createMockUserPayload();
+      const expectedCookieOptions = {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        domain: undefined,
+      };
+
+      authServiceMock.logout.mockResolvedValue(undefined);
+
+      await controller.signOut(mockResponse, mockUser);
+
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', expectedCookieOptions);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', expectedCookieOptions);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', expectedCookieOptions);
+      expect(authServiceMock.logout).toHaveBeenCalledWith(mockUser.id);
+
+      process.env.NODE_ENV = originalEnv;
     });
 
     it('should throw an error if authService.logout fails', async () => {
-      const mockUser = createMockUser();
-      const cookieOptions = {
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
+
+      const mockUser = createMockUserPayload();
+      const expectedCookieOptions = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        domain: process.env.CLIENT_DOMAIN,
+        secure: false,
+        sameSite: 'lax',
+        domain: undefined,
       };
 
       authServiceMock.logout.mockRejectedValue(new Error());
 
       await expect(controller.signOut(mockResponse, mockUser)).rejects.toThrow();
 
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', { ...cookieOptions, sameSite: 'none' });
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', { ...cookieOptions, sameSite: 'none' });
-      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', { ...cookieOptions, sameSite: 'none' });
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('access-token', expectedCookieOptions);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('refresh-token', expectedCookieOptions);
+      expect(mockResponse.clearCookie).toHaveBeenCalledWith('org-id', expectedCookieOptions);
+
+      process.env.NODE_ENV = originalEnv;
     });
   });
 });

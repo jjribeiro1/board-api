@@ -1,6 +1,6 @@
 generator client {
   provider   = "prisma-client"
-  output     = "../generated/prisma"
+  output     = "../src/generated/prisma"
   engineType = "client"
 }
 
@@ -9,19 +9,22 @@ datasource db {
 }
 
 model User {
-  id            String             @id @default(uuid()) @db.Uuid
-  name          String             @db.VarChar(200)
-  email         String             @unique @db.VarChar(200)
-  password      String             @db.VarChar(200)
-  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt     DateTime?          @map("deleted_at") @db.Timestamptz
-  organizations UserOrganization[]
-  posts         Post[]
-  boards        Board[]
-  comments      Comment[]
-  session       Session[]
-  votes         PostVote[]
+  id                  String               @id @default(uuid()) @db.Uuid
+  name                String               @db.VarChar(200)
+  email               String               @unique @db.VarChar(200)
+  password            String               @db.VarChar(200)
+  createdAt           DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt           DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt           DateTime?            @map("deleted_at") @db.Timestamptz
+  organizations       UserOrganization[]
+  posts               Post[]
+  boards              Board[]
+  comments            Comment[]
+  session             Session[]
+  votes               PostVote[]
+  organizationInvites OrganizationInvite[]
+  notifications       UserNotification[]
+  actedNotifications  Notification[]       @relation("NotificationActor")
 
   @@map("user")
 }
@@ -59,21 +62,43 @@ model UserOrganization {
 }
 
 model Organization {
-  id                       String             @id @default(uuid()) @db.Uuid
-  name                     String             @unique @db.VarChar(140)
-  slug                     String             @unique
-  logoUrl                  String?            @map("logo_url")
-  defaultStatusId          String?            @unique @map("default_status_id") @db.Uuid
-  defaultStatus            Status?            @relation("DefaultStatus", fields: [defaultStatusId], references: [id])
-  createdAt                DateTime           @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt                DateTime           @updatedAt @map("updated_at") @db.Timestamptz
-  deletedAt                DateTime?          @map("deleted_at") @db.Timestamptz
+  id                       String               @id @default(uuid()) @db.Uuid
+  name                     String               @unique @db.VarChar(140)
+  slug                     String               @unique
+  logoUrl                  String?              @map("logo_url")
+  defaultStatusId          String?              @unique @map("default_status_id") @db.Uuid
+  defaultStatus            Status?              @relation("DefaultStatus", fields: [defaultStatusId], references: [id])
+  createdAt                DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt                DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt                DateTime?            @map("deleted_at") @db.Timestamptz
   boards                   Board[]
   members                  UserOrganization[]
   organizationCustomStatus Status[]
   organizationCustomTags   Tag[]
+  organizationInvites      OrganizationInvite[]
+  notifications            Notification[]
 
   @@map("organization")
+}
+
+model OrganizationInvite {
+  id             String       @id @default(uuid()) @db.Uuid
+  email          String       @db.VarChar(200)
+  token          String       @unique
+  role           Role         @default(MEMBER)
+  status         InviteStatus @default(PENDING)
+  expiresAt      DateTime     @map("expires_at") @db.Timestamptz
+  acceptedAt     DateTime?    @map("accepted_at") @db.Timestamptz
+  lastRetryAt    DateTime?    @map("last_retry_at") @db.Timestamptz
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String       @map("organization_id") @db.Uuid
+  invitedBy      User         @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+  invitedById    String       @map("invited_by_id") @db.Uuid
+
+  @@index([organizationId])
+  @@map("organization_invite")
 }
 
 model Board {
@@ -189,4 +214,47 @@ enum Role {
   OWNER
   ADMIN
   MEMBER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+enum NotificationType {
+  POST_COMMENTED
+  POST_STATUS_CHANGED
+}
+
+model Notification {
+  id             String             @id @default(uuid()) @db.Uuid
+  type           NotificationType
+  actorId        String?            @map("actor_id") @db.Uuid
+  organizationId String?            @map("organization_id") @db.Uuid
+  resourceId     String?            @map("resource_id") @db.Uuid
+  payload        Json               @default("{}")
+  createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  actor          User?              @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  organization   Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  recipients     UserNotification[]
+
+  @@index([organizationId])
+  @@map("notification")
+}
+
+model UserNotification {
+  id             String       @id @default(uuid()) @db.Uuid
+  userId         String       @map("user_id") @db.Uuid
+  notificationId String       @map("notification_id") @db.Uuid
+  readAt         DateTime?    @map("read_at") @db.Timestamptz
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificationId])
+  @@index([userId])
+  @@index([notificationId])
+  @@map("user_notification")
 }

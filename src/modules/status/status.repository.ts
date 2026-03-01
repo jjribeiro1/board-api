@@ -7,16 +7,6 @@ import { UpdateStatusDto } from './dto/update-status.dto';
 export class StatusRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllStatus(organizationId: string) {
-    const results = await this.prisma.status.findMany({
-      where: {
-        organizationId,
-        deletedAt: null,
-      },
-    });
-    return results;
-  }
-
   async create(dto: CreateStatusDto) {
     const result = await this.prisma.status.create({
       data: {
@@ -59,5 +49,23 @@ export class StatusRepository {
         deletedAt: new Date(),
       },
     });
+  }
+
+  async findOrgAndAuthorId(statusId: string) {
+    const result = await this.prisma.status.findUnique({
+      where: { id: statusId, deletedAt: null },
+      select: {
+        organizationId: true,
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      organizationId: result.organizationId,
+      authorId: null,
+    };
   }
 }

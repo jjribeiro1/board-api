@@ -7,10 +7,10 @@ import { UpdatePostTagsDto } from './dto/update-post-tags.dto';
 import { PostsService } from './posts.service';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
-import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role-decorator';
+import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
-import { MutatePostGuard } from './guards/mutate-post.guard';
-import { ManagePostGuard } from './guards/manage-post.guard';
+import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { AllowAuthor } from 'src/common/decorators/allow-author.decorator';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -57,11 +57,12 @@ export class PostsController {
    * Update Post
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(MutatePostGuard)
+  @AllowAuthor()
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
-    const updatedPost = await this.postsService.update(id, dto);
+  async update(@Param('id') id: string, @Body() dto: UpdatePostDto, @LoggedUser() user: UserPayload) {
+    const updatedPost = await this.postsService.update(id, dto, user);
     return {
       data: {
         post: updatedPost,
@@ -73,11 +74,11 @@ export class PostsController {
    * Manage Post settings
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.ADMIN, OrganizationRolesOptions.OWNER])
-  @UseGuards(ManagePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/settings')
-  async managePost(@Param('id') id: string, @Body() dto: ManagePostDto) {
-    const post = await this.postsService.update(id, dto);
+  async managePost(@Param('id') id: string, @Body() dto: ManagePostDto, @LoggedUser() user: UserPayload) {
+    const post = await this.postsService.update(id, dto, user);
     return {
       data: {
         post,
@@ -89,7 +90,7 @@ export class PostsController {
    * Update Post Tags
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(ManagePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Patch(':id/tags')
   async updateTags(@Param('id') id: string, @Body() dto: UpdatePostTagsDto) {
@@ -100,7 +101,7 @@ export class PostsController {
    * Delete Post
    */
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(MutatePostGuard)
+  @UseGuards(ResourceGuard)
   @ApiBearerAuth()
   @Delete(':id')
   async remove(@Param('id') id: string) {

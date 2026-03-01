@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/shared/modules/database/prisma/prisma.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { ManageBoardDto } from './dto/manage-board.dto';
+import { ListBoardPostsQueryDto } from './dto/list-board-posts-query.dto';
 
 @Injectable()
 export class BoardsRepository {
@@ -37,12 +38,22 @@ export class BoardsRepository {
     return result;
   }
 
-  async findPostsFromBoard(boardId: string, userId: string) {
+  async findPostsFromBoard(boardId: string, userId: string, query: ListBoardPostsQueryDto) {
     const result = await this.prisma.post.findMany({
       orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
       where: {
         boardId,
         deletedAt: null,
+        ...(query?.status?.length && { statusId: { in: query.status } }),
+        ...(query?.tag?.length && {
+          tags: {
+            some: {
+              tagId: {
+                in: query.tag,
+              },
+            },
+          },
+        }),
       },
       select: {
         id: true,
@@ -65,6 +76,22 @@ export class BoardsRepository {
             color: true,
           },
         },
+        tags: {
+          where: {
+            tag: {
+              deletedAt: null,
+            },
+          },
+          select: {
+            tag: {
+              select: {
+                id: true,
+                name: true,
+                color: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             comments: {
@@ -85,6 +112,7 @@ export class BoardsRepository {
 
     return result.map((post) => ({
       ...post,
+      tags: post.tags.map((t) => t.tag),
       userHasVoted: post.votes.length > 0,
     }));
   }
@@ -101,5 +129,24 @@ export class BoardsRepository {
       where: { id: boardId },
       data: { deletedAt: new Date() },
     });
+  }
+
+  async findOrgAndAuthorId(resourceId: string) {
+    const board = await this.prisma.board.findUnique({
+      where: { id: resourceId, deletedAt: null },
+      select: {
+        organizationId: true,
+        authorId: true,
+      },
+    });
+
+    if (!board) {
+      return null;
+    }
+
+    return {
+      organizationId: board.organizationId,
+      authorId: board.authorId,
+    };
   }
 }

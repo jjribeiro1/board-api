@@ -54,4 +54,22 @@ export class TagsRepository {
       data: { deletedAt: new Date() },
     });
   }
+
+  async findOrgAndAuthorId(tagId: string) {
+    const result = await this.prisma.tag.findUnique({
+      where: { id: tagId },
+      select: {
+        organizationId: true,
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return {
+      organizationId: result.organizationId,
+      authorId: null,
+    };
+  }
 }

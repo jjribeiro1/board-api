@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
+import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
 import { EVENTS } from 'src/constants/events';
 import { OrganizationCreatedEventDto } from '../events/dto/organization-created-event.dto';
 import { OrganizationsRepository } from './organizations.repository';
 import { slugify } from 'src/utils/slug';
+import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
+import dayjs from 'src/utils/dayjs';
+import { InviteStatus } from 'src/generated/prisma/browser';
+import { InvitesExpiredEventDto } from '../events/dto/invites-events.dto';
 
 @Injectable()
 export class OrganizationsService {
@@ -64,5 +69,61 @@ export class OrganizationsService {
 
   async setDefaultStatus(organizationId: string, statusId: string) {
     return await this.organizationsRepository.setDefaultStatus(organizationId, statusId);
+  }
+
+  async verifyEmailInOrganization(organizationId: string, email: string) {
+    return await this.organizationsRepository.emailIsMember(organizationId, email);
+  }
+
+  async findInvitesFromOrganization(organizationId: string) {
+    await this.findOne(organizationId);
+    const invites = await this.organizationsRepository.findInvitesFromOrganization(organizationId);
+    const expiredInvitesId: string[] = [];
+
+    for (const invite of invites) {
+      const isExpired = dayjs().isAfter(invite.expiresAt);
+      if (isExpired && invite.status === InviteStatus.PENDING) {
+        expiredInvitesId.push(invite.id);
+      }
+    }
+
+    if (expiredInvitesId.length > 0) {
+      this.eventEmitter.emit(EVENTS.invite.expired, new InvitesExpiredEventDto(expiredInvitesId));
+    }
+
+    return invites;
+  }
+
+  async updateMemberRole(organizationId: string, userId: string, dto: UpdateMemberRoleDto) {
+    await this.findOne(organizationId);
+
+    const member = await this.organizationsRepository.findMember(organizationId, userId);
+    if (!member) {
+      throw new NotFoundException('membro não encontrado');
+    }
+
+    if (member.role === OrganizationRolesOptions.OWNER) {
+      throw new BadRequestException('não é possível alterar o papel do proprietário');
+    }
+
+    await this.organizationsRepository.updateMemberRole(organizationId, userId, dto.role);
+  }
+
+  async removeMember(organizationId: string, userId: string) {
+    await this.findOne(organizationId);
+
+    const member = await this.organizationsRepository.findMember(organizationId, userId);
+    if (!member) {
+      throw new NotFoundException('membro não encontrado');
+    }
+
+    if (member.role === OrganizationRolesOptions.OWNER) {
+      const ownerCount = await this.organizationsRepository.countOwners(organizationId);
+      if (ownerCount <= 1) {
+        throw new BadRequestException('a organização deve ter pelo menos um proprietário');
+      }
+    }
+
+    await this.organizationsRepository.removeMember(organizationId, userId);
   }
 }

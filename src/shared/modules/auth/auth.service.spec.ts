@@ -26,10 +26,10 @@ describe('AuthService', () => {
 
     configServiceMock.get.mockImplementation((key: string) => {
       const config = {
-        ACCESS_TOKEN_PRIVATE_KEY: 'access-private-key',
-        REFRESH_TOKEN_PRIVATE_KEY: 'refresh-private-key',
-        ACCESS_TOKEN_PUBLIC_KEY: 'access-public-key',
-        REFRESH_TOKEN_PUBLIC_KEY: 'refresh-public-key',
+        ACCESS_TOKEN_PRIVATE_KEY: Buffer.from('access-private-key').toString('base64'),
+        REFRESH_TOKEN_PRIVATE_KEY: Buffer.from('refresh-private-key').toString('base64'),
+        ACCESS_TOKEN_PUBLIC_KEY: Buffer.from('access-public-key').toString('base64'),
+        REFRESH_TOKEN_PUBLIC_KEY: Buffer.from('refresh-public-key').toString('base64'),
       };
       return config[key];
     });
@@ -86,12 +86,12 @@ describe('AuthService', () => {
       const result = await service.signIn(dto);
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: 'access-private-key',
+        privateKey: Buffer.from(configServiceMock.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
         expiresIn: ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: 'refresh-private-key',
+        privateKey: Buffer.from(configServiceMock.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
         expiresIn: REFRESH_TOKEN_EXPIRES_IN,
       });
 
@@ -222,7 +222,7 @@ describe('AuthService', () => {
       const result = await service.refreshToken(token);
 
       expect(jwtServiceMock.verifyAsync).toHaveBeenCalledWith(token, {
-        publicKey: configServiceMock.get('REFRESH_TOKEN_PUBLIC_KEY'),
+        publicKey: Buffer.from(configServiceMock.get('REFRESH_TOKEN_PUBLIC_KEY')!, 'base64').toString('utf-8'),
       });
 
       expect(prismaServiceMock.session.findUnique).toHaveBeenCalledWith({
@@ -231,12 +231,12 @@ describe('AuthService', () => {
       });
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: 'access-private-key',
+        privateKey: Buffer.from(configServiceMock.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
         expiresIn: ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: 'refresh-private-key',
+        privateKey: Buffer.from(configServiceMock.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
         expiresIn: REFRESH_TOKEN_EXPIRES_IN,
       });
 
@@ -331,7 +331,7 @@ describe('AuthService', () => {
       const result = await service.extractUserFromAccessToken(token);
 
       expect(jwtServiceMock.verifyAsync).toHaveBeenCalledWith(token, {
-        publicKey: configServiceMock.get('ACCESS_TOKEN_PUBLIC_KEY'),
+        publicKey: Buffer.from(configServiceMock.get('ACCESS_TOKEN_PUBLIC_KEY')!, 'base64').toString('utf-8'),
       });
 
       expect(prismaServiceMock.session.findFirst).toHaveBeenCalledWith({

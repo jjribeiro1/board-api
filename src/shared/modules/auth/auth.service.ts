@@ -25,12 +25,14 @@ export class AuthService {
       sub: user.id,
       organizations: user.organizations,
     };
+
     const accessToken = await this.generateToken(tokenPayload, {
-      privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
+      privateKey: Buffer.from(this.configService.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
+
     const refreshToken = await this.generateToken(tokenPayload, {
-      privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
+      privateKey: Buffer.from(this.configService.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
       expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
 
@@ -52,7 +54,7 @@ export class AuthService {
 
   async refreshToken(token: string) {
     await this.verifyToken(token, {
-      publicKey: this.configService.get<string>('REFRESH_TOKEN_PUBLIC_KEY'),
+      publicKey: Buffer.from(this.configService.get('REFRESH_TOKEN_PUBLIC_KEY')!, 'base64').toString('utf-8'),
     });
     const { session, user } = await this.getSession(token);
 
@@ -66,11 +68,11 @@ export class AuthService {
       organizations: user.organizations,
     };
     const accessToken = await this.generateToken(tokenPayload, {
-      privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
+      privateKey: Buffer.from(this.configService.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
     const refreshToken = await this.generateToken(tokenPayload, {
-      privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
+      privateKey: Buffer.from(this.configService.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
       expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
 
@@ -84,7 +86,7 @@ export class AuthService {
 
   async extractUserFromAccessToken(token: string) {
     const payload: JwtUserPayload = await this.verifyToken(token, {
-      publicKey: this.configService.get<string>('ACCESS_TOKEN_PUBLIC_KEY'),
+      publicKey: Buffer.from(this.configService.get('ACCESS_TOKEN_PUBLIC_KEY')!, 'base64').toString('utf-8'),
     });
     const session = await this.prisma.session.findFirst({
       where: { userId: payload.sub },

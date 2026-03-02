@@ -54,7 +54,7 @@ async function bootstrap() {
   );
 
   await app.listen(PORT, '0.0.0.0', () => {
-    console.log('server is running');
+    console.log(`Server is running on port ${PORT}`);
   });
 }
 bootstrap().catch((err) => {

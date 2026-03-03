@@ -232,12 +232,12 @@ model Notification {
   id             String             @id @default(uuid()) @db.Uuid
   type           NotificationType
   actorId        String?            @map("actor_id") @db.Uuid
-  organizationId String?            @map("organization_id") @db.Uuid
+  organizationId String             @map("organization_id") @db.Uuid
   resourceId     String?            @map("resource_id") @db.Uuid
   payload        Json               @default("{}")
   createdAt      DateTime           @default(now()) @map("created_at") @db.Timestamptz
   actor          User?              @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
-  organization   Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   recipients     UserNotification[]
 
   @@index([organizationId])

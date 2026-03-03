@@ -29,6 +29,9 @@ export class NotificationsRepository {
           })),
         },
       },
+      include: {
+        recipients: true,
+      },
     });
   }
 

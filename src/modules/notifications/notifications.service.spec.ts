@@ -4,16 +4,19 @@ import { NotFoundException } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { NotificationsRepository } from './notifications.repository';
 import { NotificationMapperService } from './notification-mapper.service';
+import { NotificationsSseService } from './notifications-sse.service';
 import { NotificationType } from 'src/generated/prisma/client';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
   let repositoryMock: DeepMockProxy<NotificationsRepository>;
   let mapperMock: DeepMockProxy<NotificationMapperService>;
+  let sseMock: DeepMockProxy<NotificationsSseService>;
 
   beforeEach(async () => {
     repositoryMock = mockDeep<NotificationsRepository>();
     mapperMock = mockDeep<NotificationMapperService>();
+    sseMock = mockDeep<NotificationsSseService>();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -25,6 +28,10 @@ describe('NotificationsService', () => {
         {
           provide: NotificationMapperService,
           useValue: mapperMock,
+        },
+        {
+          provide: NotificationsSseService,
+          useValue: sseMock,
         },
       ],
     }).compile();
@@ -45,11 +52,27 @@ describe('NotificationsService', () => {
     const resourceId = 'post-id-1';
     const payload = { postTitle: 'Test Post', actorName: 'John Doe' };
 
-    it('should create a notification with recipients', async () => {
+    it('should create a notification with recipients and publish SSE events', async () => {
       const recipientUserIds = ['user-id-1', 'user-id-2'];
-      const mockNotification = { id: 'notification-id-1' };
+      const createdAt = new Date();
+      const mockNotification = {
+        id: 'notification-id-1',
+        recipients: [
+          { id: 'un-id-1', userId: 'user-id-1', createdAt },
+          { id: 'un-id-2', userId: 'user-id-2', createdAt },
+        ],
+      };
+      const mappedNotification = {
+        id: 'un-id-1',
+        title: 'Novo comentário',
+        content: 'preview',
+        type,
+        isRead: false,
+        createdAt,
+      };
 
       repositoryMock.create.mockResolvedValue(mockNotification as any);
+      mapperMock.mapNotification.mockReturnValue(mappedNotification);
 
       const result = await service.notify(type, actorId, organizationId, resourceId, payload, recipientUserIds);
 
@@ -57,6 +80,10 @@ describe('NotificationsService', () => {
         { type, actorId, organizationId, resourceId, payload },
         recipientUserIds,
       );
+      expect(mapperMock.mapNotification).toHaveBeenCalledTimes(2);
+      expect(sseMock.publish).toHaveBeenCalledTimes(2);
+      expect(sseMock.publish).toHaveBeenCalledWith('user-id-1', mappedNotification);
+      expect(sseMock.publish).toHaveBeenCalledWith('user-id-2', mappedNotification);
       expect(result).toEqual(mockNotification);
     });
 

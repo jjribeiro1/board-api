@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { NotificationType, Prisma } from 'src/generated/prisma/client';
 import { NotificationsRepository } from './notifications.repository';
 import { NotificationMapperService } from './notification-mapper.service';
+import { NotificationsSseService } from './notifications-sse.service';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     private readonly notificationsRepository: NotificationsRepository,
     private readonly notificationMapper: NotificationMapperService,
+    private readonly notificationsSseService: NotificationsSseService,
   ) {}
 
   async notify(
@@ -22,10 +24,22 @@ export class NotificationsService {
       return null;
     }
 
-    return this.notificationsRepository.create(
+    const notification = await this.notificationsRepository.create(
       { type, actorId, organizationId, resourceId, payload },
       recipientUserIds,
     );
+
+    for (const recipient of notification.recipients) {
+      const mapped = this.notificationMapper.mapNotification({
+        id: recipient.id,
+        readAt: null,
+        createdAt: recipient.createdAt,
+        notification: { type, payload },
+      });
+      this.notificationsSseService.publish(recipient.userId, mapped);
+    }
+
+    return notification;
   }
 
   async getUserNotifications(userId: string, page: number, limit: number) {

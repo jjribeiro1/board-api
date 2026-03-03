@@ -2,15 +2,18 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
+import { NotificationsSseService } from './notifications-sse.service';
 import { createMockUserPayload } from 'test/factories/user-payload-factory';
 import { NotificationType } from 'src/generated/prisma/client';
 
 describe('NotificationsController', () => {
   let controller: NotificationsController;
   let serviceMock: DeepMockProxy<NotificationsService>;
+  let sseMock: DeepMockProxy<NotificationsSseService>;
 
   beforeEach(async () => {
     serviceMock = mockDeep<NotificationsService>();
+    sseMock = mockDeep<NotificationsSseService>();
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [NotificationsController],
@@ -18,6 +21,10 @@ describe('NotificationsController', () => {
         {
           provide: NotificationsService,
           useValue: serviceMock,
+        },
+        {
+          provide: NotificationsSseService,
+          useValue: sseMock,
         },
       ],
     }).compile();

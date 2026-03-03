@@ -1,14 +1,31 @@
-import { Controller, Delete, Get, Param, Patch, Query } from '@nestjs/common';
+import { Controller, Delete, Get, MessageEvent, Param, Patch, Query, Sse } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { merge, interval } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
 import { NotificationsService } from './notifications.service';
+import { NotificationsSseService } from './notifications-sse.service';
 import { PaginateNotificationsDto } from './dto/paginate-notifications.dto';
 
 @ApiTags('notifications')
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(
+    private readonly notificationsService: NotificationsService,
+    private readonly notificationsSseService: NotificationsSseService,
+  ) {}
+
+  /**
+   * Stream real-time notifications via Server-Sent Events
+   */
+  @ApiBearerAuth()
+  @Sse('stream')
+  stream(@LoggedUser() user: UserPayload): any {
+    const notifications$ = this.notificationsSseService.subscribe(user.id) as any;
+    const heartbeat$ = interval(30_000).pipe(map(() => ({ data: { type: 'heartbeat' } }) as MessageEvent));
+    return merge(notifications$, heartbeat$);
+  }
 
   /**
    * List notifications for the logged user (paginated)

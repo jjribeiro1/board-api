@@ -10,7 +10,7 @@ export class NotificationsRepository {
     data: {
       type: NotificationType;
       actorId: string | null;
-      organizationId: string | null;
+      organizationId: string;
       resourceId: string | null;
       payload: Prisma.InputJsonValue;
     },

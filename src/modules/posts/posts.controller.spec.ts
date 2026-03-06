@@ -128,6 +128,7 @@ describe('PostsController', () => {
         {
           id: 'comment-id-1',
           content: 'First comment',
+          parentId: null,
           postId,
           organizationId,
           author: {
@@ -137,10 +138,12 @@ describe('PostsController', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           deletedAt: null,
+          replies: [],
         },
         {
           id: 'comment-id-2',
           content: 'Second comment',
+          parentId: null,
           postId,
           organizationId,
           author: {
@@ -150,6 +153,7 @@ describe('PostsController', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           deletedAt: null,
+          replies: [],
         },
       ];
 

@@ -61,7 +61,8 @@ export class PostsService implements ResourceOwnershipResolver {
 
   async findCommentsFromPost(postId: string) {
     await this.findOne(postId);
-    return this.postsRepository.findCommentsFromPost(postId);
+    const comments = await this.postsRepository.findCommentsFromPost(postId);
+    return comments.filter((comment) => comment.parentId === null);
   }
 
   async update(postId: string, dto: UpdatePostDto | ManagePostDto, user?: UserPayload) {

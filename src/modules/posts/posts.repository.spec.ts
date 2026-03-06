@@ -224,6 +224,7 @@ describe('PostsRepository', () => {
           content: 'Great idea!',
           postId: postId,
           authorId: 'user-id-1',
+          parentId: null,
           createdAt: new Date(),
           updatedAt: new Date(),
           deletedAt: null,
@@ -233,12 +234,14 @@ describe('PostsRepository', () => {
               organizationId: 'org-id-1',
             },
           },
+          replies: [],
         },
         {
           id: 'comment-id-2',
           content: 'I agree',
           postId: postId,
           authorId: 'user-id-2',
+          parentId: null,
           createdAt: new Date(),
           updatedAt: new Date(),
           deletedAt: null,
@@ -248,6 +251,7 @@ describe('PostsRepository', () => {
               organizationId: 'org-id-1',
             },
           },
+          replies: [],
         },
       ];
 
@@ -269,22 +273,26 @@ describe('PostsRepository', () => {
         {
           id: 'comment-id-1',
           content: 'Great idea!',
+          parentId: null,
           author: { id: 'user-id-1', name: 'John Doe' },
           postId: postId,
           organizationId: 'org-id-1',
           createdAt: mockComments[0].createdAt,
           updatedAt: mockComments[0].updatedAt,
           deletedAt: null,
+          replies: [],
         },
         {
           id: 'comment-id-2',
           content: 'I agree',
+          parentId: null,
           author: { id: 'user-id-2', name: 'Jane Smith' },
           postId: postId,
           organizationId: 'org-id-1',
           createdAt: mockComments[1].createdAt,
           updatedAt: mockComments[1].updatedAt,
           deletedAt: null,
+          replies: [],
         },
       ]);
     });

@@ -8,13 +8,36 @@ export class CommentsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCommentDto, userId: string) {
-    const { content, postId } = dto;
+    const { content, postId, parentId } = dto;
 
     const result = await this.prisma.comment.create({
-      data: { content, postId, authorId: userId },
+      data: { content, postId, authorId: userId, parentId },
     });
 
     return result.id;
+  }
+
+  async findById(commentId: string) {
+    const result = await this.prisma.comment.findUnique({
+      where: { id: commentId, deletedAt: null },
+      select: {
+        id: true,
+        content: true,
+        postId: true,
+        parentId: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    return result;
   }
 
   async findOne(commendId: string) {
@@ -24,6 +47,7 @@ export class CommentsRepository {
         id: true,
         content: true,
         postId: true,
+        parentId: true,
         createdAt: true,
         updatedAt: true,
         deletedAt: true,

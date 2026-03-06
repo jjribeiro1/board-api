@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 export class CreateCommentDto {
   /**
@@ -14,4 +14,12 @@ export class CreateCommentDto {
    */
   @IsUUID('4', { message: 'ID da postagem deve ser um UUID válido' })
   postId: string;
+
+  /**
+   * parent comment ID (for replies)
+   * @example '0f3b269a-447f-49dc-a804-54585c0fb106'
+   */
+  @IsOptional()
+  @IsUUID('4', { message: 'ID do comentário pai deve ser um UUID válido' })
+  parentId?: string;
 }

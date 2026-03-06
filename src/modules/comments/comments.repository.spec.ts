@@ -43,6 +43,7 @@ describe('CommentsRepository', () => {
         content: dto.content,
         postId: dto.postId,
         authorId: userId,
+        parentId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -53,7 +54,7 @@ describe('CommentsRepository', () => {
       const result = await repository.create(dto, userId);
 
       expect(prismaServiceMock.comment.create).toHaveBeenCalledWith({
-        data: { content: dto.content, postId: dto.postId, authorId: userId },
+        data: { content: dto.content, postId: dto.postId, authorId: userId, parentId: undefined },
       });
 
       expect(result).toBe(expectedCommentId);
@@ -68,6 +69,7 @@ describe('CommentsRepository', () => {
         content: 'This is a comment',
         postId: 'post-id-1',
         authorId: 'user-id-1',
+        parentId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -87,6 +89,7 @@ describe('CommentsRepository', () => {
           id: true,
           content: true,
           postId: true,
+          parentId: true,
           createdAt: true,
           updatedAt: true,
           deletedAt: true,
@@ -129,6 +132,7 @@ describe('CommentsRepository', () => {
         content: dto.content,
         postId: 'post-id-1',
         authorId: 'user-id-1',
+        parentId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -153,6 +157,7 @@ describe('CommentsRepository', () => {
         content: 'This is a comment',
         postId: 'post-id-1',
         authorId: 'user-id-1',
+        parentId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: new Date(),
@@ -177,6 +182,7 @@ describe('CommentsRepository', () => {
         content: 'Comment',
         postId: 'post-id-1',
         authorId: 'user-id-1',
+        parentId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,

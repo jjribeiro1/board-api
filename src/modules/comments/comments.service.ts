@@ -23,6 +23,19 @@ export class CommentsService implements ResourceOwnershipResolver {
       throw new ForbiddenException('Não é possível comentar em um post bloqueado');
     }
 
+    if (dto.parentId) {
+      const parentComment = await this.commentsRepository.findById(dto.parentId);
+      if (!parentComment) {
+        throw new NotFoundException(`comentário pai com id: ${dto.parentId} não encontrado`);
+      }
+      if (parentComment.parentId) {
+        throw new ForbiddenException('Não é permitido responder uma resposta');
+      }
+      if (parentComment.postId !== dto.postId) {
+        throw new ForbiddenException('A resposta deve pertencer ao mesmo post do comentário original');
+      }
+    }
+
     const commentId = await this.commentsRepository.create(dto, user.id);
 
     this.eventEmitter.emit(

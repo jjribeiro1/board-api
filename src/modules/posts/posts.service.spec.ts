@@ -294,6 +294,8 @@ describe('PostsService', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
           deletedAt: null,
+          parentId: null,
+          replies: [],
         },
       ];
 

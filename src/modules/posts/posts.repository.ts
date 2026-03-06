@@ -89,6 +89,7 @@ export class PostsRepository {
         id: true,
         content: true,
         postId: true,
+        parentId: true,
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
@@ -107,18 +108,47 @@ export class PostsRepository {
             },
           },
         },
+        replies: {
+          where: { deletedAt: null },
+          select: {
+            id: true,
+            content: true,
+            postId: true,
+            parentId: true,
+            createdAt: true,
+            updatedAt: true,
+            deletedAt: true,
+            author: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
     return results.map((result) => ({
       id: result.id,
       content: result.content,
+      parentId: result.parentId,
       author: { id: result.author.id, name: result.author.name },
       postId: result.postId,
       organizationId: result.post.board.organizationId,
       createdAt: result.createdAt,
       updatedAt: result.updatedAt,
       deletedAt: result.deletedAt,
+      replies: result.replies.map((reply) => ({
+        id: reply.id,
+        content: reply.content,
+        parentId: reply.parentId,
+        author: { id: reply.author.id, name: reply.author.name },
+        postId: reply.postId,
+        createdAt: reply.createdAt,
+        updatedAt: reply.updatedAt,
+        deletedAt: reply.deletedAt,
+      })),
     }));
   }
 

@@ -54,7 +54,7 @@ export class AuthService {
 
   async refreshToken(token: string) {
     await this.verifyToken(token, {
-      publicKey: Buffer.from(this.configService.get('REFRESH_TOKEN_PUBLIC_KEY')!, 'base64').toString('utf-8'),
+      publicKey: this.configService.get('REFRESH_TOKEN_PUBLIC_KEY'),
     });
     const { session, user } = await this.getSession(token);
 
@@ -86,7 +86,7 @@ export class AuthService {
 
   async extractUserFromAccessToken(token: string) {
     const payload: JwtUserPayload = await this.verifyToken(token, {
-      publicKey: Buffer.from(this.configService.get('ACCESS_TOKEN_PUBLIC_KEY')!, 'base64').toString('utf-8'),
+      publicKey: this.configService.get('ACCESS_TOKEN_PUBLIC_KEY'),
     });
     const session = await this.prisma.session.findFirst({
       where: { userId: payload.sub },

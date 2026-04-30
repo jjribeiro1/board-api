@@ -27,12 +27,12 @@ export class AuthService {
     };
 
     const accessToken = await this.generateToken(tokenPayload, {
-      privateKey: Buffer.from(this.configService.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+      privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
 
     const refreshToken = await this.generateToken(tokenPayload, {
-      privateKey: Buffer.from(this.configService.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+      privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
       expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
 
@@ -68,11 +68,11 @@ export class AuthService {
       organizations: user.organizations,
     };
     const accessToken = await this.generateToken(tokenPayload, {
-      privateKey: Buffer.from(this.configService.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+      privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
     const refreshToken = await this.generateToken(tokenPayload, {
-      privateKey: Buffer.from(this.configService.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+      privateKey: this.configService.get('REFRESH_TOKEN_PRIVATE_KEY'),
       expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     });
 

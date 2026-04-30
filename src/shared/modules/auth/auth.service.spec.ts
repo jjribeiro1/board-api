@@ -86,12 +86,12 @@ describe('AuthService', () => {
       const result = await service.signIn(dto);
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: Buffer.from(configServiceMock.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+        privateKey: configServiceMock.get('ACCESS_TOKEN_PRIVATE_KEY'),
         expiresIn: ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: Buffer.from(configServiceMock.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+        privateKey: configServiceMock.get('REFRESH_TOKEN_PRIVATE_KEY'),
         expiresIn: REFRESH_TOKEN_EXPIRES_IN,
       });
 
@@ -231,12 +231,12 @@ describe('AuthService', () => {
       });
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: Buffer.from(configServiceMock.get('ACCESS_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+        privateKey: configServiceMock.get('ACCESS_TOKEN_PRIVATE_KEY'),
         expiresIn: ACCESS_TOKEN_EXPIRES_IN,
       });
 
       expect(jwtServiceMock.signAsync).toHaveBeenCalledWith(tokenPayload, {
-        privateKey: Buffer.from(configServiceMock.get('REFRESH_TOKEN_PRIVATE_KEY')!, 'base64').toString('utf-8'),
+        privateKey: configServiceMock.get('REFRESH_TOKEN_PRIVATE_KEY'),
         expiresIn: REFRESH_TOKEN_EXPIRES_IN,
       });
 

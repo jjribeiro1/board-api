@@ -16,6 +16,7 @@ import { TagsModule } from './modules/tags/tags.module';
 import { VotesModule } from './modules/votes/votes.module';
 import { InvitesModule } from './modules/invites/invites.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { StorageModule } from './shared/modules/storage/storage.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     VotesModule,
     InvitesModule,
     NotificationsModule,
+    StorageModule,
   ],
   controllers: [AppController],
 })

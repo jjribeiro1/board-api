@@ -12,10 +12,10 @@ export class S3StorageProvider implements StorageProvider {
   private readonly bucketName: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.bucketName = this.configService.getOrThrow<string>('S3_BUCKET_NAME');
+    this.bucketName = this.configService.getOrThrow<string>('AWS_S3_BUCKET_NAME');
 
-    const endpoint = this.configService.get<string>('AWS_ENDPOINT_URL');
-    const region = this.configService.get<string>('AWS_DEFAULT_REGION');
+    const endpoint = this.configService.getOrThrow<string>('AWS_ENDPOINT_URL');
+    const region = this.configService.getOrThrow<string>('AWS_DEFAULT_REGION');
     const accessKeyId = this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID');
     const secretAccessKey = this.configService.getOrThrow<string>('AWS_SECRET_ACCESS_KEY');
 

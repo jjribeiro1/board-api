@@ -60,13 +60,14 @@ export class S3StorageProvider implements StorageProvider {
     try {
       // Extrair o "key" da URL do arquivo para que seja removido corretamente
       const urlParts = fileUrl.split('/');
+      const bucketIndex = urlParts.indexOf(this.bucketName);
 
       // Se tiver usando CNAME pro Bucket pode não ter o bucket no path
-      let key = urlParts.slice(urlParts.indexOf(this.bucketName) + 1).join('/');
+      let key = bucketIndex >= 0 ? urlParts.slice(bucketIndex + 1).join('/') : '';
 
       // Fallback simples se a busca falhar
       if (!key) {
-        key = urlParts[urlParts.length - 1];
+        key = new URL(fileUrl).pathname.replace(/^\/+/, '');
       }
 
       const command = new DeleteObjectCommand({

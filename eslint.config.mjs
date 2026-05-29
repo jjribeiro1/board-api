@@ -20,11 +20,19 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   {
+    files: ['eslint.config.mjs'],
+    languageOptions: {
+      parserOptions: {
+        project: null,
+      },
+    },
+  },
+  {
     languageOptions: {
       parser: tsParser,
       sourceType: 'module',
       parserOptions: {
-        project: 'tsconfig.json',
+        project: 'tsconfig.eslint.json',
         tsconfigRootDir: __dirname,
       },
       globals: {

@@ -26,5 +26,5 @@
     "types": ["jest", "node"],
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*", "test/**/*", "prisma.config.ts"]
 }

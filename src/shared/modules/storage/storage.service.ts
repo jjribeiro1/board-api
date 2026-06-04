@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { STORAGE_PROVIDER, StorageProvider, FileUpload } from './interfaces/storage-provider.interface';
+import { STORAGE_PROVIDER, StorageProvider } from './interfaces/storage-provider.interface';
 
 @Injectable()
 export class StorageService {
@@ -7,10 +7,6 @@ export class StorageService {
     @Inject(STORAGE_PROVIDER)
     private readonly storageProvider: StorageProvider,
   ) {}
-
-  async uploadFile(file: FileUpload, path?: string): Promise<string> {
-    return this.storageProvider.uploadFile(file, path);
-  }
 
   async deleteFile(fileUrl: string): Promise<void> {
     return this.storageProvider.deleteFile(fileUrl);

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { StorageService } from './storage.service';
-import { FileUpload, STORAGE_PROVIDER, StorageProvider } from './interfaces/storage-provider.interface';
+import { STORAGE_PROVIDER, StorageProvider } from './interfaces/storage-provider.interface';
 
 describe('StorageService', () => {
   let service: StorageService;
@@ -19,23 +19,6 @@ describe('StorageService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  describe('uploadFile', () => {
-    it('should delegate file upload to the configured provider', async () => {
-      const file: FileUpload = {
-        originalname: 'avatar.png',
-        mimetype: 'image/png',
-        buffer: Buffer.from('avatar'),
-        size: 6,
-      };
-      storageProviderMock.uploadFile.mockResolvedValue('https://cdn.example.com/bucket/avatar.png');
-
-      const result = await service.uploadFile(file, 'avatars');
-
-      expect(storageProviderMock.uploadFile).toHaveBeenCalledWith(file, 'avatars');
-      expect(result).toBe('https://cdn.example.com/bucket/avatar.png');
-    });
   });
 
   describe('deleteFile', () => {

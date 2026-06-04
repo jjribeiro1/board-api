@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { StorageProvider, FileUpload } from '../interfaces/storage-provider.interface';
+import { StorageProvider } from '../interfaces/storage-provider.interface';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -27,33 +27,6 @@ export class S3StorageProvider implements StorageProvider {
         secretAccessKey,
       },
     });
-  }
-
-  async uploadFile(file: FileUpload, path = ''): Promise<string> {
-    try {
-      const extension = extname(file.originalname);
-      const filename = `${uuidv4()}${extension}`;
-      const key = path ? `${path.replace(/^\/|\/$/g, '')}/${filename}` : filename;
-
-      const command = new PutObjectCommand({
-        Bucket: this.bucketName,
-        Key: key,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-      });
-
-      await this.s3Client.send(command);
-
-      const endpoint = await this.s3Client.config.endpoint?.();
-
-      const baseUrl = endpoint
-        ? `${endpoint.protocol}//${endpoint.hostname}${endpoint.port ? `:${endpoint.port}` : ''}`
-        : `https://${this.bucketName}.s3.amazonaws.com`;
-
-      return `${baseUrl}/${this.bucketName}/${key}`;
-    } catch (error) {
-      throw new InternalServerErrorException(`Falha ao fazer upload para o S3: ${(error as Error).message}`);
-    }
   }
 
   async deleteFile(fileUrl: string): Promise<void> {

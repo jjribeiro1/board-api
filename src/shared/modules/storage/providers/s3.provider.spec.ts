@@ -64,58 +64,6 @@ describe('S3StorageProvider', () => {
     uuidMock.mockReset();
   });
 
-  describe('uploadFile', () => {
-    it('should upload the file using a normalized key and return its public URL', async () => {
-      uuidMock.mockReturnValue('uuid-123');
-      mockSend.mockResolvedValue({});
-      mockEndpoint.mockResolvedValue({
-        protocol: 'https:',
-        hostname: 'cdn.example.com',
-        port: 9000,
-      });
-
-      const result = await provider.uploadFile(
-        {
-          originalname: 'avatar.png',
-          mimetype: 'image/png',
-          buffer: Buffer.from('avatar'),
-          size: 6,
-        },
-        '/avatars/',
-      );
-
-      expect(putObjectCommandMock).toHaveBeenCalledWith({
-        Bucket: 'board-bucket',
-        Key: 'avatars/uuid-123.png',
-        Body: Buffer.from('avatar'),
-        ContentType: 'image/png',
-      });
-      expect(mockSend).toHaveBeenCalledWith({
-        input: {
-          Bucket: 'board-bucket',
-          Key: 'avatars/uuid-123.png',
-          Body: Buffer.from('avatar'),
-          ContentType: 'image/png',
-        },
-      });
-      expect(result).toBe('https://cdn.example.com:9000/board-bucket/avatars/uuid-123.png');
-    });
-
-    it('should wrap upload failures with an internal server error', async () => {
-      uuidMock.mockReturnValue('uuid-123');
-      mockSend.mockRejectedValue(new Error('network down'));
-
-      await expect(
-        provider.uploadFile({
-          originalname: 'avatar.png',
-          mimetype: 'image/png',
-          buffer: Buffer.from('avatar'),
-          size: 6,
-        }),
-      ).rejects.toThrow(new InternalServerErrorException('Falha ao fazer upload para o S3: network down'));
-    });
-  });
-
   describe('deleteFile', () => {
     it('should extract the key from a bucket-based URL', async () => {
       mockSend.mockResolvedValue({});

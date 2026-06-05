@@ -53,6 +53,7 @@ describe('UsersController', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        avatarUrl: null,
       };
       usersServiceMock.findOne.mockResolvedValue(userMock);
 

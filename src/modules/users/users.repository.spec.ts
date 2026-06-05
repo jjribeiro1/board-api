@@ -60,6 +60,7 @@ describe('UsersRepository', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        avatarUrl: null,
         organizations: [
           {
             id: 'user-org-id-1',
@@ -133,6 +134,7 @@ describe('UsersRepository', () => {
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        avatarUrl: null,
         organizations: [
           {
             id: 'user-org-id-1',

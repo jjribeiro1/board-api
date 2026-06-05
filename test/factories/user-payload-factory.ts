@@ -9,10 +9,13 @@ export const createMockUserPayload = (data?: Partial<UserPayload>): UserPayload 
   updatedAt: data?.updatedAt || new Date(),
 });
 
-export const createMockUser = (data?: Partial<UserPayload & { password?: string; deletedAt?: Date | null }>) => {
+export const createMockUser = (
+  data?: Partial<UserPayload & { password?: string; deletedAt?: Date | null; avatarUrl?: string | null }>,
+) => {
   return {
     ...createMockUserPayload(data),
     password: data?.password || 'hashed-password',
     deletedAt: data?.deletedAt || null,
+    avatarUrl: data?.avatarUrl !== undefined ? data.avatarUrl : null,
   };
 };

@@ -81,6 +81,7 @@ describe('UsersService', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
+      avatarUrl: null,
       organizations: [
         {
           id: 'org-id-1',
@@ -121,6 +122,7 @@ describe('UsersService', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,
+      avatarUrl: null,
       organizations: [
         {
           id: 'org-id-1',

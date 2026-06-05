@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { StorageProvider } from '../interfaces/storage-provider.interface';
 import { extname } from 'path';
@@ -29,20 +29,8 @@ export class S3StorageProvider implements StorageProvider {
     });
   }
 
-  async deleteFile(fileUrl: string): Promise<void> {
+  async deleteFile(key: string): Promise<void> {
     try {
-      // Extrair o "key" da URL do arquivo para que seja removido corretamente
-      const urlParts = fileUrl.split('/');
-      const bucketIndex = urlParts.indexOf(this.bucketName);
-
-      // Se tiver usando CNAME pro Bucket pode não ter o bucket no path
-      let key = bucketIndex >= 0 ? urlParts.slice(bucketIndex + 1).join('/') : '';
-
-      // Fallback simples se a busca falhar
-      if (!key) {
-        key = new URL(fileUrl).pathname.replace(/^\/+/, '');
-      }
-
       const command = new DeleteObjectCommand({
         Bucket: this.bucketName,
         Key: key,
@@ -58,7 +46,7 @@ export class S3StorageProvider implements StorageProvider {
     filename: string,
     contentType?: string,
     path = '',
-  ): Promise<{ uploadUrl: string; key: string; publicUrl: string }> {
+  ): Promise<{ uploadUrl: string; key: string }> {
     try {
       const extension = extname(filename);
       const uniqueFilename = `${uuidv4()}${extension}`;
@@ -72,17 +60,24 @@ export class S3StorageProvider implements StorageProvider {
 
       const uploadUrl = await getSignedUrl(this.s3Client, command, { expiresIn: 3600 });
 
-      const endpoint = await this.s3Client.config.endpoint?.();
-
-      const baseUrl = endpoint
-        ? `${endpoint.protocol}//${endpoint.hostname}${endpoint.port ? `:${endpoint.port}` : ''}`
-        : `https://${this.bucketName}.s3.amazonaws.com`;
-
-      const publicSiteUrl = `${baseUrl}/${this.bucketName}/${key}`;
-
-      return { uploadUrl, key, publicUrl: publicSiteUrl };
+      return { uploadUrl, key };
     } catch (error) {
       throw new InternalServerErrorException(`Falha ao gerar URL pré-assinada do S3: ${(error as Error).message}`);
+    }
+  }
+
+  async generatePreSignedGetUrl(key: string, expiresIn = 3600): Promise<string> {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: key,
+      });
+
+      return await getSignedUrl(this.s3Client, command, { expiresIn });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Falha ao gerar URL pré-assinada de leitura do S3: ${(error as Error).message}`,
+      );
     }
   }
 }

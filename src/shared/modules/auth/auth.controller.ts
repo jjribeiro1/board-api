@@ -8,11 +8,15 @@ import { Public } from 'src/common/decorators/is-public.decorator';
 import { LoggedUser } from 'src/common/decorators/logged-user.decorator';
 import { UserPayload } from 'src/common/types/user-payload';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { StorageService } from '../storage/storage.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly storageService: StorageService,
+  ) {}
 
   /**
    *
@@ -82,8 +86,10 @@ export class AuthController {
    */
   @ApiBearerAuth()
   @Get('/me')
-  getProfile(@Req() req) {
-    return req.user;
+  async getProfile(@Req() req) {
+    const user: UserPayload = req.user;
+    const avatarUrl = user.avatarUrl ? await this.storageService.generatePreSignedGetUrl(user.avatarUrl) : null;
+    return { ...user, avatarUrl };
   }
 
   /**

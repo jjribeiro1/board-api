@@ -6,15 +6,18 @@ import { SignInDto } from './dto/sign-in.dto';
 import { Response, Request } from 'express';
 import { COOKIE_ACCESS_TOKEN_EXPIRES_IN, COOKIE_REFRESH_TOKEN_EXPIRES_IN } from 'src/constants';
 import { createMockUserPayload } from 'test/factories/user-payload-factory';
+import { StorageService } from '../storage/storage.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
   let authServiceMock: DeepMockProxy<AuthService>;
+  let storageServiceMock: DeepMockProxy<StorageService>;
   let mockResponse: DeepMockProxy<Response>;
   let mockRequest: DeepMockProxy<Request & { user?: any }>;
 
   beforeEach(async () => {
     authServiceMock = mockDeep<AuthService>();
+    storageServiceMock = mockDeep<StorageService>();
     mockResponse = mockDeep<Response>();
     mockRequest = mockDeep<Request & { user?: any }>();
 
@@ -24,6 +27,10 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: authServiceMock,
+        },
+        {
+          provide: StorageService,
+          useValue: storageServiceMock,
         },
       ],
     }).compile();
@@ -215,13 +222,25 @@ describe('AuthController', () => {
   });
 
   describe('getProfile', () => {
-    it('should return the logged user profile from request', () => {
-      const mockUser = createMockUserPayload();
+    it('should return the logged user profile with resolved avatar URL', async () => {
+      const mockUser = createMockUserPayload({ avatarUrl: 'avatars/uuid.png' });
+      mockRequest.user = mockUser;
+      storageServiceMock.generatePreSignedGetUrl.mockResolvedValue('https://signed.example.com/read');
+
+      const result = await controller.getProfile(mockRequest);
+
+      expect(result).toEqual({ ...mockUser, avatarUrl: 'https://signed.example.com/read' });
+      expect(storageServiceMock.generatePreSignedGetUrl).toHaveBeenCalledWith('avatars/uuid.png');
+    });
+
+    it('should return null avatarUrl when user has no avatar', async () => {
+      const mockUser = createMockUserPayload({ avatarUrl: null });
       mockRequest.user = mockUser;
 
-      const result = controller.getProfile(mockRequest);
+      const result = await controller.getProfile(mockRequest);
 
-      expect(result).toEqual(mockUser);
+      expect(result.avatarUrl).toBeNull();
+      expect(storageServiceMock.generatePreSignedGetUrl).not.toHaveBeenCalled();
     });
   });
 

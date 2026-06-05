@@ -55,13 +55,13 @@ describe('UsersController', () => {
         deletedAt: null,
         avatarUrl: null,
       };
-      usersServiceMock.findOne.mockResolvedValue(userMock);
+      usersServiceMock.findOneWithResolvedAvatar.mockResolvedValue(userMock);
 
       const result = await usersController.findOne(userId);
 
       expect(result).toEqual({ data: { ...userMock, password: undefined } });
-      expect(usersServiceMock.findOne).toHaveBeenCalledWith(userId);
-      expect(usersServiceMock.findOne).toHaveBeenCalledTimes(1);
+      expect(usersServiceMock.findOneWithResolvedAvatar).toHaveBeenCalledWith(userId);
+      expect(usersServiceMock.findOneWithResolvedAvatar).toHaveBeenCalledTimes(1);
     });
   });
 

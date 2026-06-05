@@ -1,6 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { v4 as uuidv4 } from 'uuid';
 import { S3StorageProvider } from './s3.provider';
@@ -14,6 +14,7 @@ jest.mock('@aws-sdk/client-s3', () => ({
   })),
   PutObjectCommand: jest.fn().mockImplementation((input) => ({ input })),
   DeleteObjectCommand: jest.fn().mockImplementation((input) => ({ input })),
+  GetObjectCommand: jest.fn().mockImplementation((input) => ({ input })),
 }));
 
 jest.mock('@aws-sdk/s3-request-presigner', () => ({
@@ -33,6 +34,7 @@ describe('S3StorageProvider', () => {
   const s3ClientMock = S3Client as jest.MockedClass<typeof S3Client>;
   const putObjectCommandMock = PutObjectCommand as unknown as jest.Mock;
   const deleteObjectCommandMock = DeleteObjectCommand as unknown as jest.Mock;
+  const getObjectCommandMock = GetObjectCommand as unknown as jest.Mock;
   const getSignedUrlMock = getSignedUrl as jest.MockedFunction<typeof getSignedUrl>;
   const uuidMock = uuidv4 as unknown as jest.Mock;
 
@@ -60,15 +62,16 @@ describe('S3StorageProvider', () => {
     s3ClientMock.mockClear();
     putObjectCommandMock.mockClear();
     deleteObjectCommandMock.mockClear();
+    getObjectCommandMock.mockClear();
     getSignedUrlMock.mockReset();
     uuidMock.mockReset();
   });
 
   describe('deleteFile', () => {
-    it('should extract the key from a bucket-based URL', async () => {
+    it('should delete a file using the provided key', async () => {
       mockSend.mockResolvedValue({});
 
-      await provider.deleteFile('https://cdn.example.com/board-bucket/avatars/uuid-123.png');
+      await provider.deleteFile('avatars/uuid-123.png');
 
       expect(deleteObjectCommandMock).toHaveBeenCalledWith({
         Bucket: 'board-bucket',
@@ -76,31 +79,19 @@ describe('S3StorageProvider', () => {
       });
     });
 
-    it('should fall back to the last path segment when the bucket is not present in the URL', async () => {
-      mockSend.mockResolvedValue({});
-
-      await provider.deleteFile('https://files.example.com/avatar.png');
-
-      expect(deleteObjectCommandMock).toHaveBeenCalledWith({
-        Bucket: 'board-bucket',
-        Key: 'avatar.png',
-      });
-    });
-
     it('should wrap deletion failures with an internal server error', async () => {
       mockSend.mockRejectedValue(new Error('permission denied'));
 
-      await expect(provider.deleteFile('https://cdn.example.com/board-bucket/avatar.png')).rejects.toThrow(
+      await expect(provider.deleteFile('avatars/avatar.png')).rejects.toThrow(
         new InternalServerErrorException('Falha ao deletar arquivo do S3: permission denied'),
       );
     });
   });
 
   describe('generatePreSignedUrl', () => {
-    it('should generate a signed upload URL and public URL using the generated key', async () => {
+    it('should generate a signed upload URL and return the key', async () => {
       uuidMock.mockReturnValue('uuid-456');
       getSignedUrlMock.mockResolvedValue('https://signed.example.com/upload');
-      mockEndpoint.mockResolvedValue(undefined);
 
       const result = await provider.generatePreSignedUrl('avatar.png', 'image/png', '/avatars/');
 
@@ -125,17 +116,12 @@ describe('S3StorageProvider', () => {
       expect(result).toEqual({
         uploadUrl: 'https://signed.example.com/upload',
         key: 'avatars/uuid-456.png',
-        publicUrl: 'https://board-bucket.s3.amazonaws.com/board-bucket/avatars/uuid-456.png',
       });
     });
 
     it('should omit content type when it is not provided', async () => {
       uuidMock.mockReturnValue('uuid-789');
       getSignedUrlMock.mockResolvedValue('https://signed.example.com/upload');
-      mockEndpoint.mockResolvedValue({
-        protocol: 'https:',
-        hostname: 'cdn.example.com',
-      });
 
       await provider.generatePreSignedUrl('avatar.png');
 
@@ -151,6 +137,46 @@ describe('S3StorageProvider', () => {
 
       await expect(provider.generatePreSignedUrl('avatar.png')).rejects.toThrow(
         new InternalServerErrorException('Falha ao gerar URL pré-assinada do S3: signing failed'),
+      );
+    });
+  });
+
+  describe('generatePreSignedGetUrl', () => {
+    it('should generate a signed GET URL for the given key', async () => {
+      getSignedUrlMock.mockResolvedValue('https://signed.example.com/read');
+
+      const result = await provider.generatePreSignedGetUrl('avatars/uuid-123.png');
+
+      expect(getObjectCommandMock).toHaveBeenCalledWith({
+        Bucket: 'board-bucket',
+        Key: 'avatars/uuid-123.png',
+      });
+      expect(getSignedUrlMock).toHaveBeenCalledWith(
+        expect.objectContaining({ send: mockSend }),
+        {
+          input: {
+            Bucket: 'board-bucket',
+            Key: 'avatars/uuid-123.png',
+          },
+        },
+        { expiresIn: 3600 },
+      );
+      expect(result).toBe('https://signed.example.com/read');
+    });
+
+    it('should accept a custom expiresIn value', async () => {
+      getSignedUrlMock.mockResolvedValue('https://signed.example.com/read');
+
+      await provider.generatePreSignedGetUrl('avatars/uuid-123.png', 7200);
+
+      expect(getSignedUrlMock).toHaveBeenCalledWith(expect.anything(), expect.anything(), { expiresIn: 7200 });
+    });
+
+    it('should wrap failures with an internal server error', async () => {
+      getSignedUrlMock.mockRejectedValue(new Error('get signing failed'));
+
+      await expect(provider.generatePreSignedGetUrl('avatars/uuid-123.png')).rejects.toThrow(
+        new InternalServerErrorException('Falha ao gerar URL pré-assinada de leitura do S3: get signing failed'),
       );
     });
   });

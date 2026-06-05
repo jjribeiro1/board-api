@@ -25,9 +25,9 @@ describe('StorageService', () => {
     it('should delegate file deletion to the configured provider', async () => {
       storageProviderMock.deleteFile.mockResolvedValue();
 
-      await service.deleteFile('https://cdn.example.com/bucket/avatar.png');
+      await service.deleteFile('avatars/avatar.png');
 
-      expect(storageProviderMock.deleteFile).toHaveBeenCalledWith('https://cdn.example.com/bucket/avatar.png');
+      expect(storageProviderMock.deleteFile).toHaveBeenCalledWith('avatars/avatar.png');
     });
   });
 
@@ -36,7 +36,6 @@ describe('StorageService', () => {
       const response = {
         uploadUrl: 'https://signed.example.com/upload',
         key: 'avatars/file.png',
-        publicUrl: 'https://cdn.example.com/bucket/avatars/file.png',
       };
       storageProviderMock.generatePreSignedUrl.mockResolvedValue(response);
 
@@ -44,6 +43,25 @@ describe('StorageService', () => {
 
       expect(storageProviderMock.generatePreSignedUrl).toHaveBeenCalledWith('avatar.png', 'image/png', 'avatars');
       expect(result).toEqual(response);
+    });
+  });
+
+  describe('generatePreSignedGetUrl', () => {
+    it('should delegate pre-signed GET URL generation to the configured provider', async () => {
+      storageProviderMock.generatePreSignedGetUrl.mockResolvedValue('https://signed.example.com/read');
+
+      const result = await service.generatePreSignedGetUrl('avatars/file.png');
+
+      expect(storageProviderMock.generatePreSignedGetUrl).toHaveBeenCalledWith('avatars/file.png', undefined);
+      expect(result).toBe('https://signed.example.com/read');
+    });
+
+    it('should pass expiresIn to the provider', async () => {
+      storageProviderMock.generatePreSignedGetUrl.mockResolvedValue('https://signed.example.com/read');
+
+      await service.generatePreSignedGetUrl('avatars/file.png', 7200);
+
+      expect(storageProviderMock.generatePreSignedGetUrl).toHaveBeenCalledWith('avatars/file.png', 7200);
     });
   });
 });

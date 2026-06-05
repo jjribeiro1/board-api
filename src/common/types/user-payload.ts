@@ -4,6 +4,7 @@ export type UserPayload = {
   id: string;
   name: string;
   email: string;
+  avatarUrl: string | null;
   organizations: {
     id: string;
     name: string;

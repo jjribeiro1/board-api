@@ -37,6 +37,7 @@ describe('OrganizationsController', () => {
         id: 'user-id-1',
         email: 'email@example.com',
         name: 'John Doe',
+        avatarUrl: null,
         organizations: [],
         createdAt: new Date(),
         updatedAt: new Date(),

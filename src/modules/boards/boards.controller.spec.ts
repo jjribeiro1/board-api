@@ -44,6 +44,7 @@ describe('BoardsController', () => {
         id: 'user-id-1',
         email: 'email@example.com',
         name: 'John Doe',
+        avatarUrl: null,
         organizations: [
           {
             id: 'org-id-1',
@@ -75,6 +76,7 @@ describe('BoardsController', () => {
         id: 'user-id-1',
         email: 'user@example.com',
         name: 'User One',
+        avatarUrl: null,
         organizations: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -123,6 +125,7 @@ describe('BoardsController', () => {
         id: 'user-id-1',
         email: 'email@example.com',
         name: 'John Doe',
+        avatarUrl: null,
         organizations: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -204,6 +207,7 @@ describe('BoardsController', () => {
         id: 'user-id-1',
         email: 'email@example.com',
         name: 'John Doe',
+        avatarUrl: null,
         organizations: [],
         createdAt: new Date(),
         updatedAt: new Date(),

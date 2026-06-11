@@ -71,6 +71,7 @@ describe('PostsService', () => {
       id: 'user-id-1',
       email: 'user@example.com',
       name: 'John Doe',
+      avatarUrl: null,
       organizations: [
         {
           id: 'org-id-1',
@@ -181,6 +182,7 @@ describe('PostsService', () => {
         id: 'user-id-2',
         email: 'member@example.com',
         name: 'Jane Doe',
+        avatarUrl: null,
         organizations: [],
         createdAt: new Date(),
         updatedAt: new Date(),

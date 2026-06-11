@@ -65,6 +65,7 @@ describe('JwtAuthGuard', () => {
         id: mockUser.id,
         email: mockUser.email,
         name: mockUser.name,
+        avatarUrl: mockUser.avatarUrl,
         organizations: mockUser.organizations,
         createdAt: mockUser.createdAt,
         updatedAt: mockUser.updatedAt,

@@ -49,7 +49,7 @@ async function bootstrap() {
     '/api/docs',
     apiReference({
       content: document,
-      theme: 'elysiajs',
+      theme: 'moon',
     }),
   );
 

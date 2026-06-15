@@ -122,8 +122,8 @@ model Board {
 
 model Post {
   id          String     @id @default(uuid()) @db.Uuid
-  title       String     @db.VarChar(200)
-  description String     @db.VarChar(300)
+  title       String
+  description String
   isPrivate   Boolean    @default(false) @map("is_private")
   isPinned    Boolean    @default(false) @map("is_pinned")
   isLocked    Boolean    @default(false) @map("is_locked")

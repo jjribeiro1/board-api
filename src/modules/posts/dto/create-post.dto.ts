@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsOptional, IsString, IsUUID, Length } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreatePostDto {
   /**
@@ -6,7 +6,6 @@ export class CreatePostDto {
    * @example 'Add feature X'
    */
   @IsString({ message: 'Título inválido' })
-  @Length(3, 200, { message: 'Título deve ter entre 3 e 200 caracteres' })
   title: string;
 
   /**
@@ -14,7 +13,6 @@ export class CreatePostDto {
    * @example 'Feature X will solve many problems because of this'
    */
   @IsString({ message: 'Descrição inválida' })
-  @Length(3, 300, { message: 'Descrição deve ter entre 3 e 300 caracteres' })
   description: string;
 
   /**

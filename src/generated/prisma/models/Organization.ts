@@ -209,6 +209,7 @@ export type OrganizationWhereInput = {
   organizationCustomTags?: Prisma.TagListRelationFilter;
   organizationInvites?: Prisma.OrganizationInviteListRelationFilter;
   notifications?: Prisma.NotificationListRelationFilter;
+  roadmaps?: Prisma.RoadmapListRelationFilter;
 };
 
 export type OrganizationOrderByWithRelationInput = {
@@ -227,6 +228,7 @@ export type OrganizationOrderByWithRelationInput = {
   organizationCustomTags?: Prisma.TagOrderByRelationAggregateInput;
   organizationInvites?: Prisma.OrganizationInviteOrderByRelationAggregateInput;
   notifications?: Prisma.NotificationOrderByRelationAggregateInput;
+  roadmaps?: Prisma.RoadmapOrderByRelationAggregateInput;
 };
 
 export type OrganizationWhereUniqueInput = Prisma.AtLeast<
@@ -249,6 +251,7 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<
     organizationCustomTags?: Prisma.TagListRelationFilter;
     organizationInvites?: Prisma.OrganizationInviteListRelationFilter;
     notifications?: Prisma.NotificationListRelationFilter;
+    roadmaps?: Prisma.RoadmapListRelationFilter;
   },
   'id' | 'name' | 'slug' | 'defaultStatusId'
 >;
@@ -296,6 +299,7 @@ export type OrganizationCreateInput = {
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateInput = {
@@ -313,6 +317,7 @@ export type OrganizationUncheckedCreateInput = {
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUpdateInput = {
@@ -330,6 +335,7 @@ export type OrganizationUpdateInput = {
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateInput = {
@@ -347,6 +353,7 @@ export type OrganizationUncheckedUpdateInput = {
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationCreateManyInput = {
@@ -633,6 +640,32 @@ export type OrganizationUpdateOneRequiredWithoutNotificationsNestedInput = {
   >;
 };
 
+export type OrganizationCreateNestedOneWithoutRoadmapsInput = {
+  create?: Prisma.XOR<
+    Prisma.OrganizationCreateWithoutRoadmapsInput,
+    Prisma.OrganizationUncheckedCreateWithoutRoadmapsInput
+  >;
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutRoadmapsInput;
+  connect?: Prisma.OrganizationWhereUniqueInput;
+};
+
+export type OrganizationUpdateOneRequiredWithoutRoadmapsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.OrganizationCreateWithoutRoadmapsInput,
+    Prisma.OrganizationUncheckedCreateWithoutRoadmapsInput
+  >;
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutRoadmapsInput;
+  upsert?: Prisma.OrganizationUpsertWithoutRoadmapsInput;
+  connect?: Prisma.OrganizationWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.OrganizationUpdateToOneWithWhereWithoutRoadmapsInput,
+      Prisma.OrganizationUpdateWithoutRoadmapsInput
+    >,
+    Prisma.OrganizationUncheckedUpdateWithoutRoadmapsInput
+  >;
+};
+
 export type OrganizationCreateWithoutMembersInput = {
   id?: string;
   name: string;
@@ -647,6 +680,7 @@ export type OrganizationCreateWithoutMembersInput = {
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutMembersInput = {
@@ -663,6 +697,7 @@ export type OrganizationUncheckedCreateWithoutMembersInput = {
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutMembersInput = {
@@ -704,6 +739,7 @@ export type OrganizationUpdateWithoutMembersInput = {
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutMembersInput = {
@@ -720,6 +756,7 @@ export type OrganizationUncheckedUpdateWithoutMembersInput = {
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationCreateWithoutOrganizationInvitesInput = {
@@ -736,6 +773,7 @@ export type OrganizationCreateWithoutOrganizationInvitesInput = {
   organizationCustomStatus?: Prisma.StatusCreateNestedManyWithoutOrganizationInput;
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutOrganizationInvitesInput = {
@@ -752,6 +790,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationInvitesInput = {
   organizationCustomStatus?: Prisma.StatusUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutOrganizationInvitesInput = {
@@ -796,6 +835,7 @@ export type OrganizationUpdateWithoutOrganizationInvitesInput = {
   organizationCustomStatus?: Prisma.StatusUpdateManyWithoutOrganizationNestedInput;
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutOrganizationInvitesInput = {
@@ -812,6 +852,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationInvitesInput = {
   organizationCustomStatus?: Prisma.StatusUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationCreateWithoutBoardsInput = {
@@ -828,6 +869,7 @@ export type OrganizationCreateWithoutBoardsInput = {
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutBoardsInput = {
@@ -844,6 +886,7 @@ export type OrganizationUncheckedCreateWithoutBoardsInput = {
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutBoardsInput = {
@@ -876,6 +919,7 @@ export type OrganizationUpdateWithoutBoardsInput = {
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutBoardsInput = {
@@ -892,6 +936,7 @@ export type OrganizationUncheckedUpdateWithoutBoardsInput = {
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationCreateWithoutOrganizationCustomTagsInput = {
@@ -908,6 +953,7 @@ export type OrganizationCreateWithoutOrganizationCustomTagsInput = {
   organizationCustomStatus?: Prisma.StatusCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutOrganizationCustomTagsInput = {
@@ -924,6 +970,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationCustomTagsInput = {
   organizationCustomStatus?: Prisma.StatusUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutOrganizationCustomTagsInput = {
@@ -968,6 +1015,7 @@ export type OrganizationUpdateWithoutOrganizationCustomTagsInput = {
   organizationCustomStatus?: Prisma.StatusUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutOrganizationCustomTagsInput = {
@@ -984,6 +1032,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCustomTagsInput = {
   organizationCustomStatus?: Prisma.StatusUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationCreateWithoutOrganizationCustomStatusInput = {
@@ -1000,6 +1049,7 @@ export type OrganizationCreateWithoutOrganizationCustomStatusInput = {
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutOrganizationCustomStatusInput = {
@@ -1016,6 +1066,7 @@ export type OrganizationUncheckedCreateWithoutOrganizationCustomStatusInput = {
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutOrganizationCustomStatusInput = {
@@ -1040,6 +1091,7 @@ export type OrganizationCreateWithoutDefaultStatusInput = {
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutDefaultStatusInput = {
@@ -1056,6 +1108,7 @@ export type OrganizationUncheckedCreateWithoutDefaultStatusInput = {
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutDefaultStatusInput = {
@@ -1100,6 +1153,7 @@ export type OrganizationUpdateWithoutOrganizationCustomStatusInput = {
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutOrganizationCustomStatusInput = {
@@ -1116,6 +1170,7 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCustomStatusInput = {
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUpsertWithoutDefaultStatusInput = {
@@ -1152,6 +1207,7 @@ export type OrganizationUpdateWithoutDefaultStatusInput = {
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutDefaultStatusInput = {
@@ -1168,6 +1224,7 @@ export type OrganizationUncheckedUpdateWithoutDefaultStatusInput = {
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationCreateWithoutNotificationsInput = {
@@ -1184,6 +1241,7 @@ export type OrganizationCreateWithoutNotificationsInput = {
   organizationCustomStatus?: Prisma.StatusCreateNestedManyWithoutOrganizationInput;
   organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationUncheckedCreateWithoutNotificationsInput = {
@@ -1200,6 +1258,7 @@ export type OrganizationUncheckedCreateWithoutNotificationsInput = {
   organizationCustomStatus?: Prisma.StatusUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
+  roadmaps?: Prisma.RoadmapUncheckedCreateNestedManyWithoutOrganizationInput;
 };
 
 export type OrganizationCreateOrConnectWithoutNotificationsInput = {
@@ -1244,6 +1303,7 @@ export type OrganizationUpdateWithoutNotificationsInput = {
   organizationCustomStatus?: Prisma.StatusUpdateManyWithoutOrganizationNestedInput;
   organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUpdateManyWithoutOrganizationNestedInput;
 };
 
 export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
@@ -1260,6 +1320,103 @@ export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
   organizationCustomStatus?: Prisma.StatusUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
   organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
+  roadmaps?: Prisma.RoadmapUncheckedUpdateManyWithoutOrganizationNestedInput;
+};
+
+export type OrganizationCreateWithoutRoadmapsInput = {
+  id?: string;
+  name: string;
+  slug: string;
+  logoUrl?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  defaultStatus?: Prisma.StatusCreateNestedOneWithoutDefaultOfInput;
+  boards?: Prisma.BoardCreateNestedManyWithoutOrganizationInput;
+  members?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput;
+  organizationCustomStatus?: Prisma.StatusCreateNestedManyWithoutOrganizationInput;
+  organizationCustomTags?: Prisma.TagCreateNestedManyWithoutOrganizationInput;
+  organizationInvites?: Prisma.OrganizationInviteCreateNestedManyWithoutOrganizationInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput;
+};
+
+export type OrganizationUncheckedCreateWithoutRoadmapsInput = {
+  id?: string;
+  name: string;
+  slug: string;
+  logoUrl?: string | null;
+  defaultStatusId?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  boards?: Prisma.BoardUncheckedCreateNestedManyWithoutOrganizationInput;
+  members?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput;
+  organizationCustomStatus?: Prisma.StatusUncheckedCreateNestedManyWithoutOrganizationInput;
+  organizationCustomTags?: Prisma.TagUncheckedCreateNestedManyWithoutOrganizationInput;
+  organizationInvites?: Prisma.OrganizationInviteUncheckedCreateNestedManyWithoutOrganizationInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput;
+};
+
+export type OrganizationCreateOrConnectWithoutRoadmapsInput = {
+  where: Prisma.OrganizationWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.OrganizationCreateWithoutRoadmapsInput,
+    Prisma.OrganizationUncheckedCreateWithoutRoadmapsInput
+  >;
+};
+
+export type OrganizationUpsertWithoutRoadmapsInput = {
+  update: Prisma.XOR<
+    Prisma.OrganizationUpdateWithoutRoadmapsInput,
+    Prisma.OrganizationUncheckedUpdateWithoutRoadmapsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.OrganizationCreateWithoutRoadmapsInput,
+    Prisma.OrganizationUncheckedCreateWithoutRoadmapsInput
+  >;
+  where?: Prisma.OrganizationWhereInput;
+};
+
+export type OrganizationUpdateToOneWithWhereWithoutRoadmapsInput = {
+  where?: Prisma.OrganizationWhereInput;
+  data: Prisma.XOR<
+    Prisma.OrganizationUpdateWithoutRoadmapsInput,
+    Prisma.OrganizationUncheckedUpdateWithoutRoadmapsInput
+  >;
+};
+
+export type OrganizationUpdateWithoutRoadmapsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  slug?: Prisma.StringFieldUpdateOperationsInput | string;
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  defaultStatus?: Prisma.StatusUpdateOneWithoutDefaultOfNestedInput;
+  boards?: Prisma.BoardUpdateManyWithoutOrganizationNestedInput;
+  members?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput;
+  organizationCustomStatus?: Prisma.StatusUpdateManyWithoutOrganizationNestedInput;
+  organizationCustomTags?: Prisma.TagUpdateManyWithoutOrganizationNestedInput;
+  organizationInvites?: Prisma.OrganizationInviteUpdateManyWithoutOrganizationNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput;
+};
+
+export type OrganizationUncheckedUpdateWithoutRoadmapsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  slug?: Prisma.StringFieldUpdateOperationsInput | string;
+  logoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  defaultStatusId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  boards?: Prisma.BoardUncheckedUpdateManyWithoutOrganizationNestedInput;
+  members?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput;
+  organizationCustomStatus?: Prisma.StatusUncheckedUpdateManyWithoutOrganizationNestedInput;
+  organizationCustomTags?: Prisma.TagUncheckedUpdateManyWithoutOrganizationNestedInput;
+  organizationInvites?: Prisma.OrganizationInviteUncheckedUpdateManyWithoutOrganizationNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput;
 };
 
 /**
@@ -1273,6 +1430,7 @@ export type OrganizationCountOutputType = {
   organizationCustomTags: number;
   organizationInvites: number;
   notifications: number;
+  roadmaps: number;
 };
 
 export type OrganizationCountOutputTypeSelect<
@@ -1284,6 +1442,7 @@ export type OrganizationCountOutputTypeSelect<
   organizationCustomTags?: boolean | OrganizationCountOutputTypeCountOrganizationCustomTagsArgs;
   organizationInvites?: boolean | OrganizationCountOutputTypeCountOrganizationInvitesArgs;
   notifications?: boolean | OrganizationCountOutputTypeCountNotificationsArgs;
+  roadmaps?: boolean | OrganizationCountOutputTypeCountRoadmapsArgs;
 };
 
 /**
@@ -1352,6 +1511,15 @@ export type OrganizationCountOutputTypeCountNotificationsArgs<
   where?: Prisma.NotificationWhereInput;
 };
 
+/**
+ * OrganizationCountOutputType without action
+ */
+export type OrganizationCountOutputTypeCountRoadmapsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.RoadmapWhereInput;
+};
+
 export type OrganizationSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetSelect<
@@ -1371,6 +1539,7 @@ export type OrganizationSelect<
     organizationCustomTags?: boolean | Prisma.Organization$organizationCustomTagsArgs<ExtArgs>;
     organizationInvites?: boolean | Prisma.Organization$organizationInvitesArgs<ExtArgs>;
     notifications?: boolean | Prisma.Organization$notificationsArgs<ExtArgs>;
+    roadmaps?: boolean | Prisma.Organization$roadmapsArgs<ExtArgs>;
     _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs['result']['organization']
@@ -1437,6 +1606,7 @@ export type OrganizationInclude<
   organizationCustomTags?: boolean | Prisma.Organization$organizationCustomTagsArgs<ExtArgs>;
   organizationInvites?: boolean | Prisma.Organization$organizationInvitesArgs<ExtArgs>;
   notifications?: boolean | Prisma.Organization$notificationsArgs<ExtArgs>;
+  roadmaps?: boolean | Prisma.Organization$roadmapsArgs<ExtArgs>;
   _count?: boolean | Prisma.OrganizationCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type OrganizationIncludeCreateManyAndReturn<
@@ -1462,6 +1632,7 @@ export type $OrganizationPayload<
     organizationCustomTags: Prisma.$TagPayload<ExtArgs>[];
     organizationInvites: Prisma.$OrganizationInvitePayload<ExtArgs>[];
     notifications: Prisma.$NotificationPayload<ExtArgs>[];
+    roadmaps: Prisma.$RoadmapPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1985,6 +2156,11 @@ export interface Prisma__OrganizationClient<
     args?: Prisma.Subset<T, Prisma.Organization$notificationsArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, 'findMany', GlobalOmitOptions> | Null
+  >;
+  roadmaps<T extends Prisma.Organization$roadmapsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Organization$roadmapsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    runtime.Types.Result.GetResult<Prisma.$RoadmapPayload<ExtArgs>, T, 'findMany', GlobalOmitOptions> | Null
   >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2622,6 +2798,32 @@ export type Organization$notificationsArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[];
+};
+
+/**
+ * Organization.roadmaps
+ */
+export type Organization$roadmapsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Roadmap
+   */
+  select?: Prisma.RoadmapSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Roadmap
+   */
+  omit?: Prisma.RoadmapOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RoadmapInclude<ExtArgs> | null;
+  where?: Prisma.RoadmapWhereInput;
+  orderBy?: Prisma.RoadmapOrderByWithRelationInput | Prisma.RoadmapOrderByWithRelationInput[];
+  cursor?: Prisma.RoadmapWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.RoadmapScalarFieldEnum | Prisma.RoadmapScalarFieldEnum[];
 };
 
 /**

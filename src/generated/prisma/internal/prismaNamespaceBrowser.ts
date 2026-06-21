@@ -62,6 +62,9 @@ export const ModelName = {
   PostVote: 'PostVote',
   Notification: 'Notification',
   UserNotification: 'UserNotification',
+  Roadmap: 'Roadmap',
+  RoadmapColumn: 'RoadmapColumn',
+  RoadmapItem: 'RoadmapItem',
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -260,6 +263,44 @@ export const UserNotificationScalarFieldEnum = {
 
 export type UserNotificationScalarFieldEnum =
   (typeof UserNotificationScalarFieldEnum)[keyof typeof UserNotificationScalarFieldEnum];
+
+export const RoadmapScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  slug: 'slug',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  organizationId: 'organizationId',
+} as const;
+
+export type RoadmapScalarFieldEnum = (typeof RoadmapScalarFieldEnum)[keyof typeof RoadmapScalarFieldEnum];
+
+export const RoadmapColumnScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  color: 'color',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  roadmapId: 'roadmapId',
+} as const;
+
+export type RoadmapColumnScalarFieldEnum =
+  (typeof RoadmapColumnScalarFieldEnum)[keyof typeof RoadmapColumnScalarFieldEnum];
+
+export const RoadmapItemScalarFieldEnum = {
+  id: 'id',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  columnId: 'columnId',
+  postId: 'postId',
+} as const;
+
+export type RoadmapItemScalarFieldEnum = (typeof RoadmapItemScalarFieldEnum)[keyof typeof RoadmapItemScalarFieldEnum];
 
 export const SortOrder = {
   asc: 'asc',

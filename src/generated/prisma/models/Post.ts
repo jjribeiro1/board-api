@@ -240,6 +240,7 @@ export type PostWhereInput = {
   tags?: Prisma.PostTagListRelationFilter;
   comments?: Prisma.CommentListRelationFilter;
   votes?: Prisma.PostVoteListRelationFilter;
+  roadmapItem?: Prisma.XOR<Prisma.RoadmapItemNullableScalarRelationFilter, Prisma.RoadmapItemWhereInput> | null;
 };
 
 export type PostOrderByWithRelationInput = {
@@ -261,6 +262,7 @@ export type PostOrderByWithRelationInput = {
   tags?: Prisma.PostTagOrderByRelationAggregateInput;
   comments?: Prisma.CommentOrderByRelationAggregateInput;
   votes?: Prisma.PostVoteOrderByRelationAggregateInput;
+  roadmapItem?: Prisma.RoadmapItemOrderByWithRelationInput;
 };
 
 export type PostWhereUniqueInput = Prisma.AtLeast<
@@ -286,6 +288,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<
     tags?: Prisma.PostTagListRelationFilter;
     comments?: Prisma.CommentListRelationFilter;
     votes?: Prisma.PostVoteListRelationFilter;
+    roadmapItem?: Prisma.XOR<Prisma.RoadmapItemNullableScalarRelationFilter, Prisma.RoadmapItemWhereInput> | null;
   },
   'id'
 >;
@@ -342,6 +345,7 @@ export type PostCreateInput = {
   tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateInput = {
@@ -360,6 +364,7 @@ export type PostUncheckedCreateInput = {
   tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostUpdateInput = {
@@ -378,6 +383,7 @@ export type PostUpdateInput = {
   tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateInput = {
@@ -396,6 +402,7 @@ export type PostUncheckedUpdateInput = {
   tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
 };
 
 export type PostCreateManyInput = {
@@ -713,6 +720,23 @@ export type PostUpdateOneRequiredWithoutVotesNestedInput = {
   >;
 };
 
+export type PostCreateNestedOneWithoutRoadmapItemInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutRoadmapItemInput, Prisma.PostUncheckedCreateWithoutRoadmapItemInput>;
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutRoadmapItemInput;
+  connect?: Prisma.PostWhereUniqueInput;
+};
+
+export type PostUpdateOneRequiredWithoutRoadmapItemNestedInput = {
+  create?: Prisma.XOR<Prisma.PostCreateWithoutRoadmapItemInput, Prisma.PostUncheckedCreateWithoutRoadmapItemInput>;
+  connectOrCreate?: Prisma.PostCreateOrConnectWithoutRoadmapItemInput;
+  upsert?: Prisma.PostUpsertWithoutRoadmapItemInput;
+  connect?: Prisma.PostWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<Prisma.PostUpdateToOneWithWhereWithoutRoadmapItemInput, Prisma.PostUpdateWithoutRoadmapItemInput>,
+    Prisma.PostUncheckedUpdateWithoutRoadmapItemInput
+  >;
+};
+
 export type PostCreateWithoutAuthorInput = {
   id?: string;
   title: string;
@@ -728,6 +752,7 @@ export type PostCreateWithoutAuthorInput = {
   tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateWithoutAuthorInput = {
@@ -745,6 +770,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostCreateOrConnectWithoutAuthorInput = {
@@ -806,6 +832,7 @@ export type PostCreateWithoutBoardInput = {
   tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateWithoutBoardInput = {
@@ -823,6 +850,7 @@ export type PostUncheckedCreateWithoutBoardInput = {
   tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostCreateOrConnectWithoutBoardInput = {
@@ -866,6 +894,7 @@ export type PostCreateWithoutCommentsInput = {
   status?: Prisma.StatusCreateNestedOneWithoutPostsInput;
   tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateWithoutCommentsInput = {
@@ -883,6 +912,7 @@ export type PostUncheckedCreateWithoutCommentsInput = {
   statusId?: string | null;
   tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostCreateOrConnectWithoutCommentsInput = {
@@ -916,6 +946,7 @@ export type PostUpdateWithoutCommentsInput = {
   status?: Prisma.StatusUpdateOneWithoutPostsNestedInput;
   tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateWithoutCommentsInput = {
@@ -933,6 +964,7 @@ export type PostUncheckedUpdateWithoutCommentsInput = {
   statusId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
 };
 
 export type PostCreateWithoutTagsInput = {
@@ -950,6 +982,7 @@ export type PostCreateWithoutTagsInput = {
   status?: Prisma.StatusCreateNestedOneWithoutPostsInput;
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateWithoutTagsInput = {
@@ -967,6 +1000,7 @@ export type PostUncheckedCreateWithoutTagsInput = {
   statusId?: string | null;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostCreateOrConnectWithoutTagsInput = {
@@ -1000,6 +1034,7 @@ export type PostUpdateWithoutTagsInput = {
   status?: Prisma.StatusUpdateOneWithoutPostsNestedInput;
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateWithoutTagsInput = {
@@ -1017,6 +1052,7 @@ export type PostUncheckedUpdateWithoutTagsInput = {
   statusId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
 };
 
 export type PostCreateWithoutStatusInput = {
@@ -1034,6 +1070,7 @@ export type PostCreateWithoutStatusInput = {
   tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateWithoutStatusInput = {
@@ -1051,6 +1088,7 @@ export type PostUncheckedCreateWithoutStatusInput = {
   tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
   votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostCreateOrConnectWithoutStatusInput = {
@@ -1094,6 +1132,7 @@ export type PostCreateWithoutVotesInput = {
   status?: Prisma.StatusCreateNestedOneWithoutPostsInput;
   tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemCreateNestedOneWithoutPostInput;
 };
 
 export type PostUncheckedCreateWithoutVotesInput = {
@@ -1111,6 +1150,7 @@ export type PostUncheckedCreateWithoutVotesInput = {
   statusId?: string | null;
   tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
   comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedCreateNestedOneWithoutPostInput;
 };
 
 export type PostCreateOrConnectWithoutVotesInput = {
@@ -1144,6 +1184,7 @@ export type PostUpdateWithoutVotesInput = {
   status?: Prisma.StatusUpdateOneWithoutPostsNestedInput;
   tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateWithoutVotesInput = {
@@ -1161,6 +1202,95 @@ export type PostUncheckedUpdateWithoutVotesInput = {
   statusId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
+};
+
+export type PostCreateWithoutRoadmapItemInput = {
+  id?: string;
+  title: string;
+  description: string;
+  isPrivate?: boolean;
+  isPinned?: boolean;
+  isLocked?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  board: Prisma.BoardCreateNestedOneWithoutPostsInput;
+  author: Prisma.UserCreateNestedOneWithoutPostsInput;
+  status?: Prisma.StatusCreateNestedOneWithoutPostsInput;
+  tags?: Prisma.PostTagCreateNestedManyWithoutPostInput;
+  comments?: Prisma.CommentCreateNestedManyWithoutPostInput;
+  votes?: Prisma.PostVoteCreateNestedManyWithoutPostInput;
+};
+
+export type PostUncheckedCreateWithoutRoadmapItemInput = {
+  id?: string;
+  title: string;
+  description: string;
+  isPrivate?: boolean;
+  isPinned?: boolean;
+  isLocked?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  boardId: string;
+  authorId: string;
+  statusId?: string | null;
+  tags?: Prisma.PostTagUncheckedCreateNestedManyWithoutPostInput;
+  comments?: Prisma.CommentUncheckedCreateNestedManyWithoutPostInput;
+  votes?: Prisma.PostVoteUncheckedCreateNestedManyWithoutPostInput;
+};
+
+export type PostCreateOrConnectWithoutRoadmapItemInput = {
+  where: Prisma.PostWhereUniqueInput;
+  create: Prisma.XOR<Prisma.PostCreateWithoutRoadmapItemInput, Prisma.PostUncheckedCreateWithoutRoadmapItemInput>;
+};
+
+export type PostUpsertWithoutRoadmapItemInput = {
+  update: Prisma.XOR<Prisma.PostUpdateWithoutRoadmapItemInput, Prisma.PostUncheckedUpdateWithoutRoadmapItemInput>;
+  create: Prisma.XOR<Prisma.PostCreateWithoutRoadmapItemInput, Prisma.PostUncheckedCreateWithoutRoadmapItemInput>;
+  where?: Prisma.PostWhereInput;
+};
+
+export type PostUpdateToOneWithWhereWithoutRoadmapItemInput = {
+  where?: Prisma.PostWhereInput;
+  data: Prisma.XOR<Prisma.PostUpdateWithoutRoadmapItemInput, Prisma.PostUncheckedUpdateWithoutRoadmapItemInput>;
+};
+
+export type PostUpdateWithoutRoadmapItemInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  title?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.StringFieldUpdateOperationsInput | string;
+  isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  board?: Prisma.BoardUpdateOneRequiredWithoutPostsNestedInput;
+  author?: Prisma.UserUpdateOneRequiredWithoutPostsNestedInput;
+  status?: Prisma.StatusUpdateOneWithoutPostsNestedInput;
+  tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
+  comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
+  votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+};
+
+export type PostUncheckedUpdateWithoutRoadmapItemInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  title?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.StringFieldUpdateOperationsInput | string;
+  isPrivate?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isLocked?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+  boardId?: Prisma.StringFieldUpdateOperationsInput | string;
+  authorId?: Prisma.StringFieldUpdateOperationsInput | string;
+  statusId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
+  comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
+  votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
 };
 
 export type PostCreateManyAuthorInput = {
@@ -1192,6 +1322,7 @@ export type PostUpdateWithoutAuthorInput = {
   tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateWithoutAuthorInput = {
@@ -1209,6 +1340,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateManyWithoutAuthorInput = {
@@ -1254,6 +1386,7 @@ export type PostUpdateWithoutBoardInput = {
   tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateWithoutBoardInput = {
@@ -1271,6 +1404,7 @@ export type PostUncheckedUpdateWithoutBoardInput = {
   tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateManyWithoutBoardInput = {
@@ -1316,6 +1450,7 @@ export type PostUpdateWithoutStatusInput = {
   tags?: Prisma.PostTagUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateWithoutStatusInput = {
@@ -1333,6 +1468,7 @@ export type PostUncheckedUpdateWithoutStatusInput = {
   tags?: Prisma.PostTagUncheckedUpdateManyWithoutPostNestedInput;
   comments?: Prisma.CommentUncheckedUpdateManyWithoutPostNestedInput;
   votes?: Prisma.PostVoteUncheckedUpdateManyWithoutPostNestedInput;
+  roadmapItem?: Prisma.RoadmapItemUncheckedUpdateOneWithoutPostNestedInput;
 };
 
 export type PostUncheckedUpdateManyWithoutStatusInput = {
@@ -1427,6 +1563,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
       tags?: boolean | Prisma.Post$tagsArgs<ExtArgs>;
       comments?: boolean | Prisma.Post$commentsArgs<ExtArgs>;
       votes?: boolean | Prisma.Post$votesArgs<ExtArgs>;
+      roadmapItem?: boolean | Prisma.Post$roadmapItemArgs<ExtArgs>;
       _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>;
     },
     ExtArgs['result']['post']
@@ -1517,6 +1654,7 @@ export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     tags?: boolean | Prisma.Post$tagsArgs<ExtArgs>;
     comments?: boolean | Prisma.Post$commentsArgs<ExtArgs>;
     votes?: boolean | Prisma.Post$votesArgs<ExtArgs>;
+    roadmapItem?: boolean | Prisma.Post$roadmapItemArgs<ExtArgs>;
     _count?: boolean | Prisma.PostCountOutputTypeDefaultArgs<ExtArgs>;
   };
 export type PostIncludeCreateManyAndReturn<
@@ -1544,6 +1682,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
       tags: Prisma.$PostTagPayload<ExtArgs>[];
       comments: Prisma.$CommentPayload<ExtArgs>[];
       votes: Prisma.$PostVotePayload<ExtArgs>[];
+      roadmapItem: Prisma.$RoadmapItemPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<
       {
@@ -2074,6 +2213,19 @@ export interface Prisma__PostClient<
     args?: Prisma.Subset<T, Prisma.Post$votesArgs<ExtArgs>>,
   ): Prisma.PrismaPromise<
     runtime.Types.Result.GetResult<Prisma.$PostVotePayload<ExtArgs>, T, 'findMany', GlobalOmitOptions> | Null
+  >;
+  roadmapItem<T extends Prisma.Post$roadmapItemArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Post$roadmapItemArgs<ExtArgs>>,
+  ): Prisma.Prisma__RoadmapItemClient<
+    runtime.Types.Result.GetResult<
+      Prisma.$RoadmapItemPayload<ExtArgs>,
+      T,
+      'findUniqueOrThrow',
+      GlobalOmitOptions
+    > | null,
+    null,
+    ExtArgs,
+    GlobalOmitOptions
   >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -2637,6 +2789,27 @@ export type Post$votesArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.PostVoteScalarFieldEnum | Prisma.PostVoteScalarFieldEnum[];
+};
+
+/**
+ * Post.roadmapItem
+ */
+export type Post$roadmapItemArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the RoadmapItem
+   */
+  select?: Prisma.RoadmapItemSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the RoadmapItem
+   */
+  omit?: Prisma.RoadmapItemOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RoadmapItemInclude<ExtArgs> | null;
+  where?: Prisma.RoadmapItemWhereInput;
 };
 
 /**

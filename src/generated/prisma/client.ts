@@ -110,3 +110,18 @@ export type Notification = Prisma.NotificationModel;
  *
  */
 export type UserNotification = Prisma.UserNotificationModel;
+/**
+ * Model Roadmap
+ *
+ */
+export type Roadmap = Prisma.RoadmapModel;
+/**
+ * Model RoadmapColumn
+ *
+ */
+export type RoadmapColumn = Prisma.RoadmapColumnModel;
+/**
+ * Model RoadmapItem
+ *
+ */
+export type RoadmapItem = Prisma.RoadmapItemModel;

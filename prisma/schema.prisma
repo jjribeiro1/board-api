@@ -78,6 +78,7 @@ model Organization {
   organizationCustomTags   Tag[]
   organizationInvites      OrganizationInvite[]
   notifications            Notification[]
+  roadmaps                 Roadmap[]
 
   @@map("organization")
 }
@@ -139,6 +140,7 @@ model Post {
   tags        PostTag[]
   comments    Comment[]
   votes       PostVote[]
+  roadmapItem RoadmapItem?
 
   @@map("post")
 }
@@ -261,4 +263,51 @@ model UserNotification {
   @@index([userId])
   @@index([notificationId])
   @@map("user_notification")
+}
+
+model Roadmap {
+  id             String          @id @default(uuid()) @db.Uuid
+  name           String          @db.VarChar(140)
+  description    String?         @db.Text
+  slug           String          @unique @db.VarChar(200)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt      DateTime?       @map("deleted_at") @db.Timestamptz
+  organization   Organization    @relation(fields: [organizationId], references: [id])
+  organizationId String          @map("organization_id") @db.Uuid
+  columns        RoadmapColumn[]
+
+  @@unique([organizationId, slug])
+  @@map("roadmap")
+}
+
+model RoadmapColumn {
+  id         String        @id @default(uuid()) @db.Uuid
+  name       String        @db.VarChar(100)
+  color      String        @db.VarChar(50)
+  order      Int           @default(0)
+  createdAt  DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt  DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  deletedAt  DateTime?     @map("deleted_at") @db.Timestamptz
+  roadmap    Roadmap       @relation(fields: [roadmapId], references: [id], onDelete: Cascade)
+  roadmapId  String        @map("roadmap_id") @db.Uuid
+  items      RoadmapItem[]
+
+  @@unique([roadmapId, name])
+  @@map("roadmap_column")
+}
+
+model RoadmapItem {
+  id             String        @id @default(uuid()) @db.Uuid
+  order          Int           @default(0)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+  column         RoadmapColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  columnId       String        @map("column_id") @db.Uuid
+  post           Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId         String        @map("post_id") @db.Uuid
+
+  @@unique([postId])
+  @@index([columnId])
+  @@map("roadmap_item")
 }

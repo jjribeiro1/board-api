@@ -21,4 +21,7 @@ export type * from './models/Status';
 export type * from './models/PostVote';
 export type * from './models/Notification';
 export type * from './models/UserNotification';
+export type * from './models/Roadmap';
+export type * from './models/RoadmapColumn';
+export type * from './models/RoadmapItem';
 export type * from './commonInputTypes';

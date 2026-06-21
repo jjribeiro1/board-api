@@ -72,10 +72,7 @@ export class OrganizationsService {
   async findRoadmap(organizationId: string) {
     await this.findOne(organizationId);
     const roadmaps = await this.roadmapService.findAllByOrganization(organizationId);
-    if (roadmaps.length === 0) {
-      throw new NotFoundException('nenhum roadmap encontrado para esta organização');
-    }
-    return roadmaps[0];
+    return roadmaps;
   }
 
   async setDefaultStatus(organizationId: string, statusId: string) {

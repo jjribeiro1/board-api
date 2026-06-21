@@ -16,6 +16,7 @@ import { TagsModule } from './modules/tags/tags.module';
 import { VotesModule } from './modules/votes/votes.module';
 import { InvitesModule } from './modules/invites/invites.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { RoadmapModule } from './modules/roadmap/roadmap.module';
 import { StorageModule } from './shared/modules/storage/storage.module';
 
 @Module({
@@ -38,6 +39,7 @@ import { StorageModule } from './shared/modules/storage/storage.module';
     VotesModule,
     InvitesModule,
     NotificationsModule,
+    RoadmapModule,
     StorageModule,
   ],
   controllers: [AppController],

@@ -4,6 +4,7 @@ import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { OrganizationsService } from './organizations.service';
 import { OrganizationsRepository } from './organizations.repository';
+import { RoadmapService } from '../roadmap/roadmap.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { ListPostsQueryDto } from './dto/list-post-query.dto';
 import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
@@ -14,10 +15,12 @@ import { OrganizationRolesOptions } from 'src/common/types/user-organization-rol
 describe('OrganizationsService', () => {
   let service: OrganizationsService;
   let organizationsRepositoryMock: DeepMockProxy<OrganizationsRepository>;
+  let roadmapServiceMock: DeepMockProxy<RoadmapService>;
   let eventEmitterMock: DeepMockProxy<EventEmitter2>;
 
   beforeEach(async () => {
     organizationsRepositoryMock = mockDeep<OrganizationsRepository>();
+    roadmapServiceMock = mockDeep<RoadmapService>();
     eventEmitterMock = mockDeep<EventEmitter2>();
 
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +29,10 @@ describe('OrganizationsService', () => {
         {
           provide: OrganizationsRepository,
           useValue: organizationsRepositoryMock,
+        },
+        {
+          provide: RoadmapService,
+          useValue: roadmapServiceMock,
         },
         {
           provide: EventEmitter2,

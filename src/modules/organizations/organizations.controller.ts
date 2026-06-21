@@ -112,6 +112,19 @@ export class OrganizationsController {
 
   /**
    *
+   * Returns the roadmap from an organization
+   */
+  @ApiBearerAuth()
+  @Get(':id/roadmap')
+  async findRoadmap(@Param('id', ParseUUIDPipe) orgId: string) {
+    const roadmap = await this.organizationsService.findRoadmap(orgId);
+    return {
+      data: roadmap,
+    };
+  }
+
+  /**
+   *
    * Returns all invites from an organization
    */
   @AllowedOrganizationRoles([

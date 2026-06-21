@@ -6,6 +6,7 @@ import { UpdateMemberRoleDto } from './dto/update-member-role.dto';
 import { EVENTS } from 'src/constants/events';
 import { OrganizationCreatedEventDto } from '../events/dto/organization-created-event.dto';
 import { OrganizationsRepository } from './organizations.repository';
+import { RoadmapService } from '../roadmap/roadmap.service';
 import { slugify } from 'src/utils/slug';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import dayjs from 'src/utils/dayjs';
@@ -16,6 +17,7 @@ import { InvitesExpiredEventDto } from '../events/dto/invites-events.dto';
 export class OrganizationsService {
   constructor(
     private readonly organizationsRepository: OrganizationsRepository,
+    private readonly roadmapService: RoadmapService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -65,6 +67,15 @@ export class OrganizationsService {
   async findStatusFromOrganization(organizationId: string) {
     await this.findOne(organizationId);
     return this.organizationsRepository.findStatusFromOrganization(organizationId);
+  }
+
+  async findRoadmap(organizationId: string) {
+    await this.findOne(organizationId);
+    const roadmaps = await this.roadmapService.findAllByOrganization(organizationId);
+    if (roadmaps.length === 0) {
+      throw new NotFoundException('nenhum roadmap encontrado para esta organização');
+    }
+    return roadmaps[0];
   }
 
   async setDefaultStatus(organizationId: string, statusId: string) {

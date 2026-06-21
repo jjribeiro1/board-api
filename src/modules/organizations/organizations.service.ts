@@ -69,7 +69,7 @@ export class OrganizationsService {
     return this.organizationsRepository.findStatusFromOrganization(organizationId);
   }
 
-  async findRoadmap(organizationId: string) {
+  async findRoadmaps(organizationId: string) {
     await this.findOne(organizationId);
     const roadmaps = await this.roadmapService.findAllByOrganization(organizationId);
     return roadmaps;

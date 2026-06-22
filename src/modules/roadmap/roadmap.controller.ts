@@ -11,6 +11,7 @@ import { ReorderRoadmapItemsDto } from './dto/reorder-roadmap-items.dto';
 import { AllowedOrganizationRoles } from 'src/common/decorators/organization-role.decorator';
 import { OrganizationRolesOptions } from 'src/common/types/user-organization-role';
 import { ResourceGuard } from 'src/common/guards/resource.guard';
+import { OrganizationGuard } from 'src/common/guards/organization.guard';
 
 @ApiTags('roadmap')
 @Controller()
@@ -22,7 +23,7 @@ export class RoadmapController {
    */
   @ApiBearerAuth()
   @AllowedOrganizationRoles([OrganizationRolesOptions.OWNER, OrganizationRolesOptions.ADMIN])
-  @UseGuards(ResourceGuard)
+  @UseGuards(OrganizationGuard)
   @Post('roadmaps')
   async create(@Body() dto: CreateRoadmapDto) {
     const id = await this.roadmapService.create(dto);

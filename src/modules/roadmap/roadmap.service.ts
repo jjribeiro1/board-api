@@ -124,6 +124,11 @@ export class RoadmapService implements ResourceOwnershipResolver {
   }
 
   async findOrgAndAuthorId(resourceId: string): Promise<ResourceOwnershipInfo | null> {
+    const roadmap = await this.roadmapRepository.findOne(resourceId);
+    if (roadmap) {
+      return { organizationId: roadmap.organizationId, authorId: null };
+    }
+
     const item = await this.roadmapRepository.findItemById(resourceId);
     if (item) {
       return { organizationId: item.column.roadmap.organizationId, authorId: null };
